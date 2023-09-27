@@ -1,8 +1,34 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Auctioneer.Application.Tests", "tests\Auctioneer.Application.Tests\Auctioneer.Application.Tests.csproj", "{FB479DAA-BBFA-481E-9832-2E0CD0FCB9D7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Auctioneer.API", "src\Auctioneer.API\Auctioneer.API.csproj", "{6F070E69-B59A-4EEB-963B-B884C8468F03}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Auctioneer.Application", "src\Auctioneer.Application\Auctioneer.Application.csproj", "{5FC33E9B-0B58-4525-AF50-0DAEFBD58300}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Auctioneer.EmailService", "src\Auctioneer.EmailService\Auctioneer.EmailService.csproj", "{CF237457-D7CD-4DB9-85C8-5352006F6ACE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FB479DAA-BBFA-481E-9832-2E0CD0FCB9D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB479DAA-BBFA-481E-9832-2E0CD0FCB9D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB479DAA-BBFA-481E-9832-2E0CD0FCB9D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB479DAA-BBFA-481E-9832-2E0CD0FCB9D7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F070E69-B59A-4EEB-963B-B884C8468F03}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F070E69-B59A-4EEB-963B-B884C8468F03}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F070E69-B59A-4EEB-963B-B884C8468F03}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F070E69-B59A-4EEB-963B-B884C8468F03}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5FC33E9B-0B58-4525-AF50-0DAEFBD58300}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5FC33E9B-0B58-4525-AF50-0DAEFBD58300}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5FC33E9B-0B58-4525-AF50-0DAEFBD58300}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5FC33E9B-0B58-4525-AF50-0DAEFBD58300}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CF237457-D7CD-4DB9-85C8-5352006F6ACE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF237457-D7CD-4DB9-85C8-5352006F6ACE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF237457-D7CD-4DB9-85C8-5352006F6ACE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF237457-D7CD-4DB9-85C8-5352006F6ACE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
