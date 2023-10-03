@@ -6,7 +6,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Auctioneer.API", "src\Aucti
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Auctioneer.Application", "src\Auctioneer.Application\Auctioneer.Application.csproj", "{5FC33E9B-0B58-4525-AF50-0DAEFBD58300}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Auctioneer.EmailService", "src\Auctioneer.EmailService\Auctioneer.EmailService.csproj", "{CF237457-D7CD-4DB9-85C8-5352006F6ACE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Auctioneer.EmailService", "src\Auctioneer.EmailService\Auctioneer.EmailService.csproj", "{B9BC6596-F2F8-4379-A471-95900768A8A7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Auctioneer.NotificationService", "src\Auctioneer.NotificationService\Auctioneer.NotificationService.csproj", "{67B67E75-C64D-4647-BC12-09EEA0E2974C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Auctioneer.MessagingContracts", "src\Auctioneer.MessagingContracts\Auctioneer.MessagingContracts.csproj", "{E88CC30C-2E7C-47F2-8DF5-0FD56C47DA85}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -26,9 +30,17 @@ Global
 		{5FC33E9B-0B58-4525-AF50-0DAEFBD58300}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5FC33E9B-0B58-4525-AF50-0DAEFBD58300}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5FC33E9B-0B58-4525-AF50-0DAEFBD58300}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CF237457-D7CD-4DB9-85C8-5352006F6ACE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CF237457-D7CD-4DB9-85C8-5352006F6ACE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CF237457-D7CD-4DB9-85C8-5352006F6ACE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CF237457-D7CD-4DB9-85C8-5352006F6ACE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B9BC6596-F2F8-4379-A471-95900768A8A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B9BC6596-F2F8-4379-A471-95900768A8A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B9BC6596-F2F8-4379-A471-95900768A8A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B9BC6596-F2F8-4379-A471-95900768A8A7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{67B67E75-C64D-4647-BC12-09EEA0E2974C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{67B67E75-C64D-4647-BC12-09EEA0E2974C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{67B67E75-C64D-4647-BC12-09EEA0E2974C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{67B67E75-C64D-4647-BC12-09EEA0E2974C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E88CC30C-2E7C-47F2-8DF5-0FD56C47DA85}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E88CC30C-2E7C-47F2-8DF5-0FD56C47DA85}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E88CC30C-2E7C-47F2-8DF5-0FD56C47DA85}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E88CC30C-2E7C-47F2-8DF5-0FD56C47DA85}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

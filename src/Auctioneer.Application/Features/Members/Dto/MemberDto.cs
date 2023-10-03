@@ -2,10 +2,9 @@ using Auctioneer.Application.Common.Models;
 
 namespace Auctioneer.Application.Features.Members.Dto;
 
-
 public class MemberDto
 {
-    public Guid? MemberId { get; set; }
+    public Guid? Id { get; set; }
     public string FirstName { get; init; }
     public string LastName { get; init; }
     public string Street { get; init; }

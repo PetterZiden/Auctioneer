@@ -14,29 +14,29 @@ namespace Auctioneer.Application.Features.Members.Queries;
 public class GetMemberController : ApiControllerBase
 {
     private readonly ILogger<GetMemberController> _logger;
-    
+
     public GetMemberController(ILogger<GetMemberController> logger) : base(logger)
     {
         _logger = logger;
     }
-    
+
     [HttpGet("api/member/{id:guid}")]
     [Produces("application/json")]
     [ProducesResponseType(typeof(MemberDto), 200)]
     [ProducesResponseType(400)]
     [ProducesResponseType(404)]
     [ProducesResponseType(500)]
-    public async Task<ActionResult> Get(Guid id)
+    public async Task<ActionResult> Get([FromRoute] Guid id)
     {
         try
         {
-            var query = new GetMembersQuery();
-            
+            var query = new GetMemberQuery { Id = id };
+
             var result = await Mediator.Send(query);
 
             if (result.IsSuccess)
                 return Ok(result.Value);
-            
+
             return ReturnError(result.Errors.FirstOrDefault() as Error);
         }
         catch (Exception ex)
@@ -47,9 +47,9 @@ public class GetMemberController : ApiControllerBase
     }
 }
 
-public class GetMemberQuery : IRequest<Result<MemberDto>> 
+public class GetMemberQuery : IRequest<Result<MemberDto>>
 {
-    public Guid Id { get; set; } 
+    public Guid Id { get; set; }
 }
 
 internal sealed class GetMemberQueryHandler : IRequestHandler<GetMemberQuery, Result<MemberDto>>
@@ -69,7 +69,7 @@ internal sealed class GetMemberQueryHandler : IRequestHandler<GetMemberQuery, Re
 
             if (member is null)
                 return Result.Fail(new Error("No member found"));
-            
+
             return Result.Ok(member.ToDto());
         }
         catch (Exception ex)

@@ -14,12 +14,12 @@ namespace Auctioneer.Application.Features.Auctions.Commands;
 public class UpdateAuctionController : ApiControllerBase
 {
     private readonly ILogger<UpdateAuctionController> _logger;
-    
+
     public UpdateAuctionController(ILogger<UpdateAuctionController> logger) : base(logger)
     {
         _logger = logger;
     }
-    
+
     [HttpPut("api/auction")]
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
@@ -30,19 +30,19 @@ public class UpdateAuctionController : ApiControllerBase
         try
         {
             var command = new UpdateAuctionCommand { Auction = auction };
-            
+
             var validationResult = await new UpdateAuctionCommandValidator().ValidateAsync(command);
             if (!validationResult.IsValid)
             {
                 var errorMessages = validationResult.Errors.ConvertAll(x => x.ErrorMessage);
                 return BadRequest(errorMessages);
             }
-            
+
             var result = await Mediator.Send(command);
 
             if (result.IsSuccess)
                 return Ok();
-            
+
             return ReturnError(result.Errors.FirstOrDefault() as Error);
         }
         catch (Exception ex)
@@ -71,16 +71,16 @@ internal sealed class UpdateAuctionCommandHandler : IRequestHandler<UpdateAuctio
     {
         try
         {
-            if(request.Auction.AuctionId is null)
+            if (request.Auction.Id is null)
                 return Result.Fail(new Error("Auction id is required"));
-                
-            var auction = await _repository.GetAsync(request.Auction.AuctionId.Value);
+
+            var auction = await _repository.GetAsync(request.Auction.Id.Value);
 
             if (auction is null)
                 return Result.Fail(new Error("No auction found"));
 
-            await _repository.UpdateAsync(request.Auction.AuctionId.Value, auction);
-            
+            await _repository.UpdateAsync(request.Auction.Id.Value, auction);
+
             return Result.Ok();
         }
         catch (Exception ex)
@@ -95,7 +95,7 @@ public class UpdateAuctionCommandValidator : AbstractValidator<UpdateAuctionComm
     public UpdateAuctionCommandValidator()
     {
         //Todo: fixa all validering
-        RuleFor(v => v.Auction.AuctionId)
+        RuleFor(v => v.Auction.Id)
             .NotNull();
 
         RuleFor(v => v.Auction.Title)

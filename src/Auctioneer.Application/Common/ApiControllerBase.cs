@@ -7,7 +7,6 @@ using Microsoft.Extensions.Logging;
 namespace Auctioneer.Application.Common;
 
 [ApiController]
-[Route("api/[controller]")]
 public abstract class ApiControllerBase : ControllerBase
 {
     private ISender? _mediator;
@@ -17,6 +16,7 @@ public abstract class ApiControllerBase : ControllerBase
     {
         _logger = logger;
     }
+
     protected ISender Mediator => _mediator ??= HttpContext.RequestServices.GetService<ISender>()!;
 
     protected ObjectResult ReturnError(Error error)
@@ -32,6 +32,7 @@ public abstract class ApiControllerBase : ControllerBase
                 _ => StatusCode(500, errorMessage),
             };
         }
+
         _logger.LogError("Could not find ErrorCode in Error-Metadata");
         return StatusCode(500, errorMessage);
     }

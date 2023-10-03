@@ -7,7 +7,7 @@ using FluentResults;
 namespace Auctioneer.Application.Entities;
 
 public class Auction : AuditableEntity, IAggregateRoot
-{ 
+{
     public Guid Id { get; private init; }
     public Guid MemberId { get; private set; }
     public string Title { get; private set; }
@@ -17,28 +17,33 @@ public class Auction : AuditableEntity, IAggregateRoot
     public decimal StartingPrice { get; private set; }
     public decimal CurrentPrice { get; private set; }
     public string ImgRoute { get; private set; }
-    
-    private readonly List<Bid> _bids = new();
-    
-    public ReadOnlyCollection<Bid> Bids => _bids.AsReadOnly();
 
-    public static Auction Create(Guid memberId, string title, string description, DateTimeOffset startTime, DateTimeOffset endTime, decimal startingPrice, string imgRoute)
+    private List<Bid> _bids = new();
+
+    public ReadOnlyCollection<Bid> Bids
+    {
+        get => _bids.AsReadOnly();
+        set => _bids = value.ToList();
+    }
+
+    public static Auction Create(Guid memberId, string title, string description, DateTimeOffset startTime,
+        DateTimeOffset endTime, decimal startingPrice, string imgRoute)
     {
         if (string.IsNullOrEmpty(title))
             throw new ArgumentNullException(nameof(title));
-        
+
         if (string.IsNullOrEmpty(description))
             throw new ArgumentNullException(nameof(description));
-        
+
         if (startTime < DateTimeOffset.Now.AddDays(-1))
             throw new ArgumentException("Start time can not be earlier than today");
-        
-        if (startTime < DateTimeOffset.Now.AddDays(1))
+
+        if (endTime < DateTimeOffset.Now.AddDays(1))
             throw new ArgumentException("End time can not be earlier than at least one day in the future");
-        
+
         if (startingPrice <= 0)
             throw new ArgumentException("Starting price must be greater than 0");
-        
+
         if (string.IsNullOrEmpty(imgRoute))
             throw new ArgumentNullException(nameof(imgRoute));
 
@@ -59,12 +64,12 @@ public class Auction : AuditableEntity, IAggregateRoot
 
         return auction;
     }
-    
+
     public Result<Bid> PlaceBid(Guid memberId, decimal bidPrice)
     {
         if (bidPrice <= CurrentPrice)
             return Result.Fail(new Error($"Bid must be greater than current price: {CurrentPrice}"));
-        
+
         if (bidPrice <= 0)
             return Result.Fail(new Error("Bid must be greater than 0"));
 
@@ -79,7 +84,7 @@ public class Auction : AuditableEntity, IAggregateRoot
         _bids.Add(bid);
 
         CurrentPrice = bidPrice;
-        
+
         return Result.Ok(bid);
     }
 
@@ -95,7 +100,7 @@ public class Auction : AuditableEntity, IAggregateRoot
 
         return Result.Ok();
     }
-    
+
     public Result ChangeTitle(string title)
     {
         if (string.IsNullOrEmpty(title))

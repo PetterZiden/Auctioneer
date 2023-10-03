@@ -9,7 +9,7 @@ public static class ToDtoExtensions
     public static MemberDto ToDto(this Member member) =>
         new()
         {
-            MemberId = member.Id,
+            Id = member.Id,
             FirstName = member.FirstName,
             LastName = member.LastName,
             Street = member.Address.Street,
@@ -19,13 +19,13 @@ public static class ToDtoExtensions
             PhoneNumber = member.PhoneNumber,
             CurrentRating = member.CurrentRating,
             NumberOfRatings = member.NumberOfRatings,
-            Bids = member.Bids.ToList()
+            Bids = member.Bids?.ToList()
         };
 
-    public static List<MemberDto> ToDtos(this IEnumerable<Member> members) => 
+    public static List<MemberDto> ToDtos(this IEnumerable<Member> members) =>
         members.Select(member => new MemberDto
         {
-            MemberId = member.Id,
+            Id = member.Id,
             FirstName = member.FirstName,
             LastName = member.LastName,
             Street = member.Address.Street,
@@ -35,13 +35,13 @@ public static class ToDtoExtensions
             PhoneNumber = member.PhoneNumber,
             CurrentRating = member.CurrentRating,
             NumberOfRatings = member.NumberOfRatings,
-            Bids = member.Bids.ToList()
+            Bids = member.Bids?.ToList()
         }).ToList();
 
     public static AuctionDto ToDto(this Auction auction) =>
         new()
         {
-            AuctionId = auction.Id,
+            Id = auction.Id,
             MemberId = auction.MemberId,
             Title = auction.Title,
             Description = auction.Description,
@@ -50,13 +50,13 @@ public static class ToDtoExtensions
             StartingPrice = auction.StartingPrice,
             CurrentPrice = auction.CurrentPrice,
             ImgRoute = auction.ImgRoute,
-            Bids = auction.Bids.ToList()
+            Bids = auction.Bids?.ToList()
         };
-    
-    public static List<AuctionDto> ToDtos(this IEnumerable<Auction> auctions) => 
+
+    public static List<AuctionDto> ToDtos(this IEnumerable<Auction> auctions) =>
         auctions.Select(auction => new AuctionDto
         {
-            AuctionId = auction.Id,
+            Id = auction.Id,
             MemberId = auction.MemberId,
             Title = auction.Title,
             Description = auction.Description,
@@ -65,6 +65,6 @@ public static class ToDtoExtensions
             StartingPrice = auction.StartingPrice,
             CurrentPrice = auction.CurrentPrice,
             ImgRoute = auction.ImgRoute,
-            Bids = auction.Bids.ToList()
+            Bids = auction.Bids?.ToList()
         }).ToList();
 }

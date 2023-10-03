@@ -14,12 +14,12 @@ namespace Auctioneer.Application.Features.Members.Commands;
 public class UpdateMemberController : ApiControllerBase
 {
     private readonly ILogger<UpdateMemberController> _logger;
-    
+
     public UpdateMemberController(ILogger<UpdateMemberController> logger) : base(logger)
     {
         _logger = logger;
     }
-    
+
     [HttpPut("api/member")]
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
@@ -30,19 +30,19 @@ public class UpdateMemberController : ApiControllerBase
         try
         {
             var command = new UpdateMemberCommand { Member = member };
-            
+
             var validationResult = await new UpdateMemberCommandValidator().ValidateAsync(command);
             if (!validationResult.IsValid)
             {
                 var errorMessages = validationResult.Errors.ConvertAll(x => x.ErrorMessage);
                 return BadRequest(errorMessages);
             }
-            
+
             var result = await Mediator.Send(command);
 
             if (result.IsSuccess)
                 return Ok();
-            
+
             return ReturnError(result.Errors.FirstOrDefault() as Error);
         }
         catch (Exception ex)
@@ -71,16 +71,16 @@ internal sealed class UpdateMemberCommandHandler : IRequestHandler<UpdateMemberC
     {
         try
         {
-            if(request.Member.MemberId is null)
+            if (request.Member.Id is null)
                 return Result.Fail(new Error("Member id is required"));
-                
-            var member = await _repository.GetAsync(request.Member.MemberId.Value);
+
+            var member = await _repository.GetAsync(request.Member.Id.Value);
 
             if (member is null)
                 return Result.Fail(new Error("No member found"));
 
-            await _repository.UpdateAsync(request.Member.MemberId.Value, member);
-            
+            await _repository.UpdateAsync(request.Member.Id.Value, member);
+
             return Result.Ok();
         }
         catch (Exception ex)
@@ -95,17 +95,17 @@ public class UpdateMemberCommandValidator : AbstractValidator<UpdateMemberComman
     public UpdateMemberCommandValidator()
     {
         //Todo: fixa all validering
-        RuleFor(v => v.Member.MemberId)
+        RuleFor(v => v.Member.Id)
             .NotNull();
-        
+
         RuleFor(v => v.Member.FirstName)
             .NotNull()
             .NotEmpty();
-        
+
         RuleFor(v => v.Member.LastName)
             .NotNull()
             .NotEmpty();
-        
+
         RuleFor(v => v.Member.Email)
             .EmailAddress()
             .NotNull()

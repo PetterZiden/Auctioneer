@@ -15,14 +15,29 @@ public class Member : AuditableEntity, IAggregateRoot
     public string Email { get; private set; }
     public string PhoneNumber { get; private set; }
 
-    private readonly List<Rating> _ratings = new();
-    private readonly List<Bid> _bids = new();
-    
+    private List<Rating> _ratings = new();
+    private List<Bid> _bids = new();
+
     public int CurrentRating => _ratings.Any() ? _ratings.Select(r => r.Stars).Sum() / _ratings.Count : 0;
     public int NumberOfRatings => _ratings.Any() ? _ratings.Count : 0;
-    public ReadOnlyCollection<Bid> Bids => _bids.AsReadOnly();
 
-    public static Member Create(string firstname, string lastname, string email, string phoneNumber, string street, string zipcode, string city)
+    public ReadOnlyCollection<Bid> Bids
+    {
+        get => _bids.AsReadOnly();
+        set => _bids = value.ToList();
+    }
+
+    public ReadOnlyCollection<Rating> Ratings
+    {
+        get => _ratings.AsReadOnly();
+        set => _ratings = value.ToList();
+    }
+
+    public string FullName =>
+        $"{(!string.IsNullOrEmpty(FirstName) ? FirstName : "")} {(!string.IsNullOrEmpty(LastName) ? LastName : "")}";
+
+    public static Member Create(string firstname, string lastname, string email, string phoneNumber, string street,
+        string zipcode, string city)
     {
         if (string.IsNullOrEmpty(firstname))
             throw new ArgumentNullException(nameof(firstname));
@@ -32,7 +47,7 @@ public class Member : AuditableEntity, IAggregateRoot
 
         if (string.IsNullOrEmpty(email))
             throw new ArgumentNullException(nameof(email));
-        
+
         if (string.IsNullOrEmpty(phoneNumber))
             throw new ArgumentNullException(nameof(phoneNumber));
 
@@ -41,7 +56,7 @@ public class Member : AuditableEntity, IAggregateRoot
 
         if (string.IsNullOrEmpty(zipcode))
             throw new ArgumentNullException(nameof(zipcode));
-        
+
         if (string.IsNullOrEmpty(city))
             throw new ArgumentNullException(nameof(city));
 
@@ -66,13 +81,13 @@ public class Member : AuditableEntity, IAggregateRoot
     }
 
     public Result ChangeEmail(string email)
-    { 
+    {
         if (string.IsNullOrEmpty(email))
             throw new ArgumentNullException(nameof(email));
-        
-        if (Email.Equals(email)) 
+
+        if (Email.Equals(email))
             return Result.Fail(new Error("Email can not be the same as old email"));
-        
+
         Email = email;
         return Result.Ok();
     }
@@ -97,7 +112,7 @@ public class Member : AuditableEntity, IAggregateRoot
 
     public Result Rate(Guid memberId, int stars)
     {
-        if (stars is <= 0 or < 6)
+        if (stars is < 0 or > 6)
             return Result.Fail(new Error("Rating must be between 1 and 5"));
 
         var rating = new Rating
@@ -105,7 +120,7 @@ public class Member : AuditableEntity, IAggregateRoot
             RatingFromMemberId = memberId,
             Stars = stars
         };
-        
+
         _ratings.Add(rating);
 
         return Result.Ok();

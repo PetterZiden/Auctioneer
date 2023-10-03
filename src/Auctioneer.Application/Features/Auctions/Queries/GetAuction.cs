@@ -14,12 +14,12 @@ namespace Auctioneer.Application.Features.Auctions.Queries;
 public class GetAuctionController : ApiControllerBase
 {
     private readonly ILogger<GetAuctionController> _logger;
-    
+
     public GetAuctionController(ILogger<GetAuctionController> logger) : base(logger)
     {
         _logger = logger;
     }
-    
+
     [HttpGet("api/auction/{id:guid}")]
     [Produces("application/json")]
     [ProducesResponseType(typeof(AuctionDto), 200)]
@@ -30,13 +30,13 @@ public class GetAuctionController : ApiControllerBase
     {
         try
         {
-            var query = new GetAuctionsQuery();
-            
+            var query = new GetAuctionQuery { Id = id };
+
             var result = await Mediator.Send(query);
 
             if (result.IsSuccess)
                 return Ok(result.Value);
-            
+
             return ReturnError(result.Errors.FirstOrDefault() as Error);
         }
         catch (Exception ex)
@@ -47,9 +47,9 @@ public class GetAuctionController : ApiControllerBase
     }
 }
 
-public class GetAuctionQuery : IRequest<Result<AuctionDto>> 
+public class GetAuctionQuery : IRequest<Result<AuctionDto>>
 {
-    public Guid Id { get; set; } 
+    public Guid Id { get; set; }
 }
 
 internal sealed class GetAuctionQueryHandler : IRequestHandler<GetAuctionQuery, Result<AuctionDto>>

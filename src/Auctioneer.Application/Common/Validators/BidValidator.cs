@@ -9,9 +9,11 @@ public class BidValidator : AbstractValidator<Bid>
     {
         //Todo: fixa all validering
         RuleFor(v => v.AuctionId)
+            .NotEmpty()
             .NotNull();
 
         RuleFor(v => v.MemberId)
+            .NotEmpty()
             .NotNull();
 
         RuleFor(v => v.BidPrice)
