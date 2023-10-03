@@ -18,7 +18,8 @@ public class PlaceBidNotificationConsumer : IConsumer<PlaceBidNotification>
         {
             var dto = context.Message;
             //TODO send notification
-            Console.Write($"{dto.BidderName} placed a bid ({dto.Bid} kr) on {dto.AuctionTitle}");
+            _logger.LogInformation("{DtoBidderName} placed a bid ({DtoBid} kr) on {DtoAuctionTitle}", dto.BidderName,
+                dto.Bid, dto.AuctionTitle);
         }
         catch (Exception ex)
         {

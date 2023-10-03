@@ -1,0 +1,4 @@
+[20:44:22 INF] Configured endpoint "place-bid-notification", Consumer: "Auctioneer.NotificationService.Consumers.PlaceBidNotificationConsumer"
+[20:44:22 INF] Configured endpoint "rate-member-notification", Consumer: "Auctioneer.NotificationService.Consumers.RateMemberNotificationConsumer"
+[20:44:22 INF] Bus started: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[20:44:37 INF] "Kalle Andersson" placed a bid (2909 kr) on "Dator"

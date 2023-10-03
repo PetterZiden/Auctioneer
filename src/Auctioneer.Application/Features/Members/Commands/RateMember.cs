@@ -24,7 +24,7 @@ public class RateMemberController : ApiControllerBase
         _logger = logger;
     }
 
-    [HttpPut("api/member/rate")]
+    [HttpPost("api/member/rate")]
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
     [ProducesResponseType(404)]

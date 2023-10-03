@@ -1,0 +1,4 @@
+[20:44:20 INF] Bus started: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[20:44:37 INF] Publishing message to email-service
+[20:44:37 INF] Publishing message notification-service
+[20:44:37 WRN] Long Running Request: "PlaceBidCommand" (576 milliseconds) PlaceBidCommand { Bid: Bid { AuctionId: 703f1a3d-57f5-4662-a22f-797bb88a9063, MemberId: f0e671b5-7e9a-47ab-b94a-e68abd2429f3, BidPrice: 2909, TimeStamp: null } }

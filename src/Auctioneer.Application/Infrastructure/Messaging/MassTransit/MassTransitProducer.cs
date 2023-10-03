@@ -17,7 +17,7 @@ public class MassTransitProducer : INotificationProducer
 
     public async void PublishNotification<T>(INotification<T> notification)
     {
-        _logger.LogInformation("Publishing notification of type {Type}", notification.GetType());
+        _logger.LogInformation("Publishing message notification-service");
         await _publisher.Publish(notification.Data);
     }
 }

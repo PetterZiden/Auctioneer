@@ -1,8 +1,0 @@
-[18:42:39 INF] Bus started: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
-[18:49:23 INF] Bus started: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
-[18:49:46 WRN] Long Running Request: "RateMemberCommand" (12997 milliseconds) RateMemberCommand { Rating: Rating { RatingForMemberId: f0e671b5-7e9a-47ab-b94a-e68abd2429f3, RatingFromMemberId: 7ada3c75-4acc-4a9c-a251-c485b12e2328, Stars: 4 } }
-[18:49:46 ERR] Could not find ErrorCode in Error-Metadata
-[18:49:56 ERR] Could not find ErrorCode in Error-Metadata
-[18:57:19 INF] Bus started: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
-[18:57:47 INF] Publishing notification of type "Auctioneer.Application.Infrastructure.Messaging.MassTransit.Notification`1[Auctioneer.MessagingContracts.Notification.RateMemberNotification]"
-[18:57:47 WRN] Long Running Request: "RateMemberCommand" (22211 milliseconds) RateMemberCommand { Rating: Rating { RatingForMemberId: f0e671b5-7e9a-47ab-b94a-e68abd2429f3, RatingFromMemberId: 7ada3c75-4acc-4a9c-a251-c485b12e2328, Stars: 4 } }

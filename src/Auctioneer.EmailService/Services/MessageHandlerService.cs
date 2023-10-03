@@ -1,18 +1,29 @@
+using Auctioneer.EmailService.Interfaces;
 using Auctioneer.MessagingContracts.Email;
 
 namespace Auctioneer.EmailService.Services;
 
-public static class MessageHandlerService
+public class MessageHandlerService : IMessageHandlerService
 {
-    public static void RateMemberMessageHandler(RateMemberMessage message)
+    private readonly ILogger<MessageHandlerService> _logger;
+
+    public MessageHandlerService(ILogger<MessageHandlerService> logger)
     {
-        Console.WriteLine(
-            $"Processed RateMemberMessage: {message.RatedByName} gave {message.RatedName} {message.Stars} stars, sending email to: {message.RatedEmail}");
+        _logger = logger;
     }
 
-    public static void PlaceBidMessageHandler(PlaceBidMessage message)
+    public void RateMemberMessageHandler(RateMemberMessage message)
     {
-        Console.WriteLine(
-            $"Processed PlaceBidMessage: {message.BidderName} bid {message.Bid} on {message.AuctionTitle}, owner {message.AuctionOwnerName}, sending email to: {message.AuctionOwnerEmail} and {message.BidderEmail}");
+        _logger.LogInformation(
+            "Processed RateMemberMessage: {MessageRatedByName} gave {MessageRatedName} {MessageStars} stars, sending email to: {MessageRatedEmail}",
+            message.RatedByName, message.RatedName, message.Stars, message.RatedEmail);
+    }
+
+    public void PlaceBidMessageHandler(PlaceBidMessage message)
+    {
+        _logger.LogInformation(
+            "Processed PlaceBidMessage: {MessageBidderName} bid {MessageBid} on {MessageAuctionTitle}, owner {MessageAuctionOwnerName}, sending email to: {MessageAuctionOwnerEmail} and {MessageBidderEmail}",
+            message.BidderName, message.Bid, message.AuctionTitle, message.AuctionOwnerName, message.AuctionOwnerEmail,
+            message.BidderEmail);
     }
 }

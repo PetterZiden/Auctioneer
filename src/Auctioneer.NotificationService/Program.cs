@@ -1,4 +1,5 @@
 using MassTransit;
+using Serilog;
 
 var host = Host.CreateDefaultBuilder(args)
     .ConfigureServices((hostContext, services) =>
@@ -19,6 +20,15 @@ var host = Host.CreateDefaultBuilder(args)
                 cfg.UseMessageRetry(r => { r.Interval(3, TimeSpan.FromSeconds(5)); });
             });
         });
+    })
+    .ConfigureLogging((hostingContext, logging) =>
+    {
+        var logger = new LoggerConfiguration()
+            .ReadFrom.Configuration(hostingContext.Configuration)
+            .Enrich.FromLogContext()
+            .CreateLogger();
+        logging.ClearProviders();
+        logging.AddSerilog(logger);
     })
     .Build();
 

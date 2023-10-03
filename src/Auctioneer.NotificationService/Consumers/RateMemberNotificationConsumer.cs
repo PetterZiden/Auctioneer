@@ -18,7 +18,7 @@ public class RateMemberNotificationConsumer : IConsumer<RateMemberNotification>
         {
             var dto = context.Message;
             //TODO send notification
-            Console.Write($"{dto.RatedByName} gave you {dto.Stars} stars");
+            _logger.LogInformation("{DtoRatedByName} gave you {DtoStars} stars", dto.RatedByName, dto.Stars);
         }
         catch (Exception ex)
         {
