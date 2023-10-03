@@ -13,4 +13,8 @@ var host = Host.CreateDefaultBuilder(args)
     })
     .Build();
 
+var config = new ConfigurationBuilder()
+    .AddUserSecrets<Program>()
+    .Build();
+
 host.Run();

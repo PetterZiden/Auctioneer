@@ -5,6 +5,7 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+        <UserSecretsId>33ff7e54-390b-4fea-b6e9-d6b6ab651b2f</UserSecretsId>
     </PropertyGroup>
 
     <ItemGroup>
@@ -20,6 +21,10 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Auctioneer.Application\Auctioneer.Application.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Folder Include="Logs\"/>
     </ItemGroup>
 
 </Project>

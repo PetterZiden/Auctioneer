@@ -1,3 +1,5 @@
+using System.Diagnostics;
+using System.Reflection;
 using Microsoft.Extensions.Configuration;
 using RabbitMQ.Client;
 
@@ -19,7 +21,8 @@ public sealed class RabbitMqChannelFactory
         var builder = new ConfigurationBuilder()
             .SetBasePath(AppContext.BaseDirectory)
             .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-            .AddJsonFile("../Auctioneer.API/appsettings.json", optional: true);
+            .AddJsonFile("../Auctioneer.API/appsettings.json", optional: true)
+            .AddUserSecrets(Assembly.GetEntryAssembly()!);
 
         _configuration = builder.Build();
 

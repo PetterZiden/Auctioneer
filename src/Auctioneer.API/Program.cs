@@ -18,6 +18,8 @@ builder.AddInfrastructure();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c => c.SwaggerDoc("v1", new OpenApiInfo { Title = "Auctioneer API", Version = "v1" }));
 
+builder.Configuration.AddUserSecrets<Program>();
+
 var app = builder.Build();
 
 app.UseSwagger();
