@@ -2,7 +2,7 @@ using System.Reflection;
 using Auctioneer.Application.Common;
 using Auctioneer.Application.Common.Interfaces;
 using Auctioneer.Application.Entities;
-using Auctioneer.Application.Features.Auctions.Dto;
+using Auctioneer.Application.Features.Auctions.Contracts;
 using FluentResults;
 using FluentValidation;
 using MediatR;
@@ -25,11 +25,17 @@ public class UpdateAuctionController : ApiControllerBase
     [ProducesResponseType(400)]
     [ProducesResponseType(404)]
     [ProducesResponseType(500)]
-    public async Task<ActionResult<Guid>> Update(AuctionDto auction)
+    public async Task<ActionResult<Guid>> Update(UpdateAuctionRequest request)
     {
         try
         {
-            var command = new UpdateAuctionCommand { Auction = auction };
+            var command = new UpdateAuctionCommand
+            {
+                Id = request.AuctionId,
+                Title = request.Title,
+                Description = request.Description,
+                ImgRoute = null
+            };
 
             var validationResult = await new UpdateAuctionCommandValidator().ValidateAsync(command);
             if (!validationResult.IsValid)
@@ -55,36 +61,40 @@ public class UpdateAuctionController : ApiControllerBase
 
 public class UpdateAuctionCommand : IRequest<Result>
 {
-    public AuctionDto Auction { get; init; }
+    public Guid Id { get; init; }
+    public string Title { get; init; }
+    public string Description { get; init; }
+    public string ImgRoute { get; init; }
 }
 
 internal sealed class UpdateAuctionCommandHandler : IRequestHandler<UpdateAuctionCommand, Result>
 {
     private readonly IRepository<Auction> _repository;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public UpdateAuctionCommandHandler(IRepository<Auction> repository)
+    public UpdateAuctionCommandHandler(IRepository<Auction> repository, IUnitOfWork unitOfWork)
     {
         _repository = repository;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<Result> Handle(UpdateAuctionCommand request, CancellationToken cancellationToken)
     {
         try
         {
-            if (request.Auction.Id is null)
-                return Result.Fail(new Error("Auction id is required"));
-
-            var auction = await _repository.GetAsync(request.Auction.Id.Value);
+            var auction = await _repository.GetAsync(request.Id);
 
             if (auction is null)
                 return Result.Fail(new Error("No auction found"));
 
-            await _repository.UpdateAsync(request.Auction.Id.Value, auction);
+            await _repository.UpdateAsync(request.Id, auction);
+            await _unitOfWork.SaveAsync();
 
             return Result.Ok();
         }
         catch (Exception ex)
         {
+            _unitOfWork.CleanOperations();
             return Result.Fail(new Error(ex.Message));
         }
     }
@@ -95,18 +105,15 @@ public class UpdateAuctionCommandValidator : AbstractValidator<UpdateAuctionComm
     public UpdateAuctionCommandValidator()
     {
         //Todo: fixa all validering
-        RuleFor(v => v.Auction.Id)
+        RuleFor(v => v.Id)
             .NotNull();
 
-        RuleFor(v => v.Auction.Title)
+        RuleFor(v => v.Title)
             .NotNull()
             .NotEmpty();
 
-        RuleFor(v => v.Auction.Description)
+        RuleFor(v => v.Description)
             .NotNull()
             .NotEmpty();
-
-        RuleFor(v => v.Auction.StartingPrice)
-            .GreaterThan(0);
     }
 }

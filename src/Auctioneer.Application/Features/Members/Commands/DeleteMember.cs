@@ -12,12 +12,12 @@ namespace Auctioneer.Application.Features.Members.Commands;
 public class DeleteMemberController : ApiControllerBase
 {
     private readonly ILogger<DeleteMemberController> _logger;
-    
+
     public DeleteMemberController(ILogger<DeleteMemberController> logger) : base(logger)
     {
         _logger = logger;
     }
-    
+
     [HttpDelete("api/member/{id:guid}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
@@ -28,12 +28,12 @@ public class DeleteMemberController : ApiControllerBase
         try
         {
             var command = new DeleteMemberCommand { MemberId = id };
-            
+
             var result = await Mediator.Send(command);
 
             if (result.IsSuccess)
                 return Ok();
-            
+
             return ReturnError(result.Errors.FirstOrDefault() as Error);
         }
         catch (Exception ex)
@@ -52,10 +52,12 @@ public class DeleteMemberCommand : IRequest<Result>
 internal sealed class DeleteMemberCommandHandler : IRequestHandler<DeleteMemberCommand, Result>
 {
     private readonly IRepository<Member> _repository;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public DeleteMemberCommandHandler(IRepository<Member> repository)
+    public DeleteMemberCommandHandler(IRepository<Member> repository, IUnitOfWork unitOfWork)
     {
         _repository = repository;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<Result> Handle(DeleteMemberCommand request, CancellationToken cancellationToken)
@@ -63,11 +65,13 @@ internal sealed class DeleteMemberCommandHandler : IRequestHandler<DeleteMemberC
         try
         {
             await _repository.DeleteAsync(request.MemberId);
-            
+            await _unitOfWork.SaveAsync();
+
             return Result.Ok();
         }
         catch (Exception ex)
         {
+            _unitOfWork.CleanOperations();
             return Result.Fail(new Error(ex.Message));
         }
     }

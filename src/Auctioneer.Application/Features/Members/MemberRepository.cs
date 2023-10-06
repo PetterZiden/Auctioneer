@@ -10,12 +10,14 @@ namespace Auctioneer.Application.Features.Members;
 public class MemberRepository : IRepository<Member>
 {
     private readonly IMongoCollection<Member> _memberCollection;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public MemberRepository(IOptions<AuctioneerDatabaseSettings> dbSettings)
+    public MemberRepository(IOptions<AuctioneerDatabaseSettings> dbSettings, IUnitOfWork unitOfWork)
     {
         var mongoClient = new MongoClient(dbSettings.Value.ConnectionString);
         var mongoDatabase = mongoClient.GetDatabase(dbSettings.Value.DatabaseName);
         _memberCollection = mongoDatabase.GetCollection<Member>(dbSettings.Value.MemberCollectionName);
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<List<Member>> GetAsync() =>
@@ -31,12 +33,27 @@ public class MemberRepository : IRepository<Member>
     public async Task<Member?> GetAsync(Guid id) =>
         await _memberCollection.Find(x => x.Id == id).FirstOrDefaultAsync();
 
-    public async Task CreateAsync(Member newEntity) =>
-        await _memberCollection.InsertOneAsync(newEntity);
+    public async Task CreateAsync(Member newEntity)
+    {
+        Action operation = async () =>
+            await _memberCollection.InsertOneAsync(_unitOfWork.Session as IClientSessionHandle, newEntity);
+        _unitOfWork.AddOperation(operation);
+    }
 
-    public async Task UpdateAsync(Guid id, Member updatedEntity) =>
-        await _memberCollection.ReplaceOneAsync(x => x.Id == id, updatedEntity);
 
-    public async Task DeleteAsync(Guid id) =>
-        await _memberCollection.DeleteOneAsync(x => x.Id == id);
+    public async Task UpdateAsync(Guid id, Member updatedEntity)
+    {
+        Action operation = async () =>
+            await _memberCollection.ReplaceOneAsync(_unitOfWork.Session as IClientSessionHandle, x => x.Id == id,
+                updatedEntity);
+        _unitOfWork.AddOperation(operation);
+    }
+
+
+    public async Task DeleteAsync(Guid id)
+    {
+        Action operation = async () =>
+            await _memberCollection.DeleteOneAsync(_unitOfWork.Session as IClientSessionHandle, x => x.Id == id);
+        _unitOfWork.AddOperation(operation);
+    }
 }

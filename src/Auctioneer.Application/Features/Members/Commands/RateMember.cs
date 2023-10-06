@@ -65,13 +65,15 @@ public class RateMemberCommand : IRequest<Result>
 internal sealed class RateMemberCommandHandler : IRequestHandler<RateMemberCommand, Result>
 {
     private readonly IRepository<Member> _repository;
+    private readonly IUnitOfWork _unitOfWork;
     private readonly IMessageProducer _messageProducer;
     private readonly INotificationProducer _notificationProducer;
 
     public RateMemberCommandHandler(IRepository<Member> repository, IMessageProducer messageProducer,
-        INotificationProducer notificationProducer)
+        INotificationProducer notificationProducer, IUnitOfWork unitOfWork)
     {
         _repository = repository;
+        _unitOfWork = unitOfWork;
         _messageProducer = messageProducer;
         _notificationProducer = notificationProducer;
     }
@@ -92,6 +94,7 @@ internal sealed class RateMemberCommandHandler : IRequestHandler<RateMemberComma
                 return result;
 
             await _repository.UpdateAsync(ratedMember.Id, ratedMember);
+            await _unitOfWork.SaveAsync();
 
             _messageProducer.PublishMessage(new Message<RateMemberMessage>
             {
@@ -118,6 +121,7 @@ internal sealed class RateMemberCommandHandler : IRequestHandler<RateMemberComma
         }
         catch (Exception ex)
         {
+            _unitOfWork.CleanOperations();
             return Result.Fail(new Error(ex.Message));
         }
     }

@@ -8,12 +8,10 @@ using Auctioneer.Application.Infrastructure.Messaging.MassTransit;
 using Auctioneer.Application.Infrastructure.Messaging.RabbitMq;
 using Auctioneer.Application.Infrastructure.Persistence;
 using MassTransit;
-using MassTransit.RabbitMqTransport.Topology;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using RabbitMQ.Client;
 using Serilog;
 
 namespace Auctioneer.Application;
@@ -22,16 +20,9 @@ public static class ConfigureServices
 {
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
-        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
-        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(UnhandledExceptionBehaviour<,>));
-        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(PerformanceBehaviour<,>));
-        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(CachingBehavior<,>));
-
         services.AddSingleton<IRepository<Member>, MemberRepository>();
         services.AddSingleton<IRepository<Auction>, AuctionRepository>();
-
-        services.AddScoped<IMessageProducer, RabbitMqProducer>();
-        services.AddScoped<INotificationProducer, MassTransitProducer>();
+        services.AddSingleton<IUnitOfWork, UnitOfWork>();
 
         return services;
     }
@@ -49,6 +40,29 @@ public static class ConfigureServices
 
         builder.Services.AddMemoryCache();
 
+        var logger = new LoggerConfiguration()
+            .ReadFrom.Configuration(builder.Configuration)
+            .Enrich.FromLogContext()
+            .CreateLogger();
+        builder.Logging.ClearProviders();
+        builder.Logging.AddSerilog(logger);
+
+        return builder;
+    }
+
+    public static IServiceCollection AddMediatr(this IServiceCollection services)
+    {
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
+
+        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(UnhandledExceptionBehaviour<,>));
+        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(PerformanceBehaviour<,>));
+        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(CachingBehavior<,>));
+
+        return services;
+    }
+
+    public static WebApplicationBuilder AddMessaging(this WebApplicationBuilder builder)
+    {
         builder.Services.AddMassTransit(x =>
         {
             x.SetKebabCaseEndpointNameFormatter();
@@ -61,12 +75,8 @@ public static class ConfigureServices
             });
         });
 
-        var logger = new LoggerConfiguration()
-            .ReadFrom.Configuration(builder.Configuration)
-            .Enrich.FromLogContext()
-            .CreateLogger();
-        builder.Logging.ClearProviders();
-        builder.Logging.AddSerilog(logger);
+        builder.Services.AddScoped<IMessageProducer, RabbitMqProducer>();
+        builder.Services.AddScoped<INotificationProducer, MassTransitProducer>();
 
         return builder;
     }

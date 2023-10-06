@@ -14,6 +14,10 @@ builder.Services.AddCors(options => options.AddDefaultPolicy(
 
 builder.Services.AddApplication();
 builder.AddInfrastructure();
+builder.Services.AddMediatr();
+builder.AddMessaging();
+
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c => c.SwaggerDoc("v1", new OpenApiInfo { Title = "Auctioneer API", Version = "v1" }));

@@ -12,12 +12,12 @@ namespace Auctioneer.Application.Features.Auctions.Commands;
 public class DeleteAuctionController : ApiControllerBase
 {
     private readonly ILogger<DeleteAuctionController> _logger;
-    
+
     public DeleteAuctionController(ILogger<DeleteAuctionController> logger) : base(logger)
     {
         _logger = logger;
     }
-    
+
     [HttpDelete("api/auction/{id:guid}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
@@ -28,12 +28,12 @@ public class DeleteAuctionController : ApiControllerBase
         try
         {
             var command = new DeleteAuctionCommand { AuctionId = id };
-            
+
             var result = await Mediator.Send(command);
 
             if (result.IsSuccess)
                 return Ok();
-            
+
             return ReturnError(result.Errors.FirstOrDefault() as Error);
         }
         catch (Exception ex)
@@ -52,10 +52,12 @@ public class DeleteAuctionCommand : IRequest<Result>
 internal sealed class DeleteAuctionCommandHandler : IRequestHandler<DeleteAuctionCommand, Result>
 {
     private readonly IRepository<Auction> _repository;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public DeleteAuctionCommandHandler(IRepository<Auction> repository)
+    public DeleteAuctionCommandHandler(IRepository<Auction> repository, IUnitOfWork unitOfWork)
     {
         _repository = repository;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<Result> Handle(DeleteAuctionCommand request, CancellationToken cancellationToken)
@@ -63,11 +65,13 @@ internal sealed class DeleteAuctionCommandHandler : IRequestHandler<DeleteAuctio
         try
         {
             await _repository.DeleteAsync(request.AuctionId);
-            
+            await _unitOfWork.SaveAsync();
+
             return Result.Ok();
         }
         catch (Exception ex)
         {
+            _unitOfWork.CleanOperations();
             return Result.Fail(new Error(ex.Message));
         }
     }

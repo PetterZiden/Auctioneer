@@ -66,14 +66,16 @@ internal sealed class PlaceBidCommandHandler : IRequestHandler<PlaceBidCommand, 
 {
     private readonly IRepository<Auction> _auctionRepository;
     private readonly IRepository<Member> _memberRepository;
+    private readonly IUnitOfWork _unitOfWork;
     private readonly IMessageProducer _messageProducer;
     private readonly INotificationProducer _notificationProducer;
 
     public PlaceBidCommandHandler(IRepository<Auction> auctionRepository, IRepository<Member> memberRepository,
-        IMessageProducer messageProducer, INotificationProducer notificationProducer)
+        IMessageProducer messageProducer, INotificationProducer notificationProducer, IUnitOfWork unitOfWork)
     {
         _auctionRepository = auctionRepository;
         _memberRepository = memberRepository;
+        _unitOfWork = unitOfWork;
         _messageProducer = messageProducer;
         _notificationProducer = notificationProducer;
     }
@@ -108,6 +110,7 @@ internal sealed class PlaceBidCommandHandler : IRequestHandler<PlaceBidCommand, 
                 return memberResult;
 
             await _memberRepository.UpdateAsync(bidder.Id, bidder);
+            await _unitOfWork.SaveAsync();
 
             _messageProducer.PublishMessage(new Message<PlaceBidMessage>
             {
@@ -139,6 +142,7 @@ internal sealed class PlaceBidCommandHandler : IRequestHandler<PlaceBidCommand, 
         }
         catch (Exception ex)
         {
+            _unitOfWork.CleanOperations();
             return Result.Fail(new Error(ex.Message));
         }
     }

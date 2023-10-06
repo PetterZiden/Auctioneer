@@ -1,0 +1,6 @@
+[14:10:08 INF] Bus started: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[14:10:36 WRN] Failed to stop bus: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj/PettersMBP_AuctioneerGraphQL_bus_bcgoyyys4f8pde44bdphjwzkrc?temporary=true ("Not Started")
+[14:11:52 WRN] Failed to stop bus: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj/PettersMBP_AuctioneerGraphQL_bus_prgoyyys4f8pd78cbdphjwaay5?temporary=true ("Not Started")
+[14:13:48 INF] Bus started: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[14:16:06 INF] Bus started: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[14:24:49 INF] Bus started: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj

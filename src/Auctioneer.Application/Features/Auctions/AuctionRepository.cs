@@ -10,12 +10,14 @@ namespace Auctioneer.Application.Features.Auctions;
 public class AuctionRepository : IRepository<Auction>
 {
     private readonly IMongoCollection<Auction> _auctionCollection;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public AuctionRepository(IOptions<AuctioneerDatabaseSettings> dbSettings)
+    public AuctionRepository(IOptions<AuctioneerDatabaseSettings> dbSettings, IUnitOfWork unitOfWork)
     {
         var mongoClient = new MongoClient(dbSettings.Value.ConnectionString);
         var mongoDatabase = mongoClient.GetDatabase(dbSettings.Value.DatabaseName);
         _auctionCollection = mongoDatabase.GetCollection<Auction>(dbSettings.Value.AuctionCollectionName);
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<List<Auction>> GetAsync() =>
@@ -31,12 +33,27 @@ public class AuctionRepository : IRepository<Auction>
     public async Task<Auction?> GetAsync(Guid id) =>
         await _auctionCollection.Find(x => x.Id == id).FirstOrDefaultAsync();
 
-    public async Task CreateAsync(Auction newEntity) =>
-        await _auctionCollection.InsertOneAsync(newEntity);
+    public async Task CreateAsync(Auction newEntity)
+    {
+        Action operation = async () =>
+            await _auctionCollection.InsertOneAsync(_unitOfWork.Session as IClientSessionHandle, newEntity);
+        _unitOfWork.AddOperation(operation);
+    }
 
-    public async Task UpdateAsync(Guid id, Auction updatedEntity) =>
-        await _auctionCollection.ReplaceOneAsync(x => x.Id == id, updatedEntity);
 
-    public async Task DeleteAsync(Guid id) =>
-        await _auctionCollection.DeleteOneAsync(x => x.Id == id);
+    public async Task UpdateAsync(Guid id, Auction updatedEntity)
+    {
+        Action operation = async () =>
+            await _auctionCollection.ReplaceOneAsync(_unitOfWork.Session as IClientSessionHandle, x => x.Id == id,
+                updatedEntity);
+        _unitOfWork.AddOperation(operation);
+    }
+
+
+    public async Task DeleteAsync(Guid id)
+    {
+        Action operation = async () =>
+            await _auctionCollection.DeleteOneAsync(_unitOfWork.Session as IClientSessionHandle, x => x.Id == id);
+        _unitOfWork.AddOperation(operation);
+    }
 }

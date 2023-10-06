@@ -2,7 +2,7 @@ using System.Reflection;
 using Auctioneer.Application.Common;
 using Auctioneer.Application.Common.Interfaces;
 using Auctioneer.Application.Entities;
-using Auctioneer.Application.Features.Members.Dto;
+using Auctioneer.Application.Features.Members.Contracts;
 using FluentResults;
 using FluentValidation;
 using MediatR;
@@ -25,11 +25,21 @@ public class UpdateMemberController : ApiControllerBase
     [ProducesResponseType(400)]
     [ProducesResponseType(404)]
     [ProducesResponseType(500)]
-    public async Task<ActionResult<Guid>> Update(MemberDto member)
+    public async Task<ActionResult<Guid>> Update(UpdateMemberRequest request)
     {
         try
         {
-            var command = new UpdateMemberCommand { Member = member };
+            var command = new UpdateMemberCommand
+            {
+                Id = request.Id,
+                FirstName = request.FirstName,
+                LastName = request.LastName,
+                Street = request.Street,
+                ZipCode = request.ZipCode,
+                City = request.City,
+                Email = request.Email,
+                PhoneNumber = request.PhoneNumber
+            };
 
             var validationResult = await new UpdateMemberCommandValidator().ValidateAsync(command);
             if (!validationResult.IsValid)
@@ -55,36 +65,44 @@ public class UpdateMemberController : ApiControllerBase
 
 public class UpdateMemberCommand : IRequest<Result>
 {
-    public MemberDto Member { get; init; }
+    public Guid Id { get; init; }
+    public string FirstName { get; init; }
+    public string LastName { get; init; }
+    public string Street { get; init; }
+    public string ZipCode { get; init; }
+    public string City { get; init; }
+    public string Email { get; init; }
+    public string PhoneNumber { get; init; }
 }
 
 internal sealed class UpdateMemberCommandHandler : IRequestHandler<UpdateMemberCommand, Result>
 {
     private readonly IRepository<Member> _repository;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public UpdateMemberCommandHandler(IRepository<Member> repository)
+    public UpdateMemberCommandHandler(IRepository<Member> repository, IUnitOfWork unitOfWork)
     {
         _repository = repository;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<Result> Handle(UpdateMemberCommand request, CancellationToken cancellationToken)
     {
         try
         {
-            if (request.Member.Id is null)
-                return Result.Fail(new Error("Member id is required"));
-
-            var member = await _repository.GetAsync(request.Member.Id.Value);
+            var member = await _repository.GetAsync(request.Id);
 
             if (member is null)
                 return Result.Fail(new Error("No member found"));
 
-            await _repository.UpdateAsync(request.Member.Id.Value, member);
+            await _repository.UpdateAsync(request.Id, member);
+            await _unitOfWork.SaveAsync();
 
             return Result.Ok();
         }
         catch (Exception ex)
         {
+            _unitOfWork.CleanOperations();
             return Result.Fail(new Error(ex.Message));
         }
     }
@@ -95,18 +113,18 @@ public class UpdateMemberCommandValidator : AbstractValidator<UpdateMemberComman
     public UpdateMemberCommandValidator()
     {
         //Todo: fixa all validering
-        RuleFor(v => v.Member.Id)
+        RuleFor(v => v.Id)
             .NotNull();
 
-        RuleFor(v => v.Member.FirstName)
+        RuleFor(v => v.FirstName)
             .NotNull()
             .NotEmpty();
 
-        RuleFor(v => v.Member.LastName)
+        RuleFor(v => v.LastName)
             .NotNull()
             .NotEmpty();
 
-        RuleFor(v => v.Member.Email)
+        RuleFor(v => v.Email)
             .EmailAddress()
             .NotNull()
             .NotEmpty();
