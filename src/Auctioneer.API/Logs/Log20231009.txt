@@ -1,0 +1,174 @@
+[13:39:22 INF] Bus started: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[13:39:39 WRN] Long Running Request: "GetMembersQuery" (754 milliseconds) GetMembersQuery {  }
+[13:39:39 ERR] Could not find ErrorCode in Error-Metadata
+[13:39:54 ERR] Could not find ErrorCode in Error-Metadata
+[13:43:59 INF] Bus stopped: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[13:44:29 INF] Bus started: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[13:46:03 INF] Bus started: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[13:46:08 WRN] Long Running Request: "GetMembersQuery" (543 milliseconds) GetMembersQuery {  }
+[13:46:08 ERR] Could not find ErrorCode in Error-Metadata
+[13:46:15 INF] Bus stopped: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[13:48:58 INF] Bus started: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[13:49:23 WRN] Long Running Request: "GetMemberQuery" (748 milliseconds) GetMemberQuery { Id: a716f3bb-2c27-4929-af50-77ea365fd3a8 }
+[13:49:23 ERR] Could not find ErrorCode in Error-Metadata
+[13:50:27 INF] Bus started: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[13:51:01 WRN] Long Running Request: "CreateMemberCommand" (22330 milliseconds) CreateMemberCommand { FirstName: "Frida", LastName: "Törn", Street: "Revirvägen 1", ZipCode: "12345", City: "Brunflo", Email: "Törn@gmail.com", PhoneNumber: "0733421244" }
+[13:56:01 INF] Bus started: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[13:56:50 INF] Bus stopped: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[13:59:54 INF] Bus started: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[14:01:00 INF] Bus stopped: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[14:16:30 INF] Bus started: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[14:53:38 INF] Bus started: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[14:53:38 INF] Publishing Domain Event: Event - "MemberCreatedEvent"
+[14:53:38 INF] Member Created Domain Event: "MemberCreatedEvent"
+[14:53:38 INF] Publishing Domain Event: Event - "MemberCreatedEvent"
+[14:53:38 INF] Member Created Domain Event: "MemberCreatedEvent"
+[14:53:41 INF] Bus stopped: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[14:53:52 INF] Bus started: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[14:55:11 INF] Bus started: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[14:55:26 WRN] Long Running Request: "CreateMemberCommand" (3932 milliseconds) CreateMemberCommand { FirstName: "Frida", LastName: "Törn", Street: "Revirvägen 1", ZipCode: "12345", City: "Brunflo", Email: "Törn@gmail.com", PhoneNumber: "0733421244" }
+[14:56:31 INF] Publishing Domain Event: Event - "MemberCreatedEvent"
+[15:01:44 INF] Bus started: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[15:01:45 INF] Publishing Domain Event: Event - "MemberCreatedEvent"
+[15:01:45 INF] Member Created Domain Event: "MemberCreatedEvent"
+[15:02:15 INF] Bus stopped: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[15:21:21 INF] Bus started: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[15:21:56 INF] Publishing Domain Event: Event - "MemberCreatedEvent"
+[15:21:56 INF] Member Created Domain Event: "MemberCreatedEvent"
+[15:22:27 ERR] Could not find ErrorCode in Error-Metadata
+[15:22:53 INF] Bus stopped: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[15:23:01 INF] Bus started: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[15:23:40 WRN] Long Running Request: "RateMemberCommand" (28809 milliseconds) RateMemberCommand { Rating: Rating { RatingForMemberId: dcf4a2c3-37b9-4b79-a1de-6e4918f16888, RatingFromMemberId: 527d5a2e-8292-4967-b7d7-6a65e1727b70, Stars: 2 } }
+[15:23:45 INF] Publishing Domain Event: Event - "RateMemberEvent"
+[15:23:45 ERR] Error in publishing events "Cannot resolve 'System.Collections.Generic.IEnumerable`1[MediatR.INotificationHandler`1[Auctioneer.Application.Common.Models.DomainEventNotification`1[Auctioneer.Application.Features.Members.Commands.RateMemberEvent]]]' from root provider because it requires scoped service 'Auctioneer.Application.Common.Interfaces.IMessageProducer'."
+System.InvalidOperationException: Cannot resolve 'System.Collections.Generic.IEnumerable`1[MediatR.INotificationHandler`1[Auctioneer.Application.Common.Models.DomainEventNotification`1[Auctioneer.Application.Features.Members.Commands.RateMemberEvent]]]' from root provider because it requires scoped service 'Auctioneer.Application.Common.Interfaces.IMessageProducer'.
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteValidator.ValidateResolution(Type serviceType, IServiceScope scope, IServiceScope rootScope)
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider.GetService(Type serviceType, ServiceProviderEngineScope serviceProviderEngineScope)
+   at Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService(IServiceProvider provider, Type serviceType)
+   at Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService[T](IServiceProvider provider)
+   at Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetServices[T](IServiceProvider provider)
+   at MediatR.Wrappers.NotificationHandlerWrapperImpl`1.Handle(INotification notification, IServiceProvider serviceFactory, Func`4 publish, CancellationToken cancellationToken)
+   at MediatR.Mediator.PublishNotification(INotification notification, CancellationToken cancellationToken)
+   at MediatR.Mediator.Publish[TNotification](TNotification notification, CancellationToken cancellationToken)
+   at Auctioneer.Application.Infrastructure.Services.DomainEventService.Publish(DomainEvent domainEvent) in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.Application/Infrastructure/Services/DomainEventService.cs:line 23
+   at Auctioneer.Application.Infrastructure.Services.OutboxPublisher.ExecuteAsync(CancellationToken stoppingToken) in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.Application/Infrastructure/Services/OutboxPublisher.cs:line 34
+[15:23:50 INF] Publishing Domain Event: Event - "RateMemberEvent"
+[15:23:50 ERR] Error in publishing events "Cannot resolve 'System.Collections.Generic.IEnumerable`1[MediatR.INotificationHandler`1[Auctioneer.Application.Common.Models.DomainEventNotification`1[Auctioneer.Application.Features.Members.Commands.RateMemberEvent]]]' from root provider because it requires scoped service 'Auctioneer.Application.Common.Interfaces.IMessageProducer'."
+System.InvalidOperationException: Cannot resolve 'System.Collections.Generic.IEnumerable`1[MediatR.INotificationHandler`1[Auctioneer.Application.Common.Models.DomainEventNotification`1[Auctioneer.Application.Features.Members.Commands.RateMemberEvent]]]' from root provider because it requires scoped service 'Auctioneer.Application.Common.Interfaces.IMessageProducer'.
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteValidator.ValidateResolution(Type serviceType, IServiceScope scope, IServiceScope rootScope)
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider.GetService(Type serviceType, ServiceProviderEngineScope serviceProviderEngineScope)
+   at Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService(IServiceProvider provider, Type serviceType)
+   at Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService[T](IServiceProvider provider)
+   at Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetServices[T](IServiceProvider provider)
+   at MediatR.Wrappers.NotificationHandlerWrapperImpl`1.Handle(INotification notification, IServiceProvider serviceFactory, Func`4 publish, CancellationToken cancellationToken)
+   at MediatR.Mediator.PublishNotification(INotification notification, CancellationToken cancellationToken)
+   at MediatR.Mediator.Publish[TNotification](TNotification notification, CancellationToken cancellationToken)
+   at Auctioneer.Application.Infrastructure.Services.DomainEventService.Publish(DomainEvent domainEvent) in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.Application/Infrastructure/Services/DomainEventService.cs:line 23
+   at Auctioneer.Application.Infrastructure.Services.OutboxPublisher.ExecuteAsync(CancellationToken stoppingToken) in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.Application/Infrastructure/Services/OutboxPublisher.cs:line 34
+[15:23:55 INF] Publishing Domain Event: Event - "RateMemberEvent"
+[15:23:55 ERR] Error in publishing events "Cannot resolve 'System.Collections.Generic.IEnumerable`1[MediatR.INotificationHandler`1[Auctioneer.Application.Common.Models.DomainEventNotification`1[Auctioneer.Application.Features.Members.Commands.RateMemberEvent]]]' from root provider because it requires scoped service 'Auctioneer.Application.Common.Interfaces.IMessageProducer'."
+System.InvalidOperationException: Cannot resolve 'System.Collections.Generic.IEnumerable`1[MediatR.INotificationHandler`1[Auctioneer.Application.Common.Models.DomainEventNotification`1[Auctioneer.Application.Features.Members.Commands.RateMemberEvent]]]' from root provider because it requires scoped service 'Auctioneer.Application.Common.Interfaces.IMessageProducer'.
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteValidator.ValidateResolution(Type serviceType, IServiceScope scope, IServiceScope rootScope)
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider.GetService(Type serviceType, ServiceProviderEngineScope serviceProviderEngineScope)
+   at Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService(IServiceProvider provider, Type serviceType)
+   at Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService[T](IServiceProvider provider)
+   at Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetServices[T](IServiceProvider provider)
+   at MediatR.Wrappers.NotificationHandlerWrapperImpl`1.Handle(INotification notification, IServiceProvider serviceFactory, Func`4 publish, CancellationToken cancellationToken)
+   at MediatR.Mediator.PublishNotification(INotification notification, CancellationToken cancellationToken)
+   at MediatR.Mediator.Publish[TNotification](TNotification notification, CancellationToken cancellationToken)
+   at Auctioneer.Application.Infrastructure.Services.DomainEventService.Publish(DomainEvent domainEvent) in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.Application/Infrastructure/Services/DomainEventService.cs:line 23
+   at Auctioneer.Application.Infrastructure.Services.OutboxPublisher.ExecuteAsync(CancellationToken stoppingToken) in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.Application/Infrastructure/Services/OutboxPublisher.cs:line 34
+[15:24:00 INF] Publishing Domain Event: Event - "RateMemberEvent"
+[15:24:00 ERR] Error in publishing events "Cannot resolve 'System.Collections.Generic.IEnumerable`1[MediatR.INotificationHandler`1[Auctioneer.Application.Common.Models.DomainEventNotification`1[Auctioneer.Application.Features.Members.Commands.RateMemberEvent]]]' from root provider because it requires scoped service 'Auctioneer.Application.Common.Interfaces.IMessageProducer'."
+System.InvalidOperationException: Cannot resolve 'System.Collections.Generic.IEnumerable`1[MediatR.INotificationHandler`1[Auctioneer.Application.Common.Models.DomainEventNotification`1[Auctioneer.Application.Features.Members.Commands.RateMemberEvent]]]' from root provider because it requires scoped service 'Auctioneer.Application.Common.Interfaces.IMessageProducer'.
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteValidator.ValidateResolution(Type serviceType, IServiceScope scope, IServiceScope rootScope)
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider.GetService(Type serviceType, ServiceProviderEngineScope serviceProviderEngineScope)
+   at Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService(IServiceProvider provider, Type serviceType)
+   at Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService[T](IServiceProvider provider)
+   at Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetServices[T](IServiceProvider provider)
+   at MediatR.Wrappers.NotificationHandlerWrapperImpl`1.Handle(INotification notification, IServiceProvider serviceFactory, Func`4 publish, CancellationToken cancellationToken)
+   at MediatR.Mediator.PublishNotification(INotification notification, CancellationToken cancellationToken)
+   at MediatR.Mediator.Publish[TNotification](TNotification notification, CancellationToken cancellationToken)
+   at Auctioneer.Application.Infrastructure.Services.DomainEventService.Publish(DomainEvent domainEvent) in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.Application/Infrastructure/Services/DomainEventService.cs:line 23
+   at Auctioneer.Application.Infrastructure.Services.OutboxPublisher.ExecuteAsync(CancellationToken stoppingToken) in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.Application/Infrastructure/Services/OutboxPublisher.cs:line 34
+[15:24:05 INF] Publishing Domain Event: Event - "RateMemberEvent"
+[15:24:06 ERR] Error in publishing events "Cannot resolve 'System.Collections.Generic.IEnumerable`1[MediatR.INotificationHandler`1[Auctioneer.Application.Common.Models.DomainEventNotification`1[Auctioneer.Application.Features.Members.Commands.RateMemberEvent]]]' from root provider because it requires scoped service 'Auctioneer.Application.Common.Interfaces.IMessageProducer'."
+System.InvalidOperationException: Cannot resolve 'System.Collections.Generic.IEnumerable`1[MediatR.INotificationHandler`1[Auctioneer.Application.Common.Models.DomainEventNotification`1[Auctioneer.Application.Features.Members.Commands.RateMemberEvent]]]' from root provider because it requires scoped service 'Auctioneer.Application.Common.Interfaces.IMessageProducer'.
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteValidator.ValidateResolution(Type serviceType, IServiceScope scope, IServiceScope rootScope)
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider.GetService(Type serviceType, ServiceProviderEngineScope serviceProviderEngineScope)
+   at Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService(IServiceProvider provider, Type serviceType)
+   at Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService[T](IServiceProvider provider)
+   at Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetServices[T](IServiceProvider provider)
+   at MediatR.Wrappers.NotificationHandlerWrapperImpl`1.Handle(INotification notification, IServiceProvider serviceFactory, Func`4 publish, CancellationToken cancellationToken)
+   at MediatR.Mediator.PublishNotification(INotification notification, CancellationToken cancellationToken)
+   at MediatR.Mediator.Publish[TNotification](TNotification notification, CancellationToken cancellationToken)
+   at Auctioneer.Application.Infrastructure.Services.DomainEventService.Publish(DomainEvent domainEvent) in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.Application/Infrastructure/Services/DomainEventService.cs:line 23
+   at Auctioneer.Application.Infrastructure.Services.OutboxPublisher.ExecuteAsync(CancellationToken stoppingToken) in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.Application/Infrastructure/Services/OutboxPublisher.cs:line 34
+[15:24:11 INF] Publishing Domain Event: Event - "RateMemberEvent"
+[15:24:11 ERR] Error in publishing events "Cannot resolve 'System.Collections.Generic.IEnumerable`1[MediatR.INotificationHandler`1[Auctioneer.Application.Common.Models.DomainEventNotification`1[Auctioneer.Application.Features.Members.Commands.RateMemberEvent]]]' from root provider because it requires scoped service 'Auctioneer.Application.Common.Interfaces.IMessageProducer'."
+System.InvalidOperationException: Cannot resolve 'System.Collections.Generic.IEnumerable`1[MediatR.INotificationHandler`1[Auctioneer.Application.Common.Models.DomainEventNotification`1[Auctioneer.Application.Features.Members.Commands.RateMemberEvent]]]' from root provider because it requires scoped service 'Auctioneer.Application.Common.Interfaces.IMessageProducer'.
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteValidator.ValidateResolution(Type serviceType, IServiceScope scope, IServiceScope rootScope)
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider.GetService(Type serviceType, ServiceProviderEngineScope serviceProviderEngineScope)
+   at Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService(IServiceProvider provider, Type serviceType)
+   at Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService[T](IServiceProvider provider)
+   at Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetServices[T](IServiceProvider provider)
+   at MediatR.Wrappers.NotificationHandlerWrapperImpl`1.Handle(INotification notification, IServiceProvider serviceFactory, Func`4 publish, CancellationToken cancellationToken)
+   at MediatR.Mediator.PublishNotification(INotification notification, CancellationToken cancellationToken)
+   at MediatR.Mediator.Publish[TNotification](TNotification notification, CancellationToken cancellationToken)
+   at Auctioneer.Application.Infrastructure.Services.DomainEventService.Publish(DomainEvent domainEvent) in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.Application/Infrastructure/Services/DomainEventService.cs:line 23
+   at Auctioneer.Application.Infrastructure.Services.OutboxPublisher.ExecuteAsync(CancellationToken stoppingToken) in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.Application/Infrastructure/Services/OutboxPublisher.cs:line 34
+[15:24:16 INF] Publishing Domain Event: Event - "RateMemberEvent"
+[15:24:16 ERR] Error in publishing events "Cannot resolve 'System.Collections.Generic.IEnumerable`1[MediatR.INotificationHandler`1[Auctioneer.Application.Common.Models.DomainEventNotification`1[Auctioneer.Application.Features.Members.Commands.RateMemberEvent]]]' from root provider because it requires scoped service 'Auctioneer.Application.Common.Interfaces.IMessageProducer'."
+System.InvalidOperationException: Cannot resolve 'System.Collections.Generic.IEnumerable`1[MediatR.INotificationHandler`1[Auctioneer.Application.Common.Models.DomainEventNotification`1[Auctioneer.Application.Features.Members.Commands.RateMemberEvent]]]' from root provider because it requires scoped service 'Auctioneer.Application.Common.Interfaces.IMessageProducer'.
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteValidator.ValidateResolution(Type serviceType, IServiceScope scope, IServiceScope rootScope)
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider.GetService(Type serviceType, ServiceProviderEngineScope serviceProviderEngineScope)
+   at Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService(IServiceProvider provider, Type serviceType)
+   at Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService[T](IServiceProvider provider)
+   at Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetServices[T](IServiceProvider provider)
+   at MediatR.Wrappers.NotificationHandlerWrapperImpl`1.Handle(INotification notification, IServiceProvider serviceFactory, Func`4 publish, CancellationToken cancellationToken)
+   at MediatR.Mediator.PublishNotification(INotification notification, CancellationToken cancellationToken)
+   at MediatR.Mediator.Publish[TNotification](TNotification notification, CancellationToken cancellationToken)
+   at Auctioneer.Application.Infrastructure.Services.DomainEventService.Publish(DomainEvent domainEvent) in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.Application/Infrastructure/Services/DomainEventService.cs:line 23
+   at Auctioneer.Application.Infrastructure.Services.OutboxPublisher.ExecuteAsync(CancellationToken stoppingToken) in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.Application/Infrastructure/Services/OutboxPublisher.cs:line 34
+[15:24:21 INF] Publishing Domain Event: Event - "RateMemberEvent"
+[15:24:21 ERR] Error in publishing events "Cannot resolve 'System.Collections.Generic.IEnumerable`1[MediatR.INotificationHandler`1[Auctioneer.Application.Common.Models.DomainEventNotification`1[Auctioneer.Application.Features.Members.Commands.RateMemberEvent]]]' from root provider because it requires scoped service 'Auctioneer.Application.Common.Interfaces.IMessageProducer'."
+System.InvalidOperationException: Cannot resolve 'System.Collections.Generic.IEnumerable`1[MediatR.INotificationHandler`1[Auctioneer.Application.Common.Models.DomainEventNotification`1[Auctioneer.Application.Features.Members.Commands.RateMemberEvent]]]' from root provider because it requires scoped service 'Auctioneer.Application.Common.Interfaces.IMessageProducer'.
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteValidator.ValidateResolution(Type serviceType, IServiceScope scope, IServiceScope rootScope)
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider.GetService(Type serviceType, ServiceProviderEngineScope serviceProviderEngineScope)
+   at Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService(IServiceProvider provider, Type serviceType)
+   at Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService[T](IServiceProvider provider)
+   at Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetServices[T](IServiceProvider provider)
+   at MediatR.Wrappers.NotificationHandlerWrapperImpl`1.Handle(INotification notification, IServiceProvider serviceFactory, Func`4 publish, CancellationToken cancellationToken)
+   at MediatR.Mediator.PublishNotification(INotification notification, CancellationToken cancellationToken)
+   at MediatR.Mediator.Publish[TNotification](TNotification notification, CancellationToken cancellationToken)
+   at Auctioneer.Application.Infrastructure.Services.DomainEventService.Publish(DomainEvent domainEvent) in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.Application/Infrastructure/Services/DomainEventService.cs:line 23
+   at Auctioneer.Application.Infrastructure.Services.OutboxPublisher.ExecuteAsync(CancellationToken stoppingToken) in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.Application/Infrastructure/Services/OutboxPublisher.cs:line 34
+[15:24:33 INF] Publishing Domain Event: Event - "RateMemberEvent"
+[15:24:43 ERR] Error in publishing events "Cannot resolve 'System.Collections.Generic.IEnumerable`1[MediatR.INotificationHandler`1[Auctioneer.Application.Common.Models.DomainEventNotification`1[Auctioneer.Application.Features.Members.Commands.RateMemberEvent]]]' from root provider because it requires scoped service 'Auctioneer.Application.Common.Interfaces.IMessageProducer'."
+System.InvalidOperationException: Cannot resolve 'System.Collections.Generic.IEnumerable`1[MediatR.INotificationHandler`1[Auctioneer.Application.Common.Models.DomainEventNotification`1[Auctioneer.Application.Features.Members.Commands.RateMemberEvent]]]' from root provider because it requires scoped service 'Auctioneer.Application.Common.Interfaces.IMessageProducer'.
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteValidator.ValidateResolution(Type serviceType, IServiceScope scope, IServiceScope rootScope)
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider.GetService(Type serviceType, ServiceProviderEngineScope serviceProviderEngineScope)
+   at Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService(IServiceProvider provider, Type serviceType)
+   at Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService[T](IServiceProvider provider)
+   at Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetServices[T](IServiceProvider provider)
+   at MediatR.Wrappers.NotificationHandlerWrapperImpl`1.Handle(INotification notification, IServiceProvider serviceFactory, Func`4 publish, CancellationToken cancellationToken)
+   at MediatR.Mediator.PublishNotification(INotification notification, CancellationToken cancellationToken)
+   at MediatR.Mediator.Publish[TNotification](TNotification notification, CancellationToken cancellationToken)
+   at Auctioneer.Application.Infrastructure.Services.DomainEventService.Publish(DomainEvent domainEvent) in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.Application/Infrastructure/Services/DomainEventService.cs:line 23
+   at Auctioneer.Application.Infrastructure.Services.OutboxPublisher.ExecuteAsync(CancellationToken stoppingToken) in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.Application/Infrastructure/Services/OutboxPublisher.cs:line 34
+[15:24:55 INF] Publishing Domain Event: Event - "RateMemberEvent"
+[15:46:15 INF] Bus started: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[15:46:28 INF] Publishing Domain Event: Event - "RateMemberEvent"
+[15:55:58 INF] Bus started: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[15:56:09 INF] Publishing Domain Event: Event - "RateMemberEvent"
+[15:57:35 INF] Bus started: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[15:57:42 INF] Publishing Domain Event: Event - "RateMemberEvent"
+[15:57:46 INF] Rate Member Domain Event: "RateMemberEvent"
+[15:57:49 INF] Publishing message to email-service
+[15:57:50 INF] Publishing message notification-service
+[15:59:56 INF] Bus started: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[15:59:56 INF] Publishing Domain Event: Event - "RateMemberEvent"
+[15:59:56 INF] Publishing message to email-service
+[15:59:56 INF] Publishing message notification-service
+[15:59:56 INF] Finished Publishing Domain Event: "RateMemberEvent"
+[16:00:42 INF] Bus stopped: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj

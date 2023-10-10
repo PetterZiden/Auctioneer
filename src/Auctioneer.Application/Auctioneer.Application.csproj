@@ -11,7 +11,6 @@
     <ItemGroup>
       <Folder Include="Common\Exceptions\" />
         <Folder Include="Common\Helpers\"/>
-      <Folder Include="Infrastructure\Services\" />
       <Folder Include="Resources\" />
       <Folder Include="ValueObjects\" />
     </ItemGroup>

@@ -16,6 +16,7 @@ builder.Services.AddApplication();
 builder.AddInfrastructure();
 builder.Services.AddMediatr();
 builder.AddMessaging();
+builder.Services.AddBackgroundWorkers();
 
 builder.Services.AddHttpContextAccessor();
 

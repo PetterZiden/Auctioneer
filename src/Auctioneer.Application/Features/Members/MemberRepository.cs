@@ -44,7 +44,8 @@ public class MemberRepository : IRepository<Member>
     public async Task UpdateAsync(Guid id, Member updatedEntity)
     {
         Action operation = async () =>
-            await _memberCollection.ReplaceOneAsync(_unitOfWork.Session as IClientSessionHandle, x => x.Id == id,
+            await _memberCollection.ReplaceOneAsync<Member>(_unitOfWork.Session as IClientSessionHandle,
+                x => x.Id == id,
                 updatedEntity);
         _unitOfWork.AddOperation(operation);
     }

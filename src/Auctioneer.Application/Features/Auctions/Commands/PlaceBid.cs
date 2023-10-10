@@ -4,6 +4,7 @@ using Auctioneer.Application.Common.Interfaces;
 using Auctioneer.Application.Common.Models;
 using Auctioneer.Application.Common.Validators;
 using Auctioneer.Application.Entities;
+using Auctioneer.Application.Features.Auctions.Dto;
 using Auctioneer.Application.Infrastructure.Messaging.MassTransit;
 using Auctioneer.Application.Infrastructure.Messaging.RabbitMq;
 using Auctioneer.MessagingContracts.Email;
@@ -66,18 +67,16 @@ internal sealed class PlaceBidCommandHandler : IRequestHandler<PlaceBidCommand, 
 {
     private readonly IRepository<Auction> _auctionRepository;
     private readonly IRepository<Member> _memberRepository;
+    private readonly IRepository<DomainEvent> _eventRepository;
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IMessageProducer _messageProducer;
-    private readonly INotificationProducer _notificationProducer;
 
     public PlaceBidCommandHandler(IRepository<Auction> auctionRepository, IRepository<Member> memberRepository,
-        IMessageProducer messageProducer, INotificationProducer notificationProducer, IUnitOfWork unitOfWork)
+        IRepository<DomainEvent> eventRepository, IUnitOfWork unitOfWork)
     {
         _auctionRepository = auctionRepository;
         _memberRepository = memberRepository;
+        _eventRepository = eventRepository;
         _unitOfWork = unitOfWork;
-        _messageProducer = messageProducer;
-        _notificationProducer = notificationProducer;
     }
 
     public async Task<Result> Handle(PlaceBidCommand request, CancellationToken cancellationToken)
@@ -109,34 +108,24 @@ internal sealed class PlaceBidCommandHandler : IRequestHandler<PlaceBidCommand, 
             if (!memberResult.IsSuccess)
                 return memberResult;
 
+            var placeBidDto = new PlaceBidDto
+            {
+                AuctionOwnerId = auctionOwner.Id,
+                AuctionTitle = auction.Title,
+                AuctionOwnerName = auctionOwner.FullName,
+                AuctionOwnerEmail = auctionOwner.Email,
+                Bid = request.Bid.BidPrice,
+                BidderName = bidder.FullName,
+                BidderEmail = bidder.Email,
+                TimeStamp = bidResult.Value.TimeStamp.Value,
+                AuctionUrl = $"https://localhost:7298/api/auction/{auction.Id}"
+            };
+            var domainEvent = new AuctionPlaceBidEvent(placeBidDto, "auction.place.bid");
+
+            await _auctionRepository.UpdateAsync(auction.Id, auction);
             await _memberRepository.UpdateAsync(bidder.Id, bidder);
+            await _eventRepository.CreateAsync(domainEvent);
             await _unitOfWork.SaveAsync();
-
-            _messageProducer.PublishMessage(new Message<PlaceBidMessage>
-            {
-                Queue = RabbitMqSettings.PlaceBidQueue,
-                Exchange = RabbitMqSettings.AuctionExchange,
-                ExchangeType = RabbitMqSettings.AuctionExchangeType,
-                RouteKey = RabbitMqSettings.PlaceBidRouteKey,
-                Data = new PlaceBidMessage(
-                    auction.Title,
-                    auctionOwner.FullName,
-                    auctionOwner.Email,
-                    request.Bid.BidPrice,
-                    bidder.FullName,
-                    bidder.Email,
-                    bidResult.Value.TimeStamp.Value,
-                    $"https://localhost:7298/api/auction/{auction.Id}")
-            });
-
-            _notificationProducer.PublishNotification(new Notification<PlaceBidNotification>
-            {
-                Data = new PlaceBidNotification(
-                    auctionOwner.Id,
-                    auction.Title,
-                    bidder.FullName,
-                    request.Bid.BidPrice)
-            });
 
             return Result.Ok();
         }
@@ -146,4 +135,15 @@ internal sealed class PlaceBidCommandHandler : IRequestHandler<PlaceBidCommand, 
             return Result.Fail(new Error(ex.Message));
         }
     }
+}
+
+public class AuctionPlaceBidEvent : DomainEvent, INotification
+{
+    public AuctionPlaceBidEvent(PlaceBidDto placeBidDto, string @event)
+    {
+        PlaceBidDto = placeBidDto;
+        Event = @event;
+    }
+
+    public PlaceBidDto PlaceBidDto { get; set; }
 }

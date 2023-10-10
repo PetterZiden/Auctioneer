@@ -22,7 +22,6 @@ public class Worker : BackgroundService
     protected override Task ExecuteAsync(CancellationToken stoppingToken)
     {
         _logger.LogInformation("Background service started...");
-        //Console.WriteLine("Background service started...");
         return Task.Run(() =>
         {
             _rabbitMqService.StartListeningOnQueue("rate-member-email", "member",
@@ -45,7 +44,6 @@ public class Worker : BackgroundService
     public override Task StopAsync(CancellationToken cancellationToken)
     {
         _logger.LogInformation("Background service stopped...");
-        //Console.WriteLine("Background service stopped...");
 
         _rabbitMqService.Stop();
         return base.StopAsync(cancellationToken);

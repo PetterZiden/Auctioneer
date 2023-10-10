@@ -1,4 +1,5 @@
 using System.Reflection;
+using Auctioneer.Application.Common;
 using Auctioneer.Application.Common.Behaviours;
 using Auctioneer.Application.Common.Interfaces;
 using Auctioneer.Application.Entities;
@@ -7,6 +8,7 @@ using Auctioneer.Application.Features.Members;
 using Auctioneer.Application.Infrastructure.Messaging.MassTransit;
 using Auctioneer.Application.Infrastructure.Messaging.RabbitMq;
 using Auctioneer.Application.Infrastructure.Persistence;
+using Auctioneer.Application.Infrastructure.Services;
 using MassTransit;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
@@ -22,6 +24,7 @@ public static class ConfigureServices
     {
         services.AddSingleton<IRepository<Member>, MemberRepository>();
         services.AddSingleton<IRepository<Auction>, AuctionRepository>();
+        services.AddSingleton<IRepository<DomainEvent>, EventRepository>();
         services.AddSingleton<IUnitOfWork, UnitOfWork>();
 
         return services;
@@ -40,6 +43,8 @@ public static class ConfigureServices
 
         builder.Services.AddMemoryCache();
 
+        builder.Services.AddSingleton<IDomainEventService, DomainEventService>();
+
         var logger = new LoggerConfiguration()
             .ReadFrom.Configuration(builder.Configuration)
             .Enrich.FromLogContext()
@@ -52,7 +57,10 @@ public static class ConfigureServices
 
     public static IServiceCollection AddMediatr(this IServiceCollection services)
     {
-        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
+        foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+        {
+            services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(assembly));
+        }
 
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(UnhandledExceptionBehaviour<,>));
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(PerformanceBehaviour<,>));
@@ -79,5 +87,11 @@ public static class ConfigureServices
         builder.Services.AddScoped<INotificationProducer, MassTransitProducer>();
 
         return builder;
+    }
+
+    public static IServiceCollection AddBackgroundWorkers(this IServiceCollection services)
+    {
+        services.AddHostedService<OutboxPublisher>();
+        return services;
     }
 }

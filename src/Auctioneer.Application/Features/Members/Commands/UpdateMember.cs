@@ -78,11 +78,14 @@ public class UpdateMemberCommand : IRequest<Result>
 internal sealed class UpdateMemberCommandHandler : IRequestHandler<UpdateMemberCommand, Result>
 {
     private readonly IRepository<Member> _repository;
+    private readonly IRepository<DomainEvent> _eventRepository;
     private readonly IUnitOfWork _unitOfWork;
 
-    public UpdateMemberCommandHandler(IRepository<Member> repository, IUnitOfWork unitOfWork)
+    public UpdateMemberCommandHandler(IRepository<Member> repository, IRepository<DomainEvent> eventRepository,
+        IUnitOfWork unitOfWork)
     {
         _repository = repository;
+        _eventRepository = eventRepository;
         _unitOfWork = unitOfWork;
     }
 
@@ -95,6 +98,9 @@ internal sealed class UpdateMemberCommandHandler : IRequestHandler<UpdateMemberC
             if (member is null)
                 return Result.Fail(new Error("No member found"));
 
+            var domainEvent = new MemberUpdatedEvent(member, "member.updated");
+
+            await _eventRepository.CreateAsync(domainEvent);
             await _repository.UpdateAsync(request.Id, member);
             await _unitOfWork.SaveAsync();
 
@@ -129,4 +135,15 @@ public class UpdateMemberCommandValidator : AbstractValidator<UpdateMemberComman
             .NotNull()
             .NotEmpty();
     }
+}
+
+public class MemberUpdatedEvent : DomainEvent, INotification
+{
+    public MemberUpdatedEvent(Member member, string @event)
+    {
+        Member = member;
+        Event = @event;
+    }
+
+    public Member Member { get; set; }
 }
