@@ -1,0 +1,13 @@
+[14:56:28 INF] Bus started: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[14:58:47 WRN] Long Running Request: "CreateMemberCommand" (85002 milliseconds) CreateMemberCommand { FirstName: "Frida", LastName: "Törn", Street: "Revirvägen 1", ZipCode: "12345", City: "Brunflo", Email: "Törn@gmail.com", PhoneNumber: "0733421244" }
+[14:58:47 ERR] Could not find ErrorCode in Error-Metadata
+[15:01:06 INF] Bus started: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[15:05:59 INF] Bus started: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[15:44:33 INF] Bus started: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[15:47:59 INF] Bus started: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[15:53:56 INF] Bus started: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[15:56:33 INF] Bus started: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[18:21:38 INF] Bus started: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[18:23:10 INF] Bus started: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[18:24:42 INF] Bus started: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[18:25:09 INF] Bus started: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj

@@ -3,12 +3,13 @@ using Auctioneer.Application.Common;
 using Auctioneer.Application.Common.Interfaces;
 using Auctioneer.Application.Common.Models;
 using FluentResults;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace Auctioneer.Application.Entities;
 
 public class Member : AuditableEntity, IAggregateRoot
 {
-    public Guid Id { get; private init; }
+    [BsonId] public Guid Id { get; private init; }
     public string FirstName { get; private set; }
     public string LastName { get; private set; }
     public Address Address { get; private set; }

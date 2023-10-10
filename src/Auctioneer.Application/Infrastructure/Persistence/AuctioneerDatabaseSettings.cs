@@ -7,6 +7,8 @@ public class AuctioneerDatabaseSettings
     public string DatabaseName { get; set; } = null!;
 
     public string MemberCollectionName { get; set; } = null!;
-    
+
     public string AuctionCollectionName { get; set; } = null!;
+
+    public string EventCollectionName { get; set; } = null!;
 }

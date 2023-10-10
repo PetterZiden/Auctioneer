@@ -69,12 +69,15 @@ public class UpdateAuctionCommand : IRequest<Result>
 
 internal sealed class UpdateAuctionCommandHandler : IRequestHandler<UpdateAuctionCommand, Result>
 {
-    private readonly IRepository<Auction> _repository;
+    private readonly IRepository<Auction> _auctionRepository;
+    private readonly IRepository<DomainEvent> _eventRepository;
     private readonly IUnitOfWork _unitOfWork;
 
-    public UpdateAuctionCommandHandler(IRepository<Auction> repository, IUnitOfWork unitOfWork)
+    public UpdateAuctionCommandHandler(IRepository<Auction> auctionRepository, IRepository<DomainEvent> eventRepository,
+        IUnitOfWork unitOfWork)
     {
-        _repository = repository;
+        _auctionRepository = auctionRepository;
+        _eventRepository = eventRepository;
         _unitOfWork = unitOfWork;
     }
 
@@ -82,12 +85,15 @@ internal sealed class UpdateAuctionCommandHandler : IRequestHandler<UpdateAuctio
     {
         try
         {
-            var auction = await _repository.GetAsync(request.Id);
+            var auction = await _auctionRepository.GetAsync(request.Id);
 
             if (auction is null)
                 return Result.Fail(new Error("No auction found"));
 
-            await _repository.UpdateAsync(request.Id, auction);
+            var domainEvent = new AuctionUpdatedEvent(auction, "auction.updated");
+
+            await _eventRepository.CreateAsync(domainEvent);
+            await _auctionRepository.UpdateAsync(request.Id, auction);
             await _unitOfWork.SaveAsync();
 
             return Result.Ok();
@@ -116,4 +122,15 @@ public class UpdateAuctionCommandValidator : AbstractValidator<UpdateAuctionComm
             .NotNull()
             .NotEmpty();
     }
+}
+
+public class AuctionUpdatedEvent : DomainEvent, INotification
+{
+    public AuctionUpdatedEvent(Auction auction, string @event)
+    {
+        Auction = auction;
+        Event = @event;
+    }
+
+    public Auction Auction { get; set; }
 }

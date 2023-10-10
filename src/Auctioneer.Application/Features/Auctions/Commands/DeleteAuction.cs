@@ -51,12 +51,15 @@ public class DeleteAuctionCommand : IRequest<Result>
 
 internal sealed class DeleteAuctionCommandHandler : IRequestHandler<DeleteAuctionCommand, Result>
 {
-    private readonly IRepository<Auction> _repository;
+    private readonly IRepository<Auction> _auctionRepository;
+    private readonly IRepository<DomainEvent> _eventRepository;
     private readonly IUnitOfWork _unitOfWork;
 
-    public DeleteAuctionCommandHandler(IRepository<Auction> repository, IUnitOfWork unitOfWork)
+    public DeleteAuctionCommandHandler(IRepository<Auction> auctionRepository, IRepository<DomainEvent> eventRepository,
+        IUnitOfWork unitOfWork)
     {
-        _repository = repository;
+        _auctionRepository = auctionRepository;
+        _eventRepository = eventRepository;
         _unitOfWork = unitOfWork;
     }
 
@@ -64,7 +67,10 @@ internal sealed class DeleteAuctionCommandHandler : IRequestHandler<DeleteAuctio
     {
         try
         {
-            await _repository.DeleteAsync(request.AuctionId);
+            var domainEvent = new AuctionDeletedEvent(request.AuctionId, "auction.deleted");
+
+            await _eventRepository.CreateAsync(domainEvent);
+            await _auctionRepository.DeleteAsync(request.AuctionId);
             await _unitOfWork.SaveAsync();
 
             return Result.Ok();
@@ -75,4 +81,15 @@ internal sealed class DeleteAuctionCommandHandler : IRequestHandler<DeleteAuctio
             return Result.Fail(new Error(ex.Message));
         }
     }
+}
+
+public class AuctionDeletedEvent : DomainEvent, INotification
+{
+    public AuctionDeletedEvent(Guid auctionId, string @event)
+    {
+        DeletedAuctionId = auctionId;
+        Event = @event;
+    }
+
+    public Guid DeletedAuctionId { get; set; }
 }

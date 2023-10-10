@@ -60,12 +60,15 @@ public class ChangeEmailMemberCommand : IRequest<Result>
 
 internal sealed class ChangeEmailMemberCommandHandler : IRequestHandler<ChangeEmailMemberCommand, Result>
 {
-    private readonly IRepository<Member> _repository;
+    private readonly IRepository<Member> _memberRepository;
+    private readonly IRepository<DomainEvent> _eventRepository;
     private readonly IUnitOfWork _unitOfWork;
 
-    public ChangeEmailMemberCommandHandler(IRepository<Member> repository, IUnitOfWork unitOfWork)
+    public ChangeEmailMemberCommandHandler(IRepository<Member> memberRepository,
+        IRepository<DomainEvent> eventRepository, IUnitOfWork unitOfWork)
     {
-        _repository = repository;
+        _memberRepository = memberRepository;
+        _eventRepository = eventRepository;
         _unitOfWork = unitOfWork;
     }
 
@@ -73,7 +76,7 @@ internal sealed class ChangeEmailMemberCommandHandler : IRequestHandler<ChangeEm
     {
         try
         {
-            var member = await _repository.GetAsync(request.MemberId);
+            var member = await _memberRepository.GetAsync(request.MemberId);
 
             if (member is null)
                 return Result.Fail(new Error("No member found"));
@@ -83,7 +86,10 @@ internal sealed class ChangeEmailMemberCommandHandler : IRequestHandler<ChangeEm
             if (!result.IsSuccess)
                 return result;
 
-            await _repository.UpdateAsync(member.Id, member);
+            var domainEvent = new MemberChangedEmailEvent(member.Id, request.Email, "member.updated.email");
+
+            await _memberRepository.UpdateAsync(member.Id, member);
+            await _eventRepository.CreateAsync(domainEvent);
             await _unitOfWork.SaveAsync();
 
             return Result.Ok();
@@ -108,4 +114,17 @@ public class ChangeEmailMemberCommandValidator : AbstractValidator<ChangeEmailMe
             .NotNull()
             .NotEmpty();
     }
+}
+
+public class MemberChangedEmailEvent : DomainEvent, INotification
+{
+    public MemberChangedEmailEvent(Guid memberId, string email, string @event)
+    {
+        MemberId = memberId;
+        Email = email;
+        Event = @event;
+    }
+
+    public Guid MemberId { get; set; }
+    public string Email { get; set; }
 }

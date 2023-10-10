@@ -51,12 +51,15 @@ public class DeleteMemberCommand : IRequest<Result>
 
 internal sealed class DeleteMemberCommandHandler : IRequestHandler<DeleteMemberCommand, Result>
 {
-    private readonly IRepository<Member> _repository;
+    private readonly IRepository<Member> _memberRepository;
+    private readonly IRepository<DomainEvent> _eventRepository;
     private readonly IUnitOfWork _unitOfWork;
 
-    public DeleteMemberCommandHandler(IRepository<Member> repository, IUnitOfWork unitOfWork)
+    public DeleteMemberCommandHandler(IRepository<Member> memberRepository, IRepository<DomainEvent> eventRepository,
+        IUnitOfWork unitOfWork)
     {
-        _repository = repository;
+        _memberRepository = memberRepository;
+        _eventRepository = eventRepository;
         _unitOfWork = unitOfWork;
     }
 
@@ -64,7 +67,10 @@ internal sealed class DeleteMemberCommandHandler : IRequestHandler<DeleteMemberC
     {
         try
         {
-            await _repository.DeleteAsync(request.MemberId);
+            var domainEvent = new MemberDeletedEvent(request.MemberId, "member.deleted");
+
+            await _memberRepository.DeleteAsync(request.MemberId);
+            await _eventRepository.CreateAsync(domainEvent);
             await _unitOfWork.SaveAsync();
 
             return Result.Ok();
@@ -75,4 +81,15 @@ internal sealed class DeleteMemberCommandHandler : IRequestHandler<DeleteMemberC
             return Result.Fail(new Error(ex.Message));
         }
     }
+}
+
+public class MemberDeletedEvent : DomainEvent, INotification
+{
+    public MemberDeletedEvent(Guid memberId, string @event)
+    {
+        DeletedMemberId = memberId;
+        Event = @event;
+    }
+
+    public Guid DeletedMemberId { get; set; }
 }

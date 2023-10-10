@@ -1,8 +1,10 @@
 using System.Reflection;
+using System.Text.Json;
 using Auctioneer.Application.Common;
 using Auctioneer.Application.Common.Interfaces;
 using Auctioneer.Application.Common.Models;
 using Auctioneer.Application.Entities;
+using Auctioneer.Application.Features.Members.Dto;
 using Auctioneer.Application.Infrastructure.Messaging.MassTransit;
 using Auctioneer.Application.Infrastructure.Messaging.RabbitMq;
 using Auctioneer.MessagingContracts.Email;
@@ -65,17 +67,15 @@ public class RateMemberCommand : IRequest<Result>
 internal sealed class RateMemberCommandHandler : IRequestHandler<RateMemberCommand, Result>
 {
     private readonly IRepository<Member> _repository;
+    private readonly IRepository<DomainEvent> _eventRepository;
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IMessageProducer _messageProducer;
-    private readonly INotificationProducer _notificationProducer;
 
-    public RateMemberCommandHandler(IRepository<Member> repository, IMessageProducer messageProducer,
-        INotificationProducer notificationProducer, IUnitOfWork unitOfWork)
+    public RateMemberCommandHandler(IRepository<Member> repository, IUnitOfWork unitOfWork,
+        IRepository<DomainEvent> eventRepository)
     {
         _repository = repository;
         _unitOfWork = unitOfWork;
-        _messageProducer = messageProducer;
-        _notificationProducer = notificationProducer;
+        _eventRepository = eventRepository;
     }
 
     public async Task<Result> Handle(RateMemberCommand request, CancellationToken cancellationToken)
@@ -93,29 +93,19 @@ internal sealed class RateMemberCommandHandler : IRequestHandler<RateMemberComma
             if (!result.IsSuccess)
                 return result;
 
+            var rateMemberDto = new RateMemberDto
+            {
+                RatedName = ratedMember.FullName,
+                RatedMemberId = ratedMember.Id,
+                RatedEmail = ratedMember.Email,
+                RatedByName = ratedByMember.FullName,
+                Stars = request.Rating.Stars
+            };
+            var domainEvent = new RateMemberEvent(rateMemberDto, "member.rated");
+
             await _repository.UpdateAsync(ratedMember.Id, ratedMember);
+            await _eventRepository.CreateAsync(domainEvent);
             await _unitOfWork.SaveAsync();
-
-            _messageProducer.PublishMessage(new Message<RateMemberMessage>
-            {
-                Queue = RabbitMqSettings.RateMemberQueue,
-                Exchange = RabbitMqSettings.AuctionExchange,
-                ExchangeType = RabbitMqSettings.AuctionExchangeType,
-                RouteKey = RabbitMqSettings.RateMemberRouteKey,
-                Data = new RateMemberMessage(
-                    ratedMember.FullName,
-                    ratedMember.Email,
-                    ratedByMember.FullName,
-                    request.Rating.Stars)
-            });
-
-            _notificationProducer.PublishNotification(new Notification<RateMemberNotification>
-            {
-                Data = new RateMemberNotification(
-                    ratedMember.Id,
-                    ratedByMember.FullName,
-                    request.Rating.Stars)
-            });
 
             return Result.Ok();
         }
@@ -141,4 +131,15 @@ public class RateMemberCommandValidator : AbstractValidator<RateMemberCommand>
             .GreaterThan(0)
             .LessThan(6);
     }
+}
+
+public class RateMemberEvent : DomainEvent, INotification
+{
+    public RateMemberEvent(RateMemberDto rateMember, string @event)
+    {
+        RateMember = rateMember;
+        Event = @event;
+    }
+
+    public RateMemberDto RateMember { get; set; }
 }

@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Text.Json;
 using Auctioneer.Application.Common;
 using Auctioneer.Application.Common.Interfaces;
 using Auctioneer.Application.Entities;
@@ -75,12 +76,15 @@ public class CreateMemberCommand : IRequest<Result<Guid>>
 
 internal sealed class CreateMemberCommandHandler : IRequestHandler<CreateMemberCommand, Result<Guid>>
 {
-    private readonly IRepository<Member> _repository;
+    private readonly IRepository<Member> _memberRepository;
+    private readonly IRepository<DomainEvent> _eventRepository;
     private readonly IUnitOfWork _unitOfWork;
 
-    public CreateMemberCommandHandler(IRepository<Member> repository, IUnitOfWork unitOfWork)
+    public CreateMemberCommandHandler(IRepository<Member> memberRepository, IUnitOfWork unitOfWork,
+        IRepository<DomainEvent> eventRepository)
     {
-        _repository = repository;
+        _memberRepository = memberRepository;
+        _eventRepository = eventRepository;
         _unitOfWork = unitOfWork;
     }
 
@@ -98,7 +102,10 @@ internal sealed class CreateMemberCommandHandler : IRequestHandler<CreateMemberC
                 request.City
             );
 
-            await _repository.CreateAsync(member);
+            var domainEvent = new MemberCreatedEvent(member, "member.created");
+
+            await _memberRepository.CreateAsync(member);
+            await _eventRepository.CreateAsync(domainEvent);
             await _unitOfWork.SaveAsync();
 
             return Result.Ok(member.Id);
@@ -129,4 +136,15 @@ public class CreateMemberCommandValidator : AbstractValidator<CreateMemberComman
             .NotNull()
             .NotEmpty();
     }
+}
+
+public class MemberCreatedEvent : DomainEvent, INotification
+{
+    public MemberCreatedEvent(Member member, string @event)
+    {
+        Member = member;
+        Event = @event;
+    }
+
+    public Member Member { get; set; }
 }

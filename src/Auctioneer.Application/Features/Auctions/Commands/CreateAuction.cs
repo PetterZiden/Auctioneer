@@ -75,12 +75,17 @@ public class CreateAuctionCommand : IRequest<Result<Guid>>
 
 internal sealed class CreateAuctionCommandHandler : IRequestHandler<CreateAuctionCommand, Result<Guid>>
 {
-    private readonly IRepository<Auction> _repository;
+    private readonly IRepository<Auction> _auctionRepository;
+    private readonly IRepository<Member> _memberRepository;
+    private readonly IRepository<DomainEvent> _eventRepository;
     private readonly IUnitOfWork _unitOfWork;
 
-    public CreateAuctionCommandHandler(IRepository<Auction> repository, IUnitOfWork unitOfWork)
+    public CreateAuctionCommandHandler(IRepository<Auction> auctionRepository, IRepository<Member> memberRepository,
+        IRepository<DomainEvent> eventRepository, IUnitOfWork unitOfWork)
     {
-        _repository = repository;
+        _auctionRepository = auctionRepository;
+        _memberRepository = memberRepository;
+        _eventRepository = eventRepository;
         _unitOfWork = unitOfWork;
     }
 
@@ -88,6 +93,11 @@ internal sealed class CreateAuctionCommandHandler : IRequestHandler<CreateAuctio
     {
         try
         {
+            var member = await _memberRepository.GetAsync(request.MemberId);
+
+            if (member is null)
+                return Result.Fail(new Error("No member found"));
+
             var auction = Auction.Create(
                 request.MemberId,
                 request.Title,
@@ -98,7 +108,10 @@ internal sealed class CreateAuctionCommandHandler : IRequestHandler<CreateAuctio
                 request.ImgRoute
             );
 
-            await _repository.CreateAsync(auction);
+            var domainEvent = new AuctionCreatedEvent(auction, "auction.created");
+
+            await _eventRepository.CreateAsync(domainEvent);
+            await _auctionRepository.CreateAsync(auction);
             await _unitOfWork.SaveAsync();
 
             return Result.Ok(auction.Id);
@@ -127,4 +140,15 @@ public class CreateAuctionCommandValidator : AbstractValidator<CreateAuctionComm
         RuleFor(v => v.StartingPrice)
             .GreaterThan(0);
     }
+}
+
+public class AuctionCreatedEvent : DomainEvent, INotification
+{
+    public AuctionCreatedEvent(Auction auction, string @event)
+    {
+        Auction = auction;
+        Event = @event;
+    }
+
+    public Auction Auction { get; set; }
 }
