@@ -113,7 +113,7 @@ public class Member : AuditableEntity, IAggregateRoot
 
     public Result Rate(Guid memberId, int stars)
     {
-        if (stars is < 0 or > 6)
+        if (stars is <= 0 or >= 6)
             return Result.Fail(new Error("Rating must be between 1 and 5"));
 
         var rating = new Rating

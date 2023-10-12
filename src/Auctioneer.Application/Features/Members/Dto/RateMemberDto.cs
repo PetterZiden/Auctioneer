@@ -2,9 +2,9 @@ namespace Auctioneer.Application.Features.Members.Dto;
 
 public class RateMemberDto
 {
-    public string RatedName { get; set; }
-    public Guid RatedMemberId { get; set; }
-    public string RatedEmail { get; set; }
-    public string RatedByName { get; set; }
-    public int Stars { get; set; }
+    public string RatedName { get; init; }
+    public Guid RatedMemberId { get; init; }
+    public string RatedEmail { get; init; }
+    public string RatedByName { get; init; }
+    public int Stars { get; init; }
 }

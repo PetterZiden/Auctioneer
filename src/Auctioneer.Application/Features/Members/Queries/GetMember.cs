@@ -49,10 +49,10 @@ public class GetMemberController : ApiControllerBase
 
 public class GetMemberQuery : IRequest<Result<MemberDto>>
 {
-    public Guid Id { get; set; }
+    public Guid Id { get; init; }
 }
 
-internal sealed class GetMemberQueryHandler : IRequestHandler<GetMemberQuery, Result<MemberDto>>
+public class GetMemberQueryHandler : IRequestHandler<GetMemberQuery, Result<MemberDto>>
 {
     private readonly IRepository<Member> _repository;
 

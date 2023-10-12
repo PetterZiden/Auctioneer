@@ -2,7 +2,7 @@ using Auctioneer.Application.Common.Models;
 using Auctioneer.Application.Common.Validators;
 using FluentValidation.TestHelper;
 
-namespace Auctioneer.Application.Tests.Common.Validators;
+namespace Auctioneer.Application.Tests.Unit.Common.Validators;
 
 public class BidValidatorTests
 {

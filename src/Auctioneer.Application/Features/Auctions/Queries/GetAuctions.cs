@@ -14,12 +14,12 @@ namespace Auctioneer.Application.Features.Auctions.Queries;
 public class GetAuctionsController : ApiControllerBase
 {
     private readonly ILogger<GetAuctionsController> _logger;
-    
+
     public GetAuctionsController(ILogger<GetAuctionsController> logger) : base(logger)
     {
         _logger = logger;
     }
-    
+
     [HttpGet("api/auctions")]
     [Produces("application/json")]
     [ProducesResponseType(typeof(List<AuctionDto>), 200)]
@@ -31,12 +31,12 @@ public class GetAuctionsController : ApiControllerBase
         try
         {
             var query = new GetAuctionsQuery();
-            
+
             var result = await Mediator.Send(query);
 
             if (result.IsSuccess)
                 return Ok(result.Value);
-            
+
             return ReturnError(result.Errors.FirstOrDefault() as Error);
         }
         catch (Exception ex)
@@ -47,9 +47,11 @@ public class GetAuctionsController : ApiControllerBase
     }
 }
 
-public class GetAuctionsQuery : IRequest<Result<List<AuctionDto>>> { }
+public class GetAuctionsQuery : IRequest<Result<List<AuctionDto>>>
+{
+}
 
-internal sealed class GetAuctionsQueryHandler : IRequestHandler<GetAuctionsQuery, Result<List<AuctionDto>>>
+public class GetAuctionsQueryHandler : IRequestHandler<GetAuctionsQuery, Result<List<AuctionDto>>>
 {
     private readonly IRepository<Auction> _repository;
 
@@ -66,7 +68,7 @@ internal sealed class GetAuctionsQueryHandler : IRequestHandler<GetAuctionsQuery
 
             if (!auctions?.Any() == true)
                 return Result.Fail(new Error("No auctions found"));
-            
+
             return Result.Ok(auctions.ToDtos());
         }
         catch (Exception ex)

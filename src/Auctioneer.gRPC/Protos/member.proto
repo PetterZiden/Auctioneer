@@ -1,0 +1,60 @@
+syntax = "proto3";
+
+option csharp_namespace = "Auctioneer.gRPC";
+
+import "google/protobuf/timestamp.proto";
+
+package Member;
+
+service Member {
+    rpc CreateMember (MemberModel) returns (CreateMemberResponse);
+    rpc GetMember (GetMemberRequest) returns (MemberModel);
+    rpc GetMembers (GetMembersRequest) returns (stream MemberModel);
+    rpc DeleteMember (DeleteMemberRequest) returns (DeleteMemberResponse);
+    rpc UpdateMember (MemberModel) returns (UpdateMemberResponse);
+    rpc RateMember (RateMemberRequest) returns (RateMemberResponse);
+}
+
+message GetMembersRequest {
+}
+message GetMemberRequest {
+    string id = 1;
+}
+message CreateMemberResponse {
+    string id = 1;
+    google.protobuf.Timestamp created_at = 2;
+}
+message UpdateMemberResponse {
+    string id = 1;
+    google.protobuf.Timestamp updated_at = 2;
+}
+message DeleteMemberRequest {
+    string id = 1;
+}
+message DeleteMemberResponse {
+    string message = 1;
+}
+
+message RateMemberRequest {
+    string rating_for_member_id = 1;
+    string rating_from_member_id = 2;
+    int32 stars = 3;
+}
+message RateMemberResponse {
+    string message = 1;
+}
+
+
+
+message MemberModel {
+    string id = 1;
+    string first_name = 2;
+    string last_name = 3;
+    string street = 4;
+    string zipcode = 5;
+    string city = 6;
+    string email = 7;
+    string phone_number = 8;
+    int32 current_rating = 9;
+    int32 number_of_ratings = 10;
+}

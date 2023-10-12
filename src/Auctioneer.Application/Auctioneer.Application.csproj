@@ -10,7 +10,6 @@
 
     <ItemGroup>
       <Folder Include="Common\Exceptions\" />
-        <Folder Include="Common\Helpers\"/>
       <Folder Include="Resources\" />
       <Folder Include="ValueObjects\" />
     </ItemGroup>

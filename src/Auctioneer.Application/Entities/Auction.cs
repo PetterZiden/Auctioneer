@@ -35,8 +35,8 @@ public class Auction : AuditableEntity, IAggregateRoot
         if (string.IsNullOrEmpty(description))
             throw new ArgumentNullException(nameof(description));
 
-        if (startTime < DateTimeOffset.Now.AddDays(-1))
-            throw new ArgumentException("Start time can not be earlier than today");
+        if (startTime < DateTimeOffset.Now)
+            throw new ArgumentException("Start time can not be earlier than current day and time");
 
         if (endTime < DateTimeOffset.Now.AddDays(1))
             throw new ArgumentException("End time can not be earlier than at least one day in the future");
@@ -56,7 +56,7 @@ public class Auction : AuditableEntity, IAggregateRoot
             StartTime = startTime,
             EndTime = endTime,
             StartingPrice = startingPrice,
-            CurrentPrice = 0,
+            CurrentPrice = startingPrice,
             ImgRoute = imgRoute,
             Created = DateTimeOffset.Now,
             LastModified = null,
@@ -67,11 +67,11 @@ public class Auction : AuditableEntity, IAggregateRoot
 
     public Result<Bid> PlaceBid(Guid memberId, decimal bidPrice)
     {
-        if (bidPrice <= CurrentPrice)
-            return Result.Fail(new Error($"Bid must be greater than current price: {CurrentPrice}"));
-
         if (bidPrice <= 0)
             return Result.Fail(new Error("Bid must be greater than 0"));
+
+        if (bidPrice <= CurrentPrice)
+            return Result.Fail(new Error($"Bid must be greater than current price: {CurrentPrice}"));
 
         var bid = new Bid
         {

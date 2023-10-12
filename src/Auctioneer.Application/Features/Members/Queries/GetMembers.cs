@@ -14,12 +14,12 @@ namespace Auctioneer.Application.Features.Members.Queries;
 public class GetMembersController : ApiControllerBase
 {
     private readonly ILogger<GetMembersController> _logger;
-    
+
     public GetMembersController(ILogger<GetMembersController> logger) : base(logger)
     {
         _logger = logger;
     }
-    
+
     [HttpGet("api/members")]
     [Produces("application/json")]
     [ProducesResponseType(typeof(List<MemberDto>), 200)]
@@ -31,12 +31,12 @@ public class GetMembersController : ApiControllerBase
         try
         {
             var query = new GetMembersQuery();
-            
+
             var result = await Mediator.Send(query);
 
             if (result.IsSuccess)
                 return Ok(result.Value);
-            
+
             return ReturnError(result.Errors.FirstOrDefault() as Error);
         }
         catch (Exception ex)
@@ -47,9 +47,11 @@ public class GetMembersController : ApiControllerBase
     }
 }
 
-public class GetMembersQuery : IRequest<Result<List<MemberDto>>> { }
+public class GetMembersQuery : IRequest<Result<List<MemberDto>>>
+{
+}
 
-internal sealed class GetMembersQueryHandler : IRequestHandler<GetMembersQuery, Result<List<MemberDto>>>
+public class GetMembersQueryHandler : IRequestHandler<GetMembersQuery, Result<List<MemberDto>>>
 {
     private readonly IRepository<Member> _repository;
 
@@ -66,7 +68,7 @@ internal sealed class GetMembersQueryHandler : IRequestHandler<GetMembersQuery, 
 
             if (!members?.Any() == true)
                 return Result.Fail(new Error("No members found"));
-            
+
             return Result.Ok(members.ToDtos());
         }
         catch (Exception ex)

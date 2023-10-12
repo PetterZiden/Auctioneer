@@ -52,7 +52,7 @@ public class GetAuctionQuery : IRequest<Result<AuctionDto>>
     public Guid Id { get; set; }
 }
 
-internal sealed class GetAuctionQueryHandler : IRequestHandler<GetAuctionQuery, Result<AuctionDto>>
+public class GetAuctionQueryHandler : IRequestHandler<GetAuctionQuery, Result<AuctionDto>>
 {
     private readonly IRepository<Auction> _repository;
 

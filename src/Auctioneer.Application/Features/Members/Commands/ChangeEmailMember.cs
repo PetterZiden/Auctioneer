@@ -1,5 +1,6 @@
 using System.Reflection;
 using Auctioneer.Application.Common;
+using Auctioneer.Application.Common.Helpers;
 using Auctioneer.Application.Common.Interfaces;
 using Auctioneer.Application.Entities;
 using FluentResults;
@@ -58,7 +59,7 @@ public class ChangeEmailMemberCommand : IRequest<Result>
     public string Email { get; init; }
 }
 
-internal sealed class ChangeEmailMemberCommandHandler : IRequestHandler<ChangeEmailMemberCommand, Result>
+public class ChangeEmailMemberCommandHandler : IRequestHandler<ChangeEmailMemberCommand, Result>
 {
     private readonly IRepository<Member> _memberRepository;
     private readonly IRepository<DomainEvent> _eventRepository;
@@ -86,7 +87,8 @@ internal sealed class ChangeEmailMemberCommandHandler : IRequestHandler<ChangeEm
             if (!result.IsSuccess)
                 return result;
 
-            var domainEvent = new MemberChangedEmailEvent(member.Id, request.Email, "member.updated.email");
+            var domainEvent =
+                new MemberChangedEmailEvent(member.Id, request.Email, EventList.Member.MemberChangedEmailEvent);
 
             await _memberRepository.UpdateAsync(member.Id, member);
             await _eventRepository.CreateAsync(domainEvent);
@@ -107,6 +109,7 @@ public class ChangeEmailMemberCommandValidator : AbstractValidator<ChangeEmailMe
     public ChangeEmailMemberCommandValidator()
     {
         RuleFor(v => v.MemberId)
+            .NotEmpty()
             .NotNull();
 
         RuleFor(v => v.Email)

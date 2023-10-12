@@ -7,10 +7,12 @@
 
         <IsPackable>false</IsPackable>
         <IsTestProject>true</IsTestProject>
+        <RootNamespace>Auctioneer.Application.Tests.Unit</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.7.1"/>
+        <PackageReference Include="NSubstitute" Version="5.1.0"/>
         <PackageReference Include="xunit" Version="2.4.2"/>
         <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -23,15 +25,11 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Entities\" />
-        <Folder Include="Features\Auctions\Commands\"/>
-        <Folder Include="Features\Auctions\Queries\"/>
-        <Folder Include="Features\Members\Commands\"/>
-        <Folder Include="Features\Members\Queries\"/>
+        <Folder Include="Entities\"/>
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\src\Auctioneer.Application\Auctioneer.Application.csproj"/>
+        <ProjectReference Include="..\..\..\src\Auctioneer.Application\Auctioneer.Application.csproj"/>
     </ItemGroup>
 
 </Project>

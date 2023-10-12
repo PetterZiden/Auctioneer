@@ -1,5 +1,6 @@
 using System.Reflection;
 using Auctioneer.Application.Common;
+using Auctioneer.Application.Common.Helpers;
 using Auctioneer.Application.Common.Interfaces;
 using Auctioneer.Application.Entities;
 using FluentResults;
@@ -49,7 +50,7 @@ public class DeleteMemberCommand : IRequest<Result>
     public Guid MemberId { get; init; }
 }
 
-internal sealed class DeleteMemberCommandHandler : IRequestHandler<DeleteMemberCommand, Result>
+public class DeleteMemberCommandHandler : IRequestHandler<DeleteMemberCommand, Result>
 {
     private readonly IRepository<Member> _memberRepository;
     private readonly IRepository<DomainEvent> _eventRepository;
@@ -67,7 +68,7 @@ internal sealed class DeleteMemberCommandHandler : IRequestHandler<DeleteMemberC
     {
         try
         {
-            var domainEvent = new MemberDeletedEvent(request.MemberId, "member.deleted");
+            var domainEvent = new MemberDeletedEvent(request.MemberId, EventList.Member.MemberDeletedEvent);
 
             await _memberRepository.DeleteAsync(request.MemberId);
             await _eventRepository.CreateAsync(domainEvent);

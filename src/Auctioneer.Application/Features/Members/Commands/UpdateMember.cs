@@ -1,5 +1,6 @@
 using System.Reflection;
 using Auctioneer.Application.Common;
+using Auctioneer.Application.Common.Helpers;
 using Auctioneer.Application.Common.Interfaces;
 using Auctioneer.Application.Entities;
 using Auctioneer.Application.Features.Members.Contracts;
@@ -75,7 +76,7 @@ public class UpdateMemberCommand : IRequest<Result>
     public string PhoneNumber { get; init; }
 }
 
-internal sealed class UpdateMemberCommandHandler : IRequestHandler<UpdateMemberCommand, Result>
+public class UpdateMemberCommandHandler : IRequestHandler<UpdateMemberCommand, Result>
 {
     private readonly IRepository<Member> _repository;
     private readonly IRepository<DomainEvent> _eventRepository;
@@ -98,7 +99,7 @@ internal sealed class UpdateMemberCommandHandler : IRequestHandler<UpdateMemberC
             if (member is null)
                 return Result.Fail(new Error("No member found"));
 
-            var domainEvent = new MemberUpdatedEvent(member, "member.updated");
+            var domainEvent = new MemberUpdatedEvent(member, EventList.Member.MemberUpdatedEvent);
 
             await _eventRepository.CreateAsync(domainEvent);
             await _repository.UpdateAsync(request.Id, member);
@@ -120,6 +121,7 @@ public class UpdateMemberCommandValidator : AbstractValidator<UpdateMemberComman
     {
         //Todo: fixa all validering
         RuleFor(v => v.Id)
+            .NotEmpty()
             .NotNull();
 
         RuleFor(v => v.FirstName)

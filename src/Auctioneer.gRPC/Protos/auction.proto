@@ -1,0 +1,60 @@
+syntax = "proto3";
+
+option csharp_namespace = "Auctioneer.gRPC";
+
+import "google/protobuf/timestamp.proto";
+
+package Auction;
+
+service Auction {
+    rpc GetAuctions (GetAuctionsRequest) returns (stream AuctionModel);
+    rpc GetAuction (GetAuctionRequest) returns (AuctionModel);
+    rpc CreateAuction (AuctionModel) returns (CreateAuctionResponse);
+    rpc UpdateAuction (AuctionModel) returns (UpdateAuctionResponse);
+    rpc DeleteAuction (DeleteAuctionRequest) returns (DeleteAuctionResponse);
+    rpc PlaceBid (BidModel) returns (PlaceBidResponse);
+}
+
+message GetAuctionsRequest {
+}
+message GetAuctionRequest {
+    string id = 1;
+}
+message CreateAuctionResponse {
+    string id = 1;
+    google.protobuf.Timestamp created_at = 2;
+}
+message UpdateAuctionResponse {
+    string id = 1;
+    google.protobuf.Timestamp updated_at = 2;
+}
+message DeleteAuctionRequest {
+    string id = 1;
+}
+message DeleteAuctionResponse {
+    string message = 1;
+}
+message PlaceBidResponse {
+    string message = 1;
+}
+
+
+message AuctionModel {
+    string id = 1;
+    string member_id = 2;
+    string title = 3;
+    string description = 4;
+    google.protobuf.Timestamp start_time = 5;
+    google.protobuf.Timestamp end_time = 6;
+    double starting_price = 7;
+    double current_price = 8;
+    string img_route = 9;
+    repeated BidModel bids = 11;
+}
+
+message BidModel {
+    string auction_id = 1;
+    string member_id = 2;
+    double bid_price = 3;
+    google.protobuf.Timestamp time_stamp = 4;
+}

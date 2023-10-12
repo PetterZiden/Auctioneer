@@ -1,5 +1,6 @@
 using System.Reflection;
 using Auctioneer.Application.Common;
+using Auctioneer.Application.Common.Helpers;
 using Auctioneer.Application.Common.Interfaces;
 using Auctioneer.Application.Entities;
 using Auctioneer.Application.Features.Auctions.Contracts;
@@ -67,7 +68,7 @@ public class UpdateAuctionCommand : IRequest<Result>
     public string ImgRoute { get; init; }
 }
 
-internal sealed class UpdateAuctionCommandHandler : IRequestHandler<UpdateAuctionCommand, Result>
+public class UpdateAuctionCommandHandler : IRequestHandler<UpdateAuctionCommand, Result>
 {
     private readonly IRepository<Auction> _auctionRepository;
     private readonly IRepository<DomainEvent> _eventRepository;
@@ -90,7 +91,7 @@ internal sealed class UpdateAuctionCommandHandler : IRequestHandler<UpdateAuctio
             if (auction is null)
                 return Result.Fail(new Error("No auction found"));
 
-            var domainEvent = new AuctionUpdatedEvent(auction, "auction.updated");
+            var domainEvent = new AuctionUpdatedEvent(auction, EventList.Auction.AuctionUpdatedEvent);
 
             await _eventRepository.CreateAsync(domainEvent);
             await _auctionRepository.UpdateAsync(request.Id, auction);
@@ -112,6 +113,7 @@ public class UpdateAuctionCommandValidator : AbstractValidator<UpdateAuctionComm
     {
         //Todo: fixa all validering
         RuleFor(v => v.Id)
+            .NotEmpty()
             .NotNull();
 
         RuleFor(v => v.Title)

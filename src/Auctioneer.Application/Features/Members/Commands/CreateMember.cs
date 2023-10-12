@@ -1,6 +1,7 @@
 using System.Reflection;
 using System.Text.Json;
 using Auctioneer.Application.Common;
+using Auctioneer.Application.Common.Helpers;
 using Auctioneer.Application.Common.Interfaces;
 using Auctioneer.Application.Entities;
 using Auctioneer.Application.Features.Members.Contracts;
@@ -74,14 +75,14 @@ public class CreateMemberCommand : IRequest<Result<Guid>>
     public string PhoneNumber { get; init; }
 }
 
-internal sealed class CreateMemberCommandHandler : IRequestHandler<CreateMemberCommand, Result<Guid>>
+public class CreateMemberCommandHandler : IRequestHandler<CreateMemberCommand, Result<Guid>>
 {
     private readonly IRepository<Member> _memberRepository;
     private readonly IRepository<DomainEvent> _eventRepository;
     private readonly IUnitOfWork _unitOfWork;
 
-    public CreateMemberCommandHandler(IRepository<Member> memberRepository, IUnitOfWork unitOfWork,
-        IRepository<DomainEvent> eventRepository)
+    public CreateMemberCommandHandler(IRepository<Member> memberRepository, IRepository<DomainEvent> eventRepository,
+        IUnitOfWork unitOfWork)
     {
         _memberRepository = memberRepository;
         _eventRepository = eventRepository;
@@ -102,7 +103,7 @@ internal sealed class CreateMemberCommandHandler : IRequestHandler<CreateMemberC
                 request.City
             );
 
-            var domainEvent = new MemberCreatedEvent(member, "member.created");
+            var domainEvent = new MemberCreatedEvent(member, EventList.Member.MemberCreatedEvent);
 
             await _memberRepository.CreateAsync(member);
             await _eventRepository.CreateAsync(domainEvent);

@@ -1,5 +1,6 @@
 using System.Reflection;
 using Auctioneer.Application.Common;
+using Auctioneer.Application.Common.Helpers;
 using Auctioneer.Application.Common.Interfaces;
 using Auctioneer.Application.Common.Models;
 using Auctioneer.Application.Common.Validators;
@@ -63,7 +64,7 @@ public class PlaceBidCommand : IRequest<Result>
     public Bid Bid { get; init; }
 }
 
-internal sealed class PlaceBidCommandHandler : IRequestHandler<PlaceBidCommand, Result>
+public class PlaceBidCommandHandler : IRequestHandler<PlaceBidCommand, Result>
 {
     private readonly IRepository<Auction> _auctionRepository;
     private readonly IRepository<Member> _memberRepository;
@@ -88,19 +89,17 @@ internal sealed class PlaceBidCommandHandler : IRequestHandler<PlaceBidCommand, 
             if (auction is null)
                 return Result.Fail(new Error("No auction found"));
 
-            var bidResult = auction.PlaceBid(request.Bid.MemberId, request.Bid.BidPrice);
-
-            if (!bidResult.IsSuccess)
-                return Result.Fail(bidResult.Errors);
-
-            await _auctionRepository.UpdateAsync(auction.Id, auction);
-
             var bidder = await _memberRepository.GetAsync(request.Bid.MemberId);
 
             var auctionOwner = await _memberRepository.GetAsync(auction.MemberId);
 
             if (bidder is null || auctionOwner is null)
                 return Result.Fail(new Error("No member found"));
+
+            var bidResult = auction.PlaceBid(request.Bid.MemberId, request.Bid.BidPrice);
+
+            if (!bidResult.IsSuccess)
+                return Result.Fail(bidResult.Errors);
 
             var memberResult = bidder.AddBid(bidResult.Value.AuctionId, bidResult.Value.BidPrice,
                 bidResult.Value.TimeStamp.Value);
@@ -120,7 +119,7 @@ internal sealed class PlaceBidCommandHandler : IRequestHandler<PlaceBidCommand, 
                 TimeStamp = bidResult.Value.TimeStamp.Value,
                 AuctionUrl = $"https://localhost:7298/api/auction/{auction.Id}"
             };
-            var domainEvent = new AuctionPlaceBidEvent(placeBidDto, "auction.place.bid");
+            var domainEvent = new AuctionPlaceBidEvent(placeBidDto, EventList.Auction.AuctionPlaceBidEvent);
 
             await _auctionRepository.UpdateAsync(auction.Id, auction);
             await _memberRepository.UpdateAsync(bidder.Id, bidder);

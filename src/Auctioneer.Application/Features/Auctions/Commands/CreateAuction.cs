@@ -1,5 +1,6 @@
 using System.Reflection;
 using Auctioneer.Application.Common;
+using Auctioneer.Application.Common.Helpers;
 using Auctioneer.Application.Common.Interfaces;
 using Auctioneer.Application.Entities;
 using Auctioneer.Application.Features.Auctions.Contracts;
@@ -73,7 +74,7 @@ public class CreateAuctionCommand : IRequest<Result<Guid>>
     public string ImgRoute { get; init; }
 }
 
-internal sealed class CreateAuctionCommandHandler : IRequestHandler<CreateAuctionCommand, Result<Guid>>
+public class CreateAuctionCommandHandler : IRequestHandler<CreateAuctionCommand, Result<Guid>>
 {
     private readonly IRepository<Auction> _auctionRepository;
     private readonly IRepository<Member> _memberRepository;
@@ -108,7 +109,7 @@ internal sealed class CreateAuctionCommandHandler : IRequestHandler<CreateAuctio
                 request.ImgRoute
             );
 
-            var domainEvent = new AuctionCreatedEvent(auction, "auction.created");
+            var domainEvent = new AuctionCreatedEvent(auction, EventList.Auction.AuctionCreatedEvent);
 
             await _eventRepository.CreateAsync(domainEvent);
             await _auctionRepository.CreateAsync(auction);
