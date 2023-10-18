@@ -85,6 +85,7 @@ public class Auction : AuditableEntity, IAggregateRoot
         _bids.Add(bid);
 
         CurrentPrice = bidPrice;
+        LastModified = DateTimeOffset.Now;
 
         return Result.Ok(bid);
     }
@@ -98,6 +99,7 @@ public class Auction : AuditableEntity, IAggregateRoot
             return Result.Fail(new BadRequestError("Description can not be the same as current description"));
 
         Description = description;
+        LastModified = DateTimeOffset.Now;
 
         return Result.Ok();
     }
@@ -111,6 +113,7 @@ public class Auction : AuditableEntity, IAggregateRoot
             return Result.Fail(new BadRequestError("Title can not be the same as current title"));
 
         Title = title;
+        LastModified = DateTimeOffset.Now;
 
         return Result.Ok();
     }
@@ -124,6 +127,7 @@ public class Auction : AuditableEntity, IAggregateRoot
             return Result.Fail(new BadRequestError("Image route can not be the same as current image route"));
 
         ImgRoute = imgRoute;
+        LastModified = DateTimeOffset.Now;
 
         return Result.Ok();
     }

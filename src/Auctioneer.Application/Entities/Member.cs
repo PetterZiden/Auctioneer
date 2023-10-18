@@ -91,6 +91,7 @@ public class Member : AuditableEntity, IAggregateRoot
             return Result.Fail(new BadRequestError("Email can not be the same as current email"));
 
         Email = email;
+        LastModified = DateTimeOffset.Now;
         return Result.Ok();
     }
 
@@ -103,6 +104,7 @@ public class Member : AuditableEntity, IAggregateRoot
             return Result.Fail(new BadRequestError("Phone number can not be the same as current phone number"));
 
         PhoneNumber = phoneNumber;
+        LastModified = DateTimeOffset.Now;
         return Result.Ok();
     }
 
@@ -115,6 +117,7 @@ public class Member : AuditableEntity, IAggregateRoot
             return Result.Fail(new BadRequestError("First name can not be the same as current first name"));
 
         FirstName = firstName;
+        LastModified = DateTimeOffset.Now;
         return Result.Ok();
     }
 
@@ -127,12 +130,14 @@ public class Member : AuditableEntity, IAggregateRoot
             return Result.Fail(new BadRequestError("Last name can not be the same as current last name"));
 
         LastName = lastName;
+        LastModified = DateTimeOffset.Now;
         return Result.Ok();
     }
 
     public Result ChangeAddress(Address address)
     {
         Address = address ?? throw new ArgumentNullException(nameof(address));
+        LastModified = DateTimeOffset.Now;
         return Result.Ok();
     }
 
@@ -150,6 +155,7 @@ public class Member : AuditableEntity, IAggregateRoot
         };
 
         _bids.Add(bid);
+        LastModified = DateTimeOffset.Now;
 
         return Result.Ok();
     }
@@ -166,6 +172,7 @@ public class Member : AuditableEntity, IAggregateRoot
         };
 
         _ratings.Add(rating);
+        LastModified = DateTimeOffset.Now;
 
         return Result.Ok();
     }
