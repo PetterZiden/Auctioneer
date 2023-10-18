@@ -4,6 +4,7 @@ using Auctioneer.Application.Common.Extensions;
 using Auctioneer.Application.Common.Interfaces;
 using Auctioneer.Application.Entities;
 using Auctioneer.Application.Features.Members.Dto;
+using Auctioneer.Application.Features.Members.Errors;
 using FluentResults;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -67,7 +68,7 @@ public class GetMembersQueryHandler : IRequestHandler<GetMembersQuery, Result<Li
             var members = await _repository.GetAsync();
 
             if (!members?.Any() == true)
-                return Result.Fail(new Error("No members found"));
+                return Result.Fail(new MemberNotFoundError());
 
             return Result.Ok(members.ToDtos());
         }

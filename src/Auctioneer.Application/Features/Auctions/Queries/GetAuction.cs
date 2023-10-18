@@ -4,6 +4,7 @@ using Auctioneer.Application.Common.Extensions;
 using Auctioneer.Application.Common.Interfaces;
 using Auctioneer.Application.Entities;
 using Auctioneer.Application.Features.Auctions.Dto;
+using Auctioneer.Application.Features.Auctions.Errors;
 using FluentResults;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -49,7 +50,7 @@ public class GetAuctionController : ApiControllerBase
 
 public class GetAuctionQuery : IRequest<Result<AuctionDto>>
 {
-    public Guid Id { get; set; }
+    public Guid Id { get; init; }
 }
 
 public class GetAuctionQueryHandler : IRequestHandler<GetAuctionQuery, Result<AuctionDto>>
@@ -68,7 +69,7 @@ public class GetAuctionQueryHandler : IRequestHandler<GetAuctionQuery, Result<Au
             var auction = await _repository.GetAsync(request.Id);
 
             if (auction is null)
-                return Result.Fail(new Error("No auction found"));
+                return Result.Fail(new AuctionNotFoundError());
 
             return Result.Ok(auction.ToDto());
         }

@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using Auctioneer.Application.Common;
+using Auctioneer.Application.Common.Errors;
 using Auctioneer.Application.Common.Interfaces;
 using Auctioneer.Application.Common.Models;
 using FluentResults;
@@ -87,16 +88,58 @@ public class Member : AuditableEntity, IAggregateRoot
             throw new ArgumentNullException(nameof(email));
 
         if (Email.Equals(email))
-            return Result.Fail(new Error("Email can not be the same as old email"));
+            return Result.Fail(new BadRequestError("Email can not be the same as current email"));
 
         Email = email;
+        return Result.Ok();
+    }
+
+    public Result ChangePhoneNumber(string phoneNumber)
+    {
+        if (string.IsNullOrEmpty(phoneNumber))
+            throw new ArgumentNullException(nameof(phoneNumber));
+
+        if (PhoneNumber.Equals(phoneNumber))
+            return Result.Fail(new BadRequestError("Phone number can not be the same as current phone number"));
+
+        PhoneNumber = phoneNumber;
+        return Result.Ok();
+    }
+
+    public Result ChangeFirstName(string firstName)
+    {
+        if (string.IsNullOrEmpty(firstName))
+            throw new ArgumentNullException(nameof(firstName));
+
+        if (FirstName.Equals(firstName))
+            return Result.Fail(new BadRequestError("First name can not be the same as current first name"));
+
+        FirstName = firstName;
+        return Result.Ok();
+    }
+
+    public Result ChangeLastName(string lastName)
+    {
+        if (string.IsNullOrEmpty(lastName))
+            throw new ArgumentNullException(nameof(lastName));
+
+        if (LastName.Equals(lastName))
+            return Result.Fail(new BadRequestError("Last name can not be the same as current last name"));
+
+        LastName = lastName;
+        return Result.Ok();
+    }
+
+    public Result ChangeAddress(Address address)
+    {
+        Address = address ?? throw new ArgumentNullException(nameof(address));
         return Result.Ok();
     }
 
     public Result AddBid(Guid auctionId, decimal bidPrice, DateTimeOffset timeStamp)
     {
         if (bidPrice <= 0)
-            return Result.Fail(new Error("Bid must be greater than 0"));
+            return Result.Fail(new BadRequestError("Bid must be greater than 0"));
 
         var bid = new Bid
         {
@@ -114,7 +157,7 @@ public class Member : AuditableEntity, IAggregateRoot
     public Result Rate(Guid memberId, int stars)
     {
         if (stars is <= 0 or >= 6)
-            return Result.Fail(new Error("Rating must be between 1 and 5"));
+            return Result.Fail(new BadRequestError("Rating must be between 1 and 5"));
 
         var rating = new Rating
         {

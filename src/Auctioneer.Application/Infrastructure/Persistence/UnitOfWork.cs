@@ -1,21 +1,21 @@
-using System.Reflection;
 using Auctioneer.Application.Common.Interfaces;
-using Auctioneer.Application.Features.Members;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace Auctioneer.Application.Infrastructure.Persistence;
 
 public class UnitOfWork : IUnitOfWork
 {
+    private readonly ILogger<UnitOfWork> _logger;
     private IClientSessionHandle session { get; }
     public IDisposable Session => this.session;
 
     private List<Action> _operations { get; set; }
 
-    public UnitOfWork(IOptions<AuctioneerDatabaseSettings> dbSettings)
+    public UnitOfWork(IOptions<AuctioneerDatabaseSettings> dbSettings, ILogger<UnitOfWork> logger)
     {
+        _logger = logger;
         var mongoClient = new MongoClient(dbSettings.Value.ConnectionString);
         session = mongoClient.StartSession();
 
@@ -34,12 +34,19 @@ public class UnitOfWork : IUnitOfWork
 
     public async Task SaveAsync()
     {
-        session.StartTransaction();
+        try
+        {
+            session.StartTransaction();
 
-        _operations.ForEach(o => { o.Invoke(); });
+            _operations.ForEach(o => { o.Invoke(); });
 
-        await session.CommitTransactionAsync();
+            await session.CommitTransactionAsync();
 
-        CleanOperations();
+            CleanOperations();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+        }
     }
 }

@@ -6,6 +6,7 @@ using Auctioneer.Application.Common.Interfaces;
 using Auctioneer.Application.Common.Models;
 using Auctioneer.Application.Entities;
 using Auctioneer.Application.Features.Members.Dto;
+using Auctioneer.Application.Features.Members.Errors;
 using Auctioneer.Application.Infrastructure.Messaging.MassTransit;
 using Auctioneer.Application.Infrastructure.Messaging.RabbitMq;
 using Auctioneer.MessagingContracts.Email;
@@ -32,20 +33,25 @@ public class RateMemberController : ApiControllerBase
     [ProducesResponseType(400)]
     [ProducesResponseType(404)]
     [ProducesResponseType(500)]
-    public async Task<ActionResult> Rate(Rating rating)
+    public async Task<ActionResult> Rate(Rating request, CancellationToken cancellationToken)
     {
         try
         {
-            var command = new RateMemberCommand { Rating = rating };
+            var command = new RateMemberCommand
+            {
+                RatingForMemberId = request.RatingForMemberId,
+                RatingFromMemberId = request.RatingFromMemberId,
+                Stars = request.Stars
+            };
 
-            var validationResult = await new RateMemberCommandValidator().ValidateAsync(command);
+            var validationResult = await new RateMemberCommandValidator().ValidateAsync(command, cancellationToken);
             if (!validationResult.IsValid)
             {
                 var errorMessages = validationResult.Errors.ConvertAll(x => x.ErrorMessage);
                 return BadRequest(errorMessages);
             }
 
-            var result = await Mediator.Send(command);
+            var result = await Mediator.Send(command, cancellationToken);
 
             if (result.IsSuccess)
                 return Ok();
@@ -62,7 +68,9 @@ public class RateMemberController : ApiControllerBase
 
 public class RateMemberCommand : IRequest<Result>
 {
-    public Rating Rating { get; init; }
+    public Guid RatingForMemberId { get; init; }
+    public Guid RatingFromMemberId { get; init; }
+    public int Stars { get; init; }
 }
 
 public class RateMemberCommandHandler : IRequestHandler<RateMemberCommand, Result>
@@ -83,13 +91,13 @@ public class RateMemberCommandHandler : IRequestHandler<RateMemberCommand, Resul
     {
         try
         {
-            var ratedMember = await _memberRepository.GetAsync(request.Rating.RatingForMemberId);
-            var ratedByMember = await _memberRepository.GetAsync(request.Rating.RatingFromMemberId);
+            var ratedMember = await _memberRepository.GetAsync(request.RatingForMemberId);
+            var ratedByMember = await _memberRepository.GetAsync(request.RatingFromMemberId);
 
             if (ratedMember is null || ratedByMember is null)
-                return Result.Fail(new Error("No member found"));
+                return Result.Fail(new MemberNotFoundError());
 
-            var result = ratedMember.Rate(request.Rating.RatingFromMemberId, request.Rating.Stars);
+            var result = ratedMember.Rate(request.RatingFromMemberId, request.Stars);
 
             if (!result.IsSuccess)
                 return result;
@@ -100,12 +108,12 @@ public class RateMemberCommandHandler : IRequestHandler<RateMemberCommand, Resul
                 RatedMemberId = ratedMember.Id,
                 RatedEmail = ratedMember.Email,
                 RatedByName = ratedByMember.FullName,
-                Stars = request.Rating.Stars
+                Stars = request.Stars
             };
             var domainEvent = new RateMemberEvent(rateMemberDto, EventList.Member.RateMemberEvent);
 
-            await _memberRepository.UpdateAsync(ratedMember.Id, ratedMember);
-            await _eventRepository.CreateAsync(domainEvent);
+            await _memberRepository.UpdateAsync(ratedMember.Id, ratedMember, cancellationToken);
+            await _eventRepository.CreateAsync(domainEvent, cancellationToken);
             await _unitOfWork.SaveAsync();
 
             return Result.Ok();
@@ -122,15 +130,15 @@ public class RateMemberCommandValidator : AbstractValidator<RateMemberCommand>
 {
     public RateMemberCommandValidator()
     {
-        RuleFor(v => v.Rating.RatingForMemberId)
+        RuleFor(v => v.RatingForMemberId)
             .NotEmpty()
             .NotNull();
 
-        RuleFor(v => v.Rating.RatingFromMemberId)
+        RuleFor(v => v.RatingFromMemberId)
             .NotEmpty()
             .NotNull();
 
-        RuleFor(v => v.Rating.Stars)
+        RuleFor(v => v.Stars)
             .GreaterThan(0)
             .LessThan(6);
     }

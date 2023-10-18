@@ -10,7 +10,7 @@ namespace Auctioneer.GraphQL.Auctions;
 public class AuctionMutations
 {
     public async Task<CreateAuctionPayload> CreateAuction(CreateAuctionInput input,
-        [Service] IRepository<Auction> auctionRepository)
+        [Service] IRepository<Auction> auctionRepository, CancellationToken cancellationToken)
     {
         try
         {
@@ -24,7 +24,7 @@ public class AuctionMutations
                 input.ImgRoute
             );
 
-            await auctionRepository.CreateAsync(auction);
+            await auctionRepository.CreateAsync(auction, cancellationToken);
 
             return new CreateAuctionPayload(auction.Id, auction.Created);
         }
@@ -39,7 +39,7 @@ public class AuctionMutations
     }
 
     public async Task<UpdateAuctionPayload> UpdateAuction(UpdateAuctionInput input,
-        [Service] IRepository<Auction> auctionRepository)
+        [Service] IRepository<Auction> auctionRepository, CancellationToken cancellationToken)
     {
         try
         {
@@ -54,7 +54,7 @@ public class AuctionMutations
                         .Build());
             }
 
-            await auctionRepository.UpdateAsync(input.AuctionId, auction);
+            await auctionRepository.UpdateAsync(input.AuctionId, auction, cancellationToken);
 
             return new UpdateAuctionPayload(auction.Id, auction.LastModified.Value);
         }
@@ -69,11 +69,11 @@ public class AuctionMutations
     }
 
     public async Task<DeleteAuctionPayload> DeleteAuction(DeleteAuctionInput input,
-        [Service] IRepository<Auction> auctionRepository)
+        [Service] IRepository<Auction> auctionRepository, CancellationToken cancellationToken)
     {
         try
         {
-            await auctionRepository.DeleteAsync(input.AuctionId);
+            await auctionRepository.DeleteAsync(input.AuctionId, cancellationToken);
 
             return new DeleteAuctionPayload(input.AuctionId, "Auction deleted successfully");
         }
@@ -88,7 +88,7 @@ public class AuctionMutations
     }
 
     public async Task<PlaceBidPayload> PlaceBid(PlaceBidInput input, [Service] IRepository<Auction> auctionRepository,
-        [Service] IRepository<Member> memberRepository)
+        [Service] IRepository<Member> memberRepository, CancellationToken cancellationToken)
     {
         try
         {
@@ -115,7 +115,7 @@ public class AuctionMutations
             }
 
 
-            await auctionRepository.UpdateAsync(auction.Id, auction);
+            await auctionRepository.UpdateAsync(auction.Id, auction, cancellationToken);
 
             var bidder = await memberRepository.GetAsync(input.MemberId);
 
@@ -142,7 +142,7 @@ public class AuctionMutations
                         .Build());
             }
 
-            await memberRepository.UpdateAsync(bidder.Id, bidder);
+            await memberRepository.UpdateAsync(bidder.Id, bidder, cancellationToken);
 
             return new PlaceBidPayload($"Placed bid successfully on auction with id: {auction.Id}");
         }

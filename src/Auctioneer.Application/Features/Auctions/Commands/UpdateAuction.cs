@@ -4,6 +4,7 @@ using Auctioneer.Application.Common.Helpers;
 using Auctioneer.Application.Common.Interfaces;
 using Auctioneer.Application.Entities;
 using Auctioneer.Application.Features.Auctions.Contracts;
+using Auctioneer.Application.Features.Auctions.Errors;
 using FluentResults;
 using FluentValidation;
 using MediatR;
@@ -26,7 +27,7 @@ public class UpdateAuctionController : ApiControllerBase
     [ProducesResponseType(400)]
     [ProducesResponseType(404)]
     [ProducesResponseType(500)]
-    public async Task<ActionResult<Guid>> Update(UpdateAuctionRequest request)
+    public async Task<ActionResult> Update(UpdateAuctionRequest request, CancellationToken cancellationToken)
     {
         try
         {
@@ -35,17 +36,17 @@ public class UpdateAuctionController : ApiControllerBase
                 Id = request.AuctionId,
                 Title = request.Title,
                 Description = request.Description,
-                ImgRoute = null
+                ImgRoute = request.ImgRoute
             };
 
-            var validationResult = await new UpdateAuctionCommandValidator().ValidateAsync(command);
+            var validationResult = await new UpdateAuctionCommandValidator().ValidateAsync(command, cancellationToken);
             if (!validationResult.IsValid)
             {
                 var errorMessages = validationResult.Errors.ConvertAll(x => x.ErrorMessage);
                 return BadRequest(errorMessages);
             }
 
-            var result = await Mediator.Send(command);
+            var result = await Mediator.Send(command, cancellationToken: cancellationToken);
 
             if (result.IsSuccess)
                 return Ok();
@@ -63,9 +64,11 @@ public class UpdateAuctionController : ApiControllerBase
 public class UpdateAuctionCommand : IRequest<Result>
 {
     public Guid Id { get; init; }
-    public string Title { get; init; }
-    public string Description { get; init; }
-    public string ImgRoute { get; init; }
+#nullable enable
+    public string? Title { get; init; }
+    public string? Description { get; init; }
+    public string? ImgRoute { get; init; }
+#nullable disable
 }
 
 public class UpdateAuctionCommandHandler : IRequestHandler<UpdateAuctionCommand, Result>
@@ -89,12 +92,34 @@ public class UpdateAuctionCommandHandler : IRequestHandler<UpdateAuctionCommand,
             var auction = await _auctionRepository.GetAsync(request.Id);
 
             if (auction is null)
-                return Result.Fail(new Error("No auction found"));
+                return Result.Fail(new AuctionNotFoundError());
+
+
+            if (!string.IsNullOrEmpty(request.Title))
+            {
+                var result = auction.ChangeTitle(request.Title);
+                if (!result.IsSuccess)
+                    return result;
+            }
+
+            if (!string.IsNullOrEmpty(request.Description))
+            {
+                var result = auction.ChangeDescription(request.Description);
+                if (!result.IsSuccess)
+                    return result;
+            }
+
+            if (!string.IsNullOrEmpty(request.ImgRoute))
+            {
+                var result = auction.ChangeImageRoute(request.ImgRoute);
+                if (!result.IsSuccess)
+                    return result;
+            }
 
             var domainEvent = new AuctionUpdatedEvent(auction, EventList.Auction.AuctionUpdatedEvent);
 
-            await _eventRepository.CreateAsync(domainEvent);
-            await _auctionRepository.UpdateAsync(request.Id, auction);
+            await _eventRepository.CreateAsync(domainEvent, cancellationToken);
+            await _auctionRepository.UpdateAsync(request.Id, auction, cancellationToken);
             await _unitOfWork.SaveAsync();
 
             return Result.Ok();

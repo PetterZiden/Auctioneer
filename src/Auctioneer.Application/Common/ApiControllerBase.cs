@@ -22,10 +22,10 @@ public abstract class ApiControllerBase : ControllerBase
     protected ObjectResult ReturnError(Error error)
     {
         var errorMessage = error.Message;
-        if (error.Metadata.TryGetValue("ErrorCode", out var errorCode))
+        if (error.Metadata.TryGetValue("HttpStatusCode", out var httpStatusCode))
         {
             _logger.LogError(errorMessage);
-            return errorCode.ToString() switch
+            return httpStatusCode.ToString() switch
             {
                 "400" => BadRequest(errorMessage),
                 "404" => NotFound(errorMessage),
@@ -33,7 +33,7 @@ public abstract class ApiControllerBase : ControllerBase
             };
         }
 
-        _logger.LogError("Could not find ErrorCode in Error-Metadata");
+        _logger.LogError("Could not find HttpStatusCode in Error-Metadata");
         return StatusCode(500, errorMessage);
     }
 }

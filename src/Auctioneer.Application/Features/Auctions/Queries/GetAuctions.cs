@@ -4,6 +4,7 @@ using Auctioneer.Application.Common.Extensions;
 using Auctioneer.Application.Common.Interfaces;
 using Auctioneer.Application.Entities;
 using Auctioneer.Application.Features.Auctions.Dto;
+using Auctioneer.Application.Features.Auctions.Errors;
 using FluentResults;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -67,7 +68,7 @@ public class GetAuctionsQueryHandler : IRequestHandler<GetAuctionsQuery, Result<
             var auctions = await _repository.GetAsync();
 
             if (!auctions?.Any() == true)
-                return Result.Fail(new Error("No auctions found"));
+                return Result.Fail(new AuctionNotFoundError());
 
             return Result.Ok(auctions.ToDtos());
         }

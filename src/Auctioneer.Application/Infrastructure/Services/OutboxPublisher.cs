@@ -34,7 +34,7 @@ public class OutboxPublisher : BackgroundService
                     foreach (var @event in domainEvents)
                     {
                         await _eventService.Publish(@event);
-                        await _eventRepository.DeleteAsync(@event.DomainEventId);
+                        await _eventRepository.DeleteAsync(@event.DomainEventId, stoppingToken);
                     }
 
                     await _unitOfWork.SaveAsync();

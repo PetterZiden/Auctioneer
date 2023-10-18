@@ -3,6 +3,8 @@ using Auctioneer.Application.Common;
 using Auctioneer.Application.Common.Helpers;
 using Auctioneer.Application.Common.Interfaces;
 using Auctioneer.Application.Entities;
+using Auctioneer.Application.Features.Members.Contracts;
+using Auctioneer.Application.Features.Members.Errors;
 using FluentResults;
 using FluentValidation;
 using MediatR;
@@ -25,20 +27,21 @@ public class ChangeEmailMemberController : ApiControllerBase
     [ProducesResponseType(400)]
     [ProducesResponseType(404)]
     [ProducesResponseType(500)]
-    public async Task<ActionResult<Guid>> ChangeEmail(Guid memberId, string email)
+    public async Task<ActionResult> ChangeEmail(ChangeMemberEmailRequest request, CancellationToken cancellationToken)
     {
         try
         {
-            var command = new ChangeEmailMemberCommand { MemberId = memberId, Email = email };
+            var command = new ChangeEmailMemberCommand { MemberId = request.MemberId, Email = request.Email };
 
-            var validationResult = await new ChangeEmailMemberCommandValidator().ValidateAsync(command);
+            var validationResult =
+                await new ChangeEmailMemberCommandValidator().ValidateAsync(command, cancellationToken);
             if (!validationResult.IsValid)
             {
                 var errorMessages = validationResult.Errors.ConvertAll(x => x.ErrorMessage);
                 return BadRequest(errorMessages);
             }
 
-            var result = await Mediator.Send(command);
+            var result = await Mediator.Send(command, cancellationToken);
 
             if (result.IsSuccess)
                 return Ok();
@@ -80,7 +83,7 @@ public class ChangeEmailMemberCommandHandler : IRequestHandler<ChangeEmailMember
             var member = await _memberRepository.GetAsync(request.MemberId);
 
             if (member is null)
-                return Result.Fail(new Error("No member found"));
+                return Result.Fail(new MemberNotFoundError());
 
             var result = member.ChangeEmail(request.Email);
 
@@ -90,8 +93,8 @@ public class ChangeEmailMemberCommandHandler : IRequestHandler<ChangeEmailMember
             var domainEvent =
                 new MemberChangedEmailEvent(member.Id, request.Email, EventList.Member.MemberChangedEmailEvent);
 
-            await _memberRepository.UpdateAsync(member.Id, member);
-            await _eventRepository.CreateAsync(domainEvent);
+            await _memberRepository.UpdateAsync(member.Id, member, cancellationToken);
+            await _eventRepository.CreateAsync(domainEvent, cancellationToken);
             await _unitOfWork.SaveAsync();
 
             return Result.Ok();

@@ -2,8 +2,10 @@ using System.Reflection;
 using Auctioneer.Application.Common;
 using Auctioneer.Application.Common.Helpers;
 using Auctioneer.Application.Common.Interfaces;
+using Auctioneer.Application.Common.Models;
 using Auctioneer.Application.Entities;
 using Auctioneer.Application.Features.Members.Contracts;
+using Auctioneer.Application.Features.Members.Errors;
 using FluentResults;
 using FluentValidation;
 using MediatR;
@@ -26,7 +28,7 @@ public class UpdateMemberController : ApiControllerBase
     [ProducesResponseType(400)]
     [ProducesResponseType(404)]
     [ProducesResponseType(500)]
-    public async Task<ActionResult<Guid>> Update(UpdateMemberRequest request)
+    public async Task<ActionResult> Update(UpdateMemberRequest request, CancellationToken cancellationToken)
     {
         try
         {
@@ -38,18 +40,17 @@ public class UpdateMemberController : ApiControllerBase
                 Street = request.Street,
                 ZipCode = request.ZipCode,
                 City = request.City,
-                Email = request.Email,
                 PhoneNumber = request.PhoneNumber
             };
 
-            var validationResult = await new UpdateMemberCommandValidator().ValidateAsync(command);
+            var validationResult = await new UpdateMemberCommandValidator().ValidateAsync(command, cancellationToken);
             if (!validationResult.IsValid)
             {
                 var errorMessages = validationResult.Errors.ConvertAll(x => x.ErrorMessage);
                 return BadRequest(errorMessages);
             }
 
-            var result = await Mediator.Send(command);
+            var result = await Mediator.Send(command, cancellationToken);
 
             if (result.IsSuccess)
                 return Ok();
@@ -67,25 +68,26 @@ public class UpdateMemberController : ApiControllerBase
 public class UpdateMemberCommand : IRequest<Result>
 {
     public Guid Id { get; init; }
-    public string FirstName { get; init; }
-    public string LastName { get; init; }
-    public string Street { get; init; }
-    public string ZipCode { get; init; }
-    public string City { get; init; }
-    public string Email { get; init; }
-    public string PhoneNumber { get; init; }
+#nullable enable
+    public string? FirstName { get; init; }
+    public string? LastName { get; init; }
+    public string? Street { get; init; }
+    public string? ZipCode { get; init; }
+    public string? City { get; init; }
+    public string? PhoneNumber { get; init; }
+#nullable disable
 }
 
 public class UpdateMemberCommandHandler : IRequestHandler<UpdateMemberCommand, Result>
 {
-    private readonly IRepository<Member> _repository;
+    private readonly IRepository<Member> _memberRepository;
     private readonly IRepository<DomainEvent> _eventRepository;
     private readonly IUnitOfWork _unitOfWork;
 
-    public UpdateMemberCommandHandler(IRepository<Member> repository, IRepository<DomainEvent> eventRepository,
+    public UpdateMemberCommandHandler(IRepository<Member> memberRepository, IRepository<DomainEvent> eventRepository,
         IUnitOfWork unitOfWork)
     {
-        _repository = repository;
+        _memberRepository = memberRepository;
         _eventRepository = eventRepository;
         _unitOfWork = unitOfWork;
     }
@@ -94,15 +96,50 @@ public class UpdateMemberCommandHandler : IRequestHandler<UpdateMemberCommand, R
     {
         try
         {
-            var member = await _repository.GetAsync(request.Id);
+            var member = await _memberRepository.GetAsync(request.Id);
 
             if (member is null)
-                return Result.Fail(new Error("No member found"));
+                return Result.Fail(new MemberNotFoundError());
+
+            if (!string.IsNullOrEmpty(request.FirstName))
+            {
+                var result = member.ChangeFirstName(request.FirstName);
+                if (!result.IsSuccess)
+                    return result;
+            }
+
+            if (!string.IsNullOrEmpty(request.LastName))
+            {
+                var result = member.ChangeLastName(request.LastName);
+                if (!result.IsSuccess)
+                    return result;
+            }
+
+            if (!string.IsNullOrEmpty(request.PhoneNumber))
+            {
+                var result = member.ChangePhoneNumber(request.PhoneNumber);
+                if (!result.IsSuccess)
+                    return result;
+            }
+
+            if (!string.IsNullOrEmpty(request.Street) || !string.IsNullOrEmpty(request.ZipCode) ||
+                !string.IsNullOrEmpty(request.City))
+            {
+                var addressToUpdate = new Address
+                {
+                    Street = request.Street ?? member.Address.Street,
+                    ZipCode = request.ZipCode ?? member.Address.ZipCode,
+                    City = request.City ?? member.Address.City
+                };
+                var result = member.ChangeAddress(addressToUpdate);
+                if (!result.IsSuccess)
+                    return result;
+            }
 
             var domainEvent = new MemberUpdatedEvent(member, EventList.Member.MemberUpdatedEvent);
 
-            await _eventRepository.CreateAsync(domainEvent);
-            await _repository.UpdateAsync(request.Id, member);
+            await _eventRepository.CreateAsync(domainEvent, cancellationToken);
+            await _memberRepository.UpdateAsync(request.Id, member, cancellationToken);
             await _unitOfWork.SaveAsync();
 
             return Result.Ok();
@@ -123,19 +160,6 @@ public class UpdateMemberCommandValidator : AbstractValidator<UpdateMemberComman
         RuleFor(v => v.Id)
             .NotEmpty()
             .NotNull();
-
-        RuleFor(v => v.FirstName)
-            .NotNull()
-            .NotEmpty();
-
-        RuleFor(v => v.LastName)
-            .NotNull()
-            .NotEmpty();
-
-        RuleFor(v => v.Email)
-            .EmailAddress()
-            .NotNull()
-            .NotEmpty();
     }
 }
 
