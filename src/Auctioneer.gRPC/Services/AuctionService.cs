@@ -75,6 +75,7 @@ public class AuctionService : Auction.AuctionBase
     {
         try
         {
+            var cancellationToken = new CancellationToken();
             if (!Guid.TryParse(request.MemberId, out var memberId))
                 throw new RpcException(new Status(StatusCode.InvalidArgument, "MemberId was in wrong format"));
 
@@ -89,8 +90,8 @@ public class AuctionService : Auction.AuctionBase
 
             var domainEvent = new AuctionCreatedEvent(auction, EventList.Auction.AuctionCreatedEvent);
 
-            await _auctionRepository.CreateAsync(auction);
-            await _eventRepository.CreateAsync(domainEvent);
+            await _auctionRepository.CreateAsync(auction, cancellationToken);
+            await _eventRepository.CreateAsync(domainEvent, cancellationToken);
             await _unitOfWork.SaveAsync();
 
             return new CreateAuctionResponse
@@ -111,13 +112,14 @@ public class AuctionService : Auction.AuctionBase
     {
         try
         {
+            var cancellationToken = new CancellationToken();
             if (!Guid.TryParse(request.Id, out var auctionId))
                 throw new RpcException(new Status(StatusCode.InvalidArgument, "AuctionId was in wrong format"));
 
             var domainEvent = new AuctionDeletedEvent(auctionId, EventList.Auction.AuctionDeletedEvent);
 
-            await _auctionRepository.DeleteAsync(auctionId);
-            await _eventRepository.CreateAsync(domainEvent);
+            await _auctionRepository.DeleteAsync(auctionId, cancellationToken);
+            await _eventRepository.CreateAsync(domainEvent, cancellationToken);
             await _unitOfWork.SaveAsync();
 
             return new DeleteAuctionResponse
@@ -136,6 +138,7 @@ public class AuctionService : Auction.AuctionBase
     {
         try
         {
+            var cancellationToken = new CancellationToken();
             if (!Guid.TryParse(request.Id, out var auctionId))
                 throw new RpcException(new Status(StatusCode.InvalidArgument, "AuctionId was in wrong format"));
 
@@ -146,8 +149,8 @@ public class AuctionService : Auction.AuctionBase
 
             var domainEvent = new AuctionUpdatedEvent(auction, EventList.Auction.AuctionUpdatedEvent);
 
-            await _auctionRepository.UpdateAsync(auctionId, auction);
-            await _eventRepository.CreateAsync(domainEvent);
+            await _auctionRepository.UpdateAsync(auctionId, auction, cancellationToken);
+            await _eventRepository.CreateAsync(domainEvent, cancellationToken);
             await _unitOfWork.SaveAsync();
 
             return new UpdateAuctionResponse
@@ -169,6 +172,7 @@ public class AuctionService : Auction.AuctionBase
     {
         try
         {
+            var cancellationToken = new CancellationToken();
             if (!Guid.TryParse(request.AuctionId, out var auctionId))
                 throw new RpcException(new Status(StatusCode.InvalidArgument, "AuctionId was in wrong format"));
 
@@ -212,9 +216,9 @@ public class AuctionService : Auction.AuctionBase
             };
             var domainEvent = new AuctionPlaceBidEvent(placeBidDto, EventList.Auction.AuctionPlaceBidEvent);
 
-            await _auctionRepository.UpdateAsync(auction.Id, auction);
-            await _memberRepository.UpdateAsync(bidder.Id, bidder);
-            await _eventRepository.CreateAsync(domainEvent);
+            await _auctionRepository.UpdateAsync(auction.Id, auction, cancellationToken);
+            await _memberRepository.UpdateAsync(bidder.Id, bidder, cancellationToken);
+            await _eventRepository.CreateAsync(domainEvent, cancellationToken);
             await _unitOfWork.SaveAsync();
 
             return new PlaceBidResponse

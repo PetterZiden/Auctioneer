@@ -6,6 +6,8 @@ using Auctioneer.Application.Common.Models;
 using Auctioneer.Application.Common.Validators;
 using Auctioneer.Application.Entities;
 using Auctioneer.Application.Features.Auctions.Dto;
+using Auctioneer.Application.Features.Auctions.Errors;
+using Auctioneer.Application.Features.Members.Errors;
 using Auctioneer.Application.Infrastructure.Messaging.MassTransit;
 using Auctioneer.Application.Infrastructure.Messaging.RabbitMq;
 using Auctioneer.MessagingContracts.Email;
@@ -31,20 +33,25 @@ public class PlaceBidController : ApiControllerBase
     [ProducesResponseType(400)]
     [ProducesResponseType(404)]
     [ProducesResponseType(500)]
-    public async Task<ActionResult<Guid>> PlaceBid(Bid bid)
+    public async Task<ActionResult> PlaceBid(Bid request, CancellationToken cancellationToken)
     {
         try
         {
-            var command = new PlaceBidCommand { Bid = bid };
+            var command = new PlaceBidCommand
+            {
+                AuctionId = request.AuctionId,
+                MemberId = request.MemberId,
+                BidPrice = request.BidPrice
+            };
 
-            var validationResult = await new BidValidator().ValidateAsync(command.Bid);
+            var validationResult = await new BidValidator().ValidateAsync(request, cancellationToken);
             if (!validationResult.IsValid)
             {
                 var errorMessages = validationResult.Errors.ConvertAll(x => x.ErrorMessage);
                 return BadRequest(errorMessages);
             }
 
-            var result = await Mediator.Send(command);
+            var result = await Mediator.Send(command, cancellationToken);
 
             if (result.IsSuccess)
                 return Ok();
@@ -61,7 +68,9 @@ public class PlaceBidController : ApiControllerBase
 
 public class PlaceBidCommand : IRequest<Result>
 {
-    public Bid Bid { get; init; }
+    public Guid AuctionId { get; init; }
+    public Guid MemberId { get; init; }
+    public decimal BidPrice { get; init; }
 }
 
 public class PlaceBidCommandHandler : IRequestHandler<PlaceBidCommand, Result>
@@ -84,22 +93,22 @@ public class PlaceBidCommandHandler : IRequestHandler<PlaceBidCommand, Result>
     {
         try
         {
-            var auction = await _auctionRepository.GetAsync(request.Bid.AuctionId);
+            var auction = await _auctionRepository.GetAsync(request.AuctionId);
 
             if (auction is null)
-                return Result.Fail(new Error("No auction found"));
+                return Result.Fail(new AuctionNotFoundError());
 
-            var bidder = await _memberRepository.GetAsync(request.Bid.MemberId);
+            var bidder = await _memberRepository.GetAsync(request.MemberId);
 
             var auctionOwner = await _memberRepository.GetAsync(auction.MemberId);
 
             if (bidder is null || auctionOwner is null)
-                return Result.Fail(new Error("No member found"));
+                return Result.Fail(new MemberNotFoundError());
 
-            var bidResult = auction.PlaceBid(request.Bid.MemberId, request.Bid.BidPrice);
+            var bidResult = auction.PlaceBid(request.MemberId, request.BidPrice);
 
             if (!bidResult.IsSuccess)
-                return Result.Fail(bidResult.Errors);
+                return Result.Fail(bidResult.Errors.FirstOrDefault());
 
             var memberResult = bidder.AddBid(bidResult.Value.AuctionId, bidResult.Value.BidPrice,
                 bidResult.Value.TimeStamp.Value);
@@ -113,7 +122,7 @@ public class PlaceBidCommandHandler : IRequestHandler<PlaceBidCommand, Result>
                 AuctionTitle = auction.Title,
                 AuctionOwnerName = auctionOwner.FullName,
                 AuctionOwnerEmail = auctionOwner.Email,
-                Bid = request.Bid.BidPrice,
+                Bid = request.BidPrice,
                 BidderName = bidder.FullName,
                 BidderEmail = bidder.Email,
                 TimeStamp = bidResult.Value.TimeStamp.Value,
@@ -121,9 +130,9 @@ public class PlaceBidCommandHandler : IRequestHandler<PlaceBidCommand, Result>
             };
             var domainEvent = new AuctionPlaceBidEvent(placeBidDto, EventList.Auction.AuctionPlaceBidEvent);
 
-            await _auctionRepository.UpdateAsync(auction.Id, auction);
-            await _memberRepository.UpdateAsync(bidder.Id, bidder);
-            await _eventRepository.CreateAsync(domainEvent);
+            await _auctionRepository.UpdateAsync(auction.Id, auction, cancellationToken);
+            await _memberRepository.UpdateAsync(bidder.Id, bidder, cancellationToken);
+            await _eventRepository.CreateAsync(domainEvent, cancellationToken);
             await _unitOfWork.SaveAsync();
 
             return Result.Ok();

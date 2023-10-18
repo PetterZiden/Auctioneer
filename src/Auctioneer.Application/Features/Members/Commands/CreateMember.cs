@@ -27,7 +27,7 @@ public class CreateMemberController : ApiControllerBase
     [ProducesResponseType(400)]
     [ProducesResponseType(404)]
     [ProducesResponseType(500)]
-    public async Task<ActionResult<Guid>> Create(CreateMemberRequest request)
+    public async Task<ActionResult<Guid>> Create(CreateMemberRequest request, CancellationToken cancellationToken)
     {
         try
         {
@@ -42,14 +42,14 @@ public class CreateMemberController : ApiControllerBase
                 PhoneNumber = request.PhoneNumber
             };
 
-            var validationResult = await new CreateMemberCommandValidator().ValidateAsync(command);
+            var validationResult = await new CreateMemberCommandValidator().ValidateAsync(command, cancellationToken);
             if (!validationResult.IsValid)
             {
                 var errorMessages = validationResult.Errors.ConvertAll(x => x.ErrorMessage);
                 return BadRequest(errorMessages);
             }
 
-            var result = await Mediator.Send(command);
+            var result = await Mediator.Send(command, cancellationToken);
 
             if (result.IsSuccess)
                 return Ok(result.Value);
@@ -105,8 +105,8 @@ public class CreateMemberCommandHandler : IRequestHandler<CreateMemberCommand, R
 
             var domainEvent = new MemberCreatedEvent(member, EventList.Member.MemberCreatedEvent);
 
-            await _memberRepository.CreateAsync(member);
-            await _eventRepository.CreateAsync(domainEvent);
+            await _memberRepository.CreateAsync(member, cancellationToken);
+            await _eventRepository.CreateAsync(domainEvent, cancellationToken);
             await _unitOfWork.SaveAsync();
 
             return Result.Ok(member.Id);

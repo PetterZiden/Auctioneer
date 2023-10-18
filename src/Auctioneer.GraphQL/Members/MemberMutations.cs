@@ -10,7 +10,7 @@ namespace Auctioneer.GraphQL.Members;
 public class MemberMutations
 {
     public async Task<CreateMemberPayload> CreateMember(CreateMemberInput input,
-        [Service] IRepository<Member> memberRepository)
+        [Service] IRepository<Member> memberRepository, CancellationToken cancellationToken)
     {
         try
         {
@@ -24,7 +24,7 @@ public class MemberMutations
                 input.City
             );
 
-            await memberRepository.CreateAsync(member);
+            await memberRepository.CreateAsync(member, cancellationToken);
 
             return new CreateMemberPayload(member.Id, member.Created);
         }
@@ -39,7 +39,7 @@ public class MemberMutations
     }
 
     public async Task<UpdateMemberPayload> UpdateMember(UpdateMemberInput input,
-        [Service] IRepository<Member> memberRepository)
+        [Service] IRepository<Member> memberRepository, CancellationToken cancellationToken)
     {
         try
         {
@@ -54,7 +54,7 @@ public class MemberMutations
                         .Build());
             }
 
-            await memberRepository.UpdateAsync(input.MemberId, member);
+            await memberRepository.UpdateAsync(input.MemberId, member, cancellationToken);
 
             return new UpdateMemberPayload(member.Id, member.LastModified.Value);
         }
@@ -69,11 +69,11 @@ public class MemberMutations
     }
 
     public async Task<DeleteMemberPayload> DeleteMember(DeleteMemberInput input,
-        [Service] IRepository<Member> memberRepository)
+        [Service] IRepository<Member> memberRepository, CancellationToken cancellationToken)
     {
         try
         {
-            await memberRepository.DeleteAsync(input.MemberId);
+            await memberRepository.DeleteAsync(input.MemberId, cancellationToken);
 
             return new DeleteMemberPayload(input.MemberId, "Member deleted successfully");
         }
@@ -88,7 +88,7 @@ public class MemberMutations
     }
 
     public async Task<ChangeEmailPayload> ChangeEmail(ChangeEmailInput input,
-        [Service] IRepository<Member> memberRepository)
+        [Service] IRepository<Member> memberRepository, CancellationToken cancellationToken)
     {
         try
         {
@@ -114,7 +114,7 @@ public class MemberMutations
                         .Build());
             }
 
-            await memberRepository.UpdateAsync(member.Id, member);
+            await memberRepository.UpdateAsync(member.Id, member, cancellationToken);
 
             return new ChangeEmailPayload($"Email for member with id: {input.MemberId} changed successfully");
         }
@@ -129,7 +129,7 @@ public class MemberMutations
     }
 
     public async Task<RateMemberPayload> RateMember(RateMemberInput input,
-        [Service] IRepository<Member> memberRepository)
+        [Service] IRepository<Member> memberRepository, CancellationToken cancellationToken)
     {
         try
         {
@@ -156,7 +156,7 @@ public class MemberMutations
                         .Build());
             }
 
-            await memberRepository.UpdateAsync(ratedMember.Id, ratedMember);
+            await memberRepository.UpdateAsync(ratedMember.Id, ratedMember, cancellationToken);
 
             return new RateMemberPayload("Member rated successfully");
         }

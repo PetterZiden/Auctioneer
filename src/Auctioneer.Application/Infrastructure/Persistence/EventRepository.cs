@@ -29,28 +29,29 @@ public class EventRepository : IRepository<DomainEvent>
     public async Task<DomainEvent> GetAsync(Guid id) =>
         await _eventCollection.Find(x => x.DomainEventId == id).FirstOrDefaultAsync();
 
-    public async Task CreateAsync(DomainEvent newEntity)
+    public async Task CreateAsync(DomainEvent newEntity, CancellationToken cancellationToken)
     {
         var type = newEntity.GetType();
         Action operation = async () =>
-            await _eventCollection.InsertOneAsync(_unitOfWork.Session as IClientSessionHandle, newEntity);
+            await _eventCollection.InsertOneAsync(_unitOfWork.Session as IClientSessionHandle, newEntity,
+                cancellationToken: cancellationToken);
         _unitOfWork.AddOperation(operation);
     }
 
-    public async Task UpdateAsync(Guid id, DomainEvent updatedEntity)
+    public async Task UpdateAsync(Guid id, DomainEvent updatedEntity, CancellationToken cancellationToken)
     {
         Action operation = async () =>
             await _eventCollection.ReplaceOneAsync(_unitOfWork.Session as IClientSessionHandle,
                 x => x.DomainEventId == id,
-                updatedEntity);
+                updatedEntity, cancellationToken: cancellationToken);
         _unitOfWork.AddOperation(operation);
     }
 
-    public async Task DeleteAsync(Guid id)
+    public async Task DeleteAsync(Guid id, CancellationToken cancellationToken)
     {
         Action operation = async () =>
             await _eventCollection.DeleteOneAsync(_unitOfWork.Session as IClientSessionHandle,
-                x => x.DomainEventId == id);
+                x => x.DomainEventId == id, cancellationToken: cancellationToken);
         _unitOfWork.AddOperation(operation);
     }
 }

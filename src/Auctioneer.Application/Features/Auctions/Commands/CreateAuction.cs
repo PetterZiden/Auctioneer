@@ -4,6 +4,7 @@ using Auctioneer.Application.Common.Helpers;
 using Auctioneer.Application.Common.Interfaces;
 using Auctioneer.Application.Entities;
 using Auctioneer.Application.Features.Auctions.Contracts;
+using Auctioneer.Application.Features.Members.Errors;
 using FluentResults;
 using FluentValidation;
 using MediatR;
@@ -22,11 +23,12 @@ public class CreateAuctionController : ApiControllerBase
     }
 
     [HttpPost("api/auction")]
+    [Produces("application/json")]
     [ProducesResponseType(typeof(Guid), 200)]
     [ProducesResponseType(400)]
     [ProducesResponseType(404)]
     [ProducesResponseType(500)]
-    public async Task<ActionResult<Guid>> Create(CreateAuctionRequest request)
+    public async Task<ActionResult<Guid>> Create(CreateAuctionRequest request, CancellationToken cancellationToken)
     {
         try
         {
@@ -41,14 +43,14 @@ public class CreateAuctionController : ApiControllerBase
                 ImgRoute = request.ImgRoute
             };
 
-            var validationResult = await new CreateAuctionCommandValidator().ValidateAsync(command);
+            var validationResult = await new CreateAuctionCommandValidator().ValidateAsync(command, cancellationToken);
             if (!validationResult.IsValid)
             {
                 var errorMessages = validationResult.Errors.ConvertAll(x => x.ErrorMessage);
                 return BadRequest(errorMessages);
             }
 
-            var result = await Mediator.Send(command);
+            var result = await Mediator.Send(command, cancellationToken);
 
             if (result.IsSuccess)
                 return Ok(result.Value);
@@ -97,7 +99,7 @@ public class CreateAuctionCommandHandler : IRequestHandler<CreateAuctionCommand,
             var member = await _memberRepository.GetAsync(request.MemberId);
 
             if (member is null)
-                return Result.Fail(new Error("No member found"));
+                return Result.Fail(new MemberNotFoundError());
 
             var auction = Auction.Create(
                 request.MemberId,
@@ -111,8 +113,8 @@ public class CreateAuctionCommandHandler : IRequestHandler<CreateAuctionCommand,
 
             var domainEvent = new AuctionCreatedEvent(auction, EventList.Auction.AuctionCreatedEvent);
 
-            await _eventRepository.CreateAsync(domainEvent);
-            await _auctionRepository.CreateAsync(auction);
+            await _eventRepository.CreateAsync(domainEvent, cancellationToken);
+            await _auctionRepository.CreateAsync(auction, cancellationToken);
             await _unitOfWork.SaveAsync();
 
             return Result.Ok(auction.Id);
@@ -139,7 +141,7 @@ public class CreateAuctionCommandValidator : AbstractValidator<CreateAuctionComm
             .NotEmpty();
 
         RuleFor(v => v.StartingPrice)
-            .GreaterThan(0);
+            .GreaterThan(-1);
     }
 }
 

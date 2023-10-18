@@ -33,27 +33,29 @@ public class AuctionRepository : IRepository<Auction>
     public async Task<Auction?> GetAsync(Guid id) =>
         await _auctionCollection.Find(x => x.Id == id).FirstOrDefaultAsync();
 
-    public async Task CreateAsync(Auction newEntity)
+    public async Task CreateAsync(Auction newEntity, CancellationToken cancellationToken)
     {
         Action operation = async () =>
-            await _auctionCollection.InsertOneAsync(_unitOfWork.Session as IClientSessionHandle, newEntity);
+            await _auctionCollection.InsertOneAsync(_unitOfWork.Session as IClientSessionHandle, newEntity,
+                cancellationToken: cancellationToken);
         _unitOfWork.AddOperation(operation);
     }
 
 
-    public async Task UpdateAsync(Guid id, Auction updatedEntity)
+    public async Task UpdateAsync(Guid id, Auction updatedEntity, CancellationToken cancellationToken)
     {
         Action operation = async () =>
             await _auctionCollection.ReplaceOneAsync(_unitOfWork.Session as IClientSessionHandle, x => x.Id == id,
-                updatedEntity);
+                updatedEntity, cancellationToken: cancellationToken);
         _unitOfWork.AddOperation(operation);
     }
 
 
-    public async Task DeleteAsync(Guid id)
+    public async Task DeleteAsync(Guid id, CancellationToken cancellationToken)
     {
         Action operation = async () =>
-            await _auctionCollection.DeleteOneAsync(_unitOfWork.Session as IClientSessionHandle, x => x.Id == id);
+            await _auctionCollection.DeleteOneAsync(_unitOfWork.Session as IClientSessionHandle, x => x.Id == id,
+                cancellationToken: cancellationToken);
         _unitOfWork.AddOperation(operation);
     }
 }

@@ -3,6 +3,7 @@ using Auctioneer.Application.Common;
 using Auctioneer.Application.Common.Helpers;
 using Auctioneer.Application.Common.Interfaces;
 using Auctioneer.Application.Entities;
+using Auctioneer.Application.Features.Auctions.Errors;
 using FluentResults;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -24,13 +25,13 @@ public class DeleteAuctionController : ApiControllerBase
     [ProducesResponseType(400)]
     [ProducesResponseType(404)]
     [ProducesResponseType(500)]
-    public async Task<ActionResult<Guid>> Delete(Guid id)
+    public async Task<ActionResult> Delete(Guid id, CancellationToken cancellationToken)
     {
         try
         {
             var command = new DeleteAuctionCommand { AuctionId = id };
 
-            var result = await Mediator.Send(command);
+            var result = await Mediator.Send(command, cancellationToken);
 
             if (result.IsSuccess)
                 return Ok();
@@ -68,10 +69,14 @@ public class DeleteAuctionCommandHandler : IRequestHandler<DeleteAuctionCommand,
     {
         try
         {
+            var auction = await _auctionRepository.GetAsync(request.AuctionId);
+            if (auction is null)
+                return Result.Fail(new AuctionNotFoundError());
+
             var domainEvent = new AuctionDeletedEvent(request.AuctionId, EventList.Auction.AuctionDeletedEvent);
 
-            await _eventRepository.CreateAsync(domainEvent);
-            await _auctionRepository.DeleteAsync(request.AuctionId);
+            await _eventRepository.CreateAsync(domainEvent, cancellationToken);
+            await _auctionRepository.DeleteAsync(request.AuctionId, cancellationToken);
             await _unitOfWork.SaveAsync();
 
             return Result.Ok();

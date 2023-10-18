@@ -30,31 +30,45 @@ public class MemberRepository : IRepository<Member>
             page,
             pageSize);
 
-    public async Task<Member?> GetAsync(Guid id) =>
-        await _memberCollection.Find(x => x.Id == id).FirstOrDefaultAsync();
+    public async Task<Member?> GetAsync(Guid id)
+    {
+        try
+        {
+            var member = await _memberCollection.Find(x => x.Id == id).FirstOrDefaultAsync();
+            return member;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            return null;
+        }
+    }
 
-    public async Task CreateAsync(Member newEntity)
+
+    public async Task CreateAsync(Member newEntity, CancellationToken cancellationToken)
     {
         Action operation = async () =>
-            await _memberCollection.InsertOneAsync(_unitOfWork.Session as IClientSessionHandle, newEntity);
+            await _memberCollection.InsertOneAsync(_unitOfWork.Session as IClientSessionHandle, newEntity,
+                cancellationToken: cancellationToken);
         _unitOfWork.AddOperation(operation);
     }
 
 
-    public async Task UpdateAsync(Guid id, Member updatedEntity)
+    public async Task UpdateAsync(Guid id, Member updatedEntity, CancellationToken cancellationToken)
     {
         Action operation = async () =>
-            await _memberCollection.ReplaceOneAsync<Member>(_unitOfWork.Session as IClientSessionHandle,
+            await _memberCollection.ReplaceOneAsync(_unitOfWork.Session as IClientSessionHandle,
                 x => x.Id == id,
-                updatedEntity);
+                updatedEntity, cancellationToken: cancellationToken);
         _unitOfWork.AddOperation(operation);
     }
 
 
-    public async Task DeleteAsync(Guid id)
+    public async Task DeleteAsync(Guid id, CancellationToken cancellationToken)
     {
         Action operation = async () =>
-            await _memberCollection.DeleteOneAsync(_unitOfWork.Session as IClientSessionHandle, x => x.Id == id);
+            await _memberCollection.DeleteOneAsync(_unitOfWork.Session as IClientSessionHandle, x => x.Id == id,
+                cancellationToken: cancellationToken);
         _unitOfWork.AddOperation(operation);
     }
 }

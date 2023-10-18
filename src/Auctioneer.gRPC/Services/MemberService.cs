@@ -72,6 +72,7 @@ public class MemberService : Member.MemberBase
     {
         try
         {
+            var cancellationToken = new CancellationToken();
             var member = Application.Entities.Member.Create(
                 request.FirstName,
                 request.LastName,
@@ -83,8 +84,8 @@ public class MemberService : Member.MemberBase
 
             var domainEvent = new MemberCreatedEvent(member, EventList.Member.MemberCreatedEvent);
 
-            await _memberRepository.CreateAsync(member);
-            await _eventRepository.CreateAsync(domainEvent);
+            await _memberRepository.CreateAsync(member, cancellationToken);
+            await _eventRepository.CreateAsync(domainEvent, cancellationToken);
             await _unitOfWork.SaveAsync();
 
             return new CreateMemberResponse
@@ -105,13 +106,14 @@ public class MemberService : Member.MemberBase
     {
         try
         {
+            var cancellationToken = new CancellationToken();
             if (!Guid.TryParse(request.Id, out var memberId))
                 throw new RpcException(new Status(StatusCode.InvalidArgument, "MemberId was in wrong format"));
 
             var domainEvent = new MemberDeletedEvent(memberId, EventList.Member.MemberDeletedEvent);
 
-            await _memberRepository.DeleteAsync(memberId);
-            await _eventRepository.CreateAsync(domainEvent);
+            await _memberRepository.DeleteAsync(memberId, cancellationToken);
+            await _eventRepository.CreateAsync(domainEvent, cancellationToken);
             await _unitOfWork.SaveAsync();
 
             return new DeleteMemberResponse
@@ -130,6 +132,7 @@ public class MemberService : Member.MemberBase
     {
         try
         {
+            var cancellationToken = new CancellationToken();
             if (!Guid.TryParse(request.Id, out var memberId))
                 throw new RpcException(new Status(StatusCode.InvalidArgument, "MemberId was in wrong format"));
 
@@ -140,8 +143,8 @@ public class MemberService : Member.MemberBase
 
             var domainEvent = new MemberUpdatedEvent(member, EventList.Member.MemberUpdatedEvent);
 
-            await _eventRepository.CreateAsync(domainEvent);
-            await _memberRepository.UpdateAsync(memberId, member);
+            await _eventRepository.CreateAsync(domainEvent, cancellationToken);
+            await _memberRepository.UpdateAsync(memberId, member, cancellationToken);
             await _unitOfWork.SaveAsync();
 
             return new UpdateMemberResponse
@@ -163,6 +166,7 @@ public class MemberService : Member.MemberBase
     {
         try
         {
+            var cancellationToken = new CancellationToken();
             if (!Guid.TryParse(request.RatingForMemberId, out var memberForId))
                 throw new RpcException(new Status(StatusCode.InvalidArgument, "MemberId was in wrong format"));
 
@@ -190,8 +194,8 @@ public class MemberService : Member.MemberBase
             };
             var domainEvent = new RateMemberEvent(rateMemberDto, EventList.Member.RateMemberEvent);
 
-            await _memberRepository.UpdateAsync(ratedMember.Id, ratedMember);
-            await _eventRepository.CreateAsync(domainEvent);
+            await _memberRepository.UpdateAsync(ratedMember.Id, ratedMember, cancellationToken);
+            await _eventRepository.CreateAsync(domainEvent, cancellationToken);
             await _unitOfWork.SaveAsync();
 
             return new RateMemberResponse

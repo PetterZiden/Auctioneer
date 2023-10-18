@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using Auctioneer.Application.Common;
+using Auctioneer.Application.Common.Errors;
 using Auctioneer.Application.Common.Interfaces;
 using Auctioneer.Application.Common.Models;
 using FluentResults;
@@ -68,10 +69,10 @@ public class Auction : AuditableEntity, IAggregateRoot
     public Result<Bid> PlaceBid(Guid memberId, decimal bidPrice)
     {
         if (bidPrice <= 0)
-            return Result.Fail(new Error("Bid must be greater than 0"));
+            return Result.Fail(new BadRequestError("Bid must be greater than 0"));
 
         if (bidPrice <= CurrentPrice)
-            return Result.Fail(new Error($"Bid must be greater than current price: {CurrentPrice}"));
+            return Result.Fail(new BadRequestError($"Bid must be greater than current price: {CurrentPrice}"));
 
         var bid = new Bid
         {
@@ -94,7 +95,7 @@ public class Auction : AuditableEntity, IAggregateRoot
             throw new ArgumentNullException(nameof(description));
 
         if (description.Equals(Description))
-            return Result.Fail(new Error("Description can not be the same as current description"));
+            return Result.Fail(new BadRequestError("Description can not be the same as current description"));
 
         Description = description;
 
@@ -107,9 +108,22 @@ public class Auction : AuditableEntity, IAggregateRoot
             throw new ArgumentNullException(nameof(title));
 
         if (title.Equals(Title))
-            return Result.Fail(new Error("Title can not be the same as current title"));
+            return Result.Fail(new BadRequestError("Title can not be the same as current title"));
 
         Title = title;
+
+        return Result.Ok();
+    }
+
+    public Result ChangeImageRoute(string imgRoute)
+    {
+        if (string.IsNullOrEmpty(imgRoute))
+            throw new ArgumentNullException(nameof(imgRoute));
+
+        if (imgRoute.Equals(ImgRoute))
+            return Result.Fail(new BadRequestError("Image route can not be the same as current image route"));
+
+        ImgRoute = imgRoute;
 
         return Result.Ok();
     }
