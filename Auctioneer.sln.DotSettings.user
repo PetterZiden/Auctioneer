@@ -1,0 +1,94 @@
+﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=2b95dbd5_002Db50d_002D49bb_002Da17d_002D12af8809aacf/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="GetMemberEndPoint_Should_Return_Not_Found_When_Not_Passing_Guid_As_QueryParameter" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+  &lt;Or&gt;
+    &lt;TestAncestor&gt;
+      &lt;TestId&gt;xUnit::7A5268AD-31B0-4272-8624-F5021EA448A0::net7.0::Auctioneer.API.IntegrationTests.Member.GetMemberTests.GetMemberEndPoint_Should_Return_Not_Found_When_Not_Passing_Guid_As_QueryParameter&lt;/TestId&gt;
+      &lt;TestId&gt;xUnit::7A5268AD-31B0-4272-8624-F5021EA448A0::net7.0::Auctioneer.API.IntegrationTests.Member.GetMembersTests.GetMemberEndPoint_Should_Fetch_Member_If_Member_Exist&lt;/TestId&gt;
+      &lt;TestId&gt;xUnit::7A5268AD-31B0-4272-8624-F5021EA448A0::net7.0::Auctioneer.API.IntegrationTests.Member.GetMembersTests.GetMembersEndPoint_Should_Return_Not_Found_If_Members_Does_Not_Exist&lt;/TestId&gt;
+      &lt;TestId&gt;xUnit::7A5268AD-31B0-4272-8624-F5021EA448A0::net7.0::Auctioneer.API.IntegrationTests.Member.CreateMemberTests.CreateMembersEndPoint_Should_Create_Members_And_Return_MemberId_If_Request_Is_Valid&lt;/TestId&gt;
+    &lt;/TestAncestor&gt;
+    &lt;ProjectFile&gt;7A5268AD-31B0-4272-8624-F5021EA448A0/d:Member/f:GetMemberTests.cs&lt;/ProjectFile&gt;
+  &lt;/Or&gt;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=68a1b963_002D72ee_002D4ebf_002Da452_002D5d8a994e6a2e/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="CreateAuctionsEndPoint_Should_Create_Auctions_And_Return_AuctionId_If_Request_Is_Valid #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+  &lt;Or&gt;
+    &lt;TestAncestor&gt;
+      &lt;TestId&gt;xUnit::7A5268AD-31B0-4272-8624-F5021EA448A0::net7.0::Auctioneer.API.IntegrationTests.Auction.CreateAuctionTests.CreateAuctionsEndPoint_Should_Create_Auctions_And_Return_AuctionId_If_Request_Is_Valid&lt;/TestId&gt;
+      &lt;TestId&gt;xUnit::7A5268AD-31B0-4272-8624-F5021EA448A0::net7.0::Auctioneer.API.IntegrationTests.Auction.CreateAuctionTests.CreateAuctionsEndPoint_Should_Not_Create_Auctions_If_Member_Is_Not_Found&lt;/TestId&gt;
+    &lt;/TestAncestor&gt;
+    &lt;Project Location="/Users/petterziden/Projects/Auctioneer/tests/Auctioneer.Application.UnitTests" Presentation="&amp;lt;Auctioneer.Application.UnitTests&amp;gt;" /&gt;
+    &lt;Project Location="/Users/petterziden/Projects/Auctioneer/tests/Auctioneer.API.IntegrationTests" Presentation="&amp;lt;Auctioneer.API.IntegrationTests&amp;gt;" /&gt;
+  &lt;/Or&gt;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=70db16a8_002D74ae_002D4f01_002Db654_002Dd9300ce5f364/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="CreateAuctionsEndPoint_Should_Create_Auctions_And_Return_AuctionId_If_Request_Is_Valid" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+  &lt;TestAncestor&gt;
+    &lt;TestId&gt;xUnit::7A5268AD-31B0-4272-8624-F5021EA448A0::net7.0::Auctioneer.API.IntegrationTests.Auction.CreateAuctionTests.CreateAuctionsEndPoint_Should_Create_Auctions_And_Return_AuctionId_If_Request_Is_Valid&lt;/TestId&gt;
+  &lt;/TestAncestor&gt;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=acce13fa_002D8131_002D4df5_002D9d03_002Dfb349429ddae/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="CreateMemberCommand_Should_Add_New_Member_To_Database" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+  &lt;TestAncestor&gt;
+    &lt;TestId&gt;xUnit::35597C9E-7A16-4F08-A06B-3B8FF5AB369B::net7.0::Auctioneer.Application.IntegrationTests.Member.MemberIntegrationTests.CreateMemberCommand_Should_Add_New_Member_To_Database&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::35597C9E-7A16-4F08-A06B-3B8FF5AB369B::net7.0::Auctioneer.Application.IntegrationTests.Member.MemberIntegrationTests.GetMemberQuery_Should_Fetch_Member_If_Member_Exist&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::451CFABB-8DD9-4BFE-965F-561374FB8F50::net7.0::Auctioneer.Application.UnitTests.Features.Auctions.Commands.CreateAuctionTests&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::7A5268AD-31B0-4272-8624-F5021EA448A0::net7.0::Auctioneer.API.IntegrationTests.Member.GetMemberTests.GetMemberEndPoint_Should_Fetch_Member_If_Member_Exist&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::7A5268AD-31B0-4272-8624-F5021EA448A0::net7.0::Auctioneer.API.IntegrationTests.Member.GetMemberTests.GetMemberEndPoint_Should_Not_Fetch_Member_If_Member_Does_Not_Exist&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::7A5268AD-31B0-4272-8624-F5021EA448A0::net7.0::Auctioneer.API.IntegrationTests.Member.GetMemberTests.GetMemberEndPoint_Should_Return_&lt;/TestId&gt;
+  &lt;/TestAncestor&gt;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=dc4c05a0_002D79cd_002D4486_002Db123_002D9156d95776a1/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="CreateMembersEndPoint_Should_Create_Members_And_Return_MemberId_If_Request_Is_Valid" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+  &lt;Or&gt;
+    &lt;TestAncestor&gt;
+      &lt;TestId&gt;xUnit::7A5268AD-31B0-4272-8624-F5021EA448A0::net7.0::Auctioneer.API.IntegrationTests.Member.CreateMemberTests&lt;/TestId&gt;
+      &lt;TestId&gt;xUnit::7A5268AD-31B0-4272-8624-F5021EA448A0::net7.0::Auctioneer.API.IntegrationTests.Member.UpdateMemberTests.UpdateMembersEndPoint_Should_Update_Members_If_Request_Is_Valid&lt;/TestId&gt;
+      &lt;TestId&gt;xUnit::7A5268AD-31B0-4272-8624-F5021EA448A0::net7.0::Auctioneer.API.IntegrationTests.Member.UpdateMemberTests.UpdateMembersEndPoint_Should_Not_Update_Members_If_PhoneNumber_Is_Same_As_Before&lt;/TestId&gt;
+      &lt;TestId&gt;xUnit::7A5268AD-31B0-4272-8624-F5021EA448A0::net7.0::Auctioneer.API.IntegrationTests.Member.UpdateMemberTests.UpdateMembersEndPoint_Should_Update_Members_If_Member_Is_Not_Found&lt;/TestId&gt;
+      &lt;TestId&gt;xUnit::7A5268AD-31B0-4272-8624-F5021EA448A0::net7.0::Auctioneer.API.IntegrationTests.Member.UpdateMemberTests.UpdateMembersEndPoint_Should_Not_Update_Members_If_LastName_Is_Same_As_Before&lt;/TestId&gt;
+      &lt;TestId&gt;xUnit::7A5268AD-31B0-4272-8624-F5021EA448A0::net7.0::Auctioneer.API.IntegrationTests.Member.UpdateMemberTests.UpdateMembersEndPoint_Should_Not_Update_Members_If_FirstName_Is_Same_As_Before&lt;/TestId&gt;
+      &lt;TestId&gt;xUnit::7A5268AD-31B0-4272-8624-F5021EA448A0::net7.0::Auctioneer.API.IntegrationTests.Member.UpdateMemberTests.UpdateMembersEndPoint_Should_Update_Members_Address&lt;/TestId&gt;
+      &lt;TestId&gt;xUnit::7A5268AD-31B0-4272-8624-F5021EA448A0::net7.0::Auctioneer.API.IntegrationTests.Member.ChangeEmailMemberTests.ChangeMemberEmailEndPoint_Should_Update_Members_Email_If_Request_Is_Valid&lt;/TestId&gt;
+      &lt;TestId&gt;xUnit::7A5268AD-31B0-4272-8624-F5021EA448A0::net7.0::Auctioneer.API.IntegrationTests.Member.ChangeEmailMemberTests.CreateMembersEndPoint_Should_Return_Bad_Request_If_Email_Is_Invalid_Email_Format&lt;/TestId&gt;
+      &lt;TestId&gt;xUnit::7A5268AD-31B0-4272-8624-F5021EA448A0::net7.0::Auctioneer.API.IntegrationTests.Member.ChangeEmailMemberTests.ChangeMemberEndPoint_Should_Return_Bad_Request_If_MemberId_Is_Empty&lt;/TestId&gt;
+      &lt;TestId&gt;xUnit::7A5268AD-31B0-4272-8624-F5021EA448A0::net7.0::Auctioneer.API.IntegrationTests.Member.ChangeEmailMemberTests.ChangeMemberEmailEndPoint_Should_Update_Members_If_Member_Is_Not_Found&lt;/TestId&gt;
+      &lt;TestId&gt;xUnit::7A5268AD-31B0-4272-8624-F5021EA448A0::net7.0::Auctioneer.API.IntegrationTests.Member.ChangeEmailMemberTests.ChangeMemberEmailEndPoint_Should_Not_Change_Members_Email_If_Member_Is_Not_Found&lt;/TestId&gt;
+      &lt;TestId&gt;xUnit::7A5268AD-31B0-4272-8624-F5021EA448A0::net7.0::Auctioneer.API.IntegrationTests.Member.ChangeEmailMemberTests.ChangeMemberEmailEndPoint_Should_Not_Change_Members_Email_If_Email_Is_The_Same_As_Before&lt;/TestId&gt;
+      &lt;TestId&gt;xUnit::7A5268AD-31B0-4272-8624-F5021EA448A0::net7.0::Auctioneer.API.IntegrationTests.Member.RateMemberTests.ChangeMemberEmailEndPoint_Should_Update_Members_Email_If_Request_Is_Valid&lt;/TestId&gt;
+      &lt;TestId&gt;xUnit::7A5268AD-31B0-4272-8624-F5021EA448A0::net7.0::Auctioneer.API.IntegrationTests.Member.RateMemberTests.RateMemberEndPoint_Should_Not_Add_Rating_To_Members_If_Member_Is_Not_Found&lt;/TestId&gt;
+      &lt;TestId&gt;xUnit::7A5268AD-31B0-4272-8624-F5021EA448A0::net7.0::Auctioneer.API.IntegrationTests.Member.RateMemberTests.RateMemberEndPoint_Should_Not_Add_Rating_To_Members_If_RatingFromMemberId_Is_Empty&lt;/TestId&gt;
+      &lt;TestId&gt;xUnit::7A5268AD-31B0-4272-8624-F5021EA448A0::net7.0::Auctioneer.API.IntegrationTests.Member.RateMemberTests.RateMemberEndPoint_Should_Not_Add_Rating_To_Members_If_RatingForMemberId_Is_Empty&lt;/TestId&gt;
+      &lt;TestId&gt;xUnit::7A5268AD-31B0-4272-8624-F5021EA448A0::net7.0::Auctioneer.API.IntegrationTests.Member.RateMemberTests.RateMemberEndPoint_Should_Not_Add_Rating_To_Members_If_Stars_Is_Less_Than_1&lt;/TestId&gt;
+      &lt;TestId&gt;xUnit::7A5268AD-31B0-4272-8624-F5021EA448A0::net7.0::Auctioneer.API.IntegrationTests.Member.RateMemberTests.RateMemberEndPoint_Should_Not_Add_Rating_To_Members_If_Stars_Is_Greater_Than_5&lt;/TestId&gt;
+      &lt;TestId&gt;xUnit::7A5268AD-31B0-4272-8624-F5021EA448A0::net7.0::Auctioneer.API.IntegrationTests.Member.DeleteMemberTests.DeleteMemberEndPoint_Should_Delete_Members_If_Member_Exist&lt;/TestId&gt;
+      &lt;TestId&gt;xUnit::7A5268AD-31B0-4272-8624-F5021EA448A0::net7.0::Auctioneer.API.IntegrationTests.Member.DeleteMemberTests.DeleteMemberEndPoint_Should_Not_Delete_Members_If_Member_Not_Found&lt;/TestId&gt;
+      &lt;TestId&gt;xUnit::7A5268AD-31B0-4272-8624-F5021EA448A0::net7.0::Auctioneer.API.IntegrationTests.Member.GetMemberTests.GetMemberEndPoint_Should_Return_Not_Found_If_Member_Does_Not_Exist&lt;/TestId&gt;
+      &lt;TestId&gt;xUnit::7A5268AD-31B0-4272-8624-F5021EA448A0::net7.0::Auctioneer.API.IntegrationTests.Auction.GetAuctionTests&lt;/TestId&gt;
+      &lt;TestId&gt;xUnit::7A5268AD-31B0-4272-8624-F5021EA448A0::net7.0::Auctioneer.API.IntegrationTests.Auction.GetAuctionsTests&lt;/TestId&gt;
+      &lt;TestId&gt;xUnit::7A5268AD-31B0-4272-8624-F5021EA448A0::net7.0::Auctioneer.API.IntegrationTests.Auction.CreateAuctionTests&lt;/TestId&gt;
+    &lt;/TestAncestor&gt;
+    &lt;Project Location="/Users/petterziden/Projects/Auctioneer/tests/Auctioneer.Application.UnitTests" Presentation="&amp;lt;Auctioneer.Application.UnitTests&amp;gt;" /&gt;
+  &lt;/Or&gt;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=e47e6d68_002De854_002D4f0f_002Dba59_002Dd80bb29d7731/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="GetAuctionsEndPoint_Should_Return_Not_Found_If_Auctions_Does_Not_Exist" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+  &lt;Or&gt;
+    &lt;ProjectFolder&gt;7A5268AD-31B0-4272-8624-F5021EA448A0/d:Auction&lt;/ProjectFolder&gt;
+    &lt;ProjectFolder&gt;7A5268AD-31B0-4272-8624-F5021EA448A0/d:Member&lt;/ProjectFolder&gt;
+    &lt;Project Location="/Users/petterziden/Projects/Auctioneer/tests/Auctioneer.Application.UnitTests" Presentation="&amp;lt;Auctioneer.Application.UnitTests&amp;gt;" /&gt;
+  &lt;/Or&gt;
+&lt;/SessionState&gt;</s:String>
+	
+	
+	
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=appsettings/@EntryIndexedValue">True</s:Boolean>
+	
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=Dtos/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=fixa/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=Mockholm/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=Mocksson/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=Mockv_00E4gen/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=phonenumber/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=Skolv_00E4gen/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=Testborg/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=Testgatan/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=Testgr_00E4nd/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=Testholm/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=Testsson/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=validering/@EntryIndexedValue">True</s:Boolean></wpf:ResourceDictionary>
