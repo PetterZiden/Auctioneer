@@ -8,10 +8,6 @@ using Auctioneer.Application.Entities;
 using Auctioneer.Application.Features.Auctions.Dto;
 using Auctioneer.Application.Features.Auctions.Errors;
 using Auctioneer.Application.Features.Members.Errors;
-using Auctioneer.Application.Infrastructure.Messaging.MassTransit;
-using Auctioneer.Application.Infrastructure.Messaging.RabbitMq;
-using Auctioneer.MessagingContracts.Email;
-using Auctioneer.MessagingContracts.Notification;
 using FluentResults;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -33,7 +29,7 @@ public class PlaceBidController : ApiControllerBase
     [ProducesResponseType(400)]
     [ProducesResponseType(404)]
     [ProducesResponseType(500)]
-    public async Task<ActionResult> PlaceBid(Bid request, CancellationToken cancellationToken)
+    public async Task<ActionResult> PlaceBid([FromBody] Bid request, CancellationToken cancellationToken)
     {
         try
         {

@@ -46,7 +46,7 @@ public class GetMemberTests : BaseIntegrationTest
     {
         var client = _factory.CreateClient();
 
-        var response = await client.GetAsync($"https://localhost:7298/api/member/id234");
+        var response = await client.GetAsync("https://localhost:7298/api/member/id234");
 
         Assert.False(response.IsSuccessStatusCode);
         Assert.True(response.StatusCode == HttpStatusCode.NotFound);

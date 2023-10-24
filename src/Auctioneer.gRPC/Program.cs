@@ -4,17 +4,18 @@ using Auctioneer.gRPC.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddInfrastructure();
+builder.AddApplicationAuth();
 builder.Services.AddApplication();
 
-// Additional configuration is required to successfully run gRPC on macOS.
-// For instructions on how to configure Kestrel and gRPC clients on macOS, visit https://go.microsoft.com/fwlink/?linkid=2099682
-
-// Add services to the container.
 builder.Services.AddGrpc();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+app.UseRouting();
+
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.MapGrpcService<MemberService>();
 app.MapGet("/",
     () =>

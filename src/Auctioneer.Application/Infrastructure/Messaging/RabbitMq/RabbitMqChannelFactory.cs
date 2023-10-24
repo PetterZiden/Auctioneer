@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using System.Reflection;
 using Microsoft.Extensions.Configuration;
 using RabbitMQ.Client;

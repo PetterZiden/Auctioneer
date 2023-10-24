@@ -22,7 +22,7 @@ public static class MongoCollectionQueryByPageExtensions
             {
                 PipelineStageDefinitionBuilder.Sort(sortDefinition),
                 PipelineStageDefinitionBuilder.Skip<TDocument>((page - 1) * pageSize),
-                PipelineStageDefinitionBuilder.Limit<TDocument>(pageSize),
+                PipelineStageDefinitionBuilder.Limit<TDocument>(pageSize)
             }));
 
 

@@ -60,7 +60,7 @@ public class Auction : AuditableEntity, IAggregateRoot
             CurrentPrice = startingPrice,
             ImgRoute = imgRoute,
             Created = DateTimeOffset.Now,
-            LastModified = null,
+            LastModified = null
         };
 
         return auction;

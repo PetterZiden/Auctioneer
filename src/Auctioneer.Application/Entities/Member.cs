@@ -76,7 +76,7 @@ public class Member : AuditableEntity, IAggregateRoot
             Email = email,
             PhoneNumber = phoneNumber,
             Created = DateTimeOffset.Now,
-            LastModified = null,
+            LastModified = null
         };
 
         return member;

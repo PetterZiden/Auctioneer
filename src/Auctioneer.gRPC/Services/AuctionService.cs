@@ -6,9 +6,11 @@ using Auctioneer.Application.Features.Auctions.Dto;
 using Auctioneer.gRPC.Mappers;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Auctioneer.gRPC.Services;
 
+[Authorize]
 public class AuctionService : Auction.AuctionBase
 {
     private readonly ILogger<AuctionService> _logger;
@@ -197,7 +199,7 @@ public class AuctionService : Auction.AuctionBase
                 throw new RpcException(new Status(StatusCode.InvalidArgument, bidResult.Errors[0].Message));
 
             var memberResult = bidder.AddBid(bidResult.Value.AuctionId, bidResult.Value.BidPrice,
-                bidResult.Value.TimeStamp.Value);
+                bidResult.Value.TimeStamp!.Value);
 
             if (!memberResult.IsSuccess)
                 throw new RpcException(new Status(StatusCode.InvalidArgument, memberResult.Errors[0].Message));

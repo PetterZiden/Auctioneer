@@ -6,9 +6,11 @@ using Auctioneer.Application.Features.Members.Dto;
 using Auctioneer.gRPC.Mappers;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Auctioneer.gRPC.Services;
 
+[Authorize]
 public class MemberService : Member.MemberBase
 {
     private readonly ILogger<MemberService> _logger;

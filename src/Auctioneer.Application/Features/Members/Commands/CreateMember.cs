@@ -1,5 +1,4 @@
 using System.Reflection;
-using System.Text.Json;
 using Auctioneer.Application.Common;
 using Auctioneer.Application.Common.Helpers;
 using Auctioneer.Application.Common.Interfaces;
@@ -23,6 +22,7 @@ public class CreateMemberController : ApiControllerBase
     }
 
     [HttpPost("api/member")]
+    [Produces("application/json")]
     [ProducesResponseType(typeof(Guid), 200)]
     [ProducesResponseType(400)]
     [ProducesResponseType(404)]
