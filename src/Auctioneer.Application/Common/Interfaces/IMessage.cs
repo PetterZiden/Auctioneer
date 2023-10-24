@@ -1,5 +1,3 @@
-using RabbitMQ.Client;
-
 namespace Auctioneer.Application.Common.Interfaces;
 
 public interface IMessage<T>

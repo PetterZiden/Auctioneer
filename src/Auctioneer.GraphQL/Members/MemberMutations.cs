@@ -175,7 +175,7 @@ public class MemberMutations
             await memberRepository.UpdateAsync(command.Id, member, cancellationToken);
             await unitOfWork.SaveAsync();
 
-            return new UpdateMemberPayload(member.Id, member.LastModified.Value);
+            return new UpdateMemberPayload(member.Id, member.LastModified!.Value);
         }
         catch (Exception ex)
         {

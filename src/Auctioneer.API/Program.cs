@@ -13,10 +13,11 @@ builder.Services.AddCors(options => options.AddDefaultPolicy(
         .AllowAnyMethod()));
 
 builder.Services.AddApplication();
-builder.AddInfrastructure();
 builder.Services.AddMediatr();
-builder.AddMessaging();
 builder.Services.AddBackgroundWorkers();
+builder.AddApplicationAuth();
+builder.AddInfrastructure();
+builder.AddMessaging();
 
 builder.Services.AddHttpContextAccessor();
 
@@ -37,7 +38,9 @@ app.UseHttpsRedirection();
 
 app.UseExceptionHandler(app.Environment.IsDevelopment() ? "/error-development" : "/error");
 
+app.UseAuthentication();
 app.UseAuthorization();
+
 app.MapControllers();
 
 app.Run();

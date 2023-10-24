@@ -11,18 +11,16 @@ public class RabbitMqService : IRabbitMqService
 {
     private readonly ILogger<RabbitMqService> _logger;
     private readonly IConnection _connection;
-    private readonly IOptions<CloudAmqpSettings> _settings;
     private readonly IModel _channel;
 
     public RabbitMqService(IOptions<CloudAmqpSettings> settings, ILogger<RabbitMqService> logger)
     {
         _logger = logger;
-        _settings = settings;
         try
         {
             var factory = new ConnectionFactory
             {
-                Uri = _settings.Value.Url
+                Uri = settings.Value.Url
             };
 
             _connection = factory.CreateConnection();
@@ -36,6 +34,8 @@ public class RabbitMqService : IRabbitMqService
 
     public void StartListeningOnQueue(string queue, string routeKey, Action<string> messageHandler)
     {
+        _logger.LogInformation("Start listening on queue: {Queue}", queue);
+
         _channel.ExchangeDeclare(exchange: "auction", type: ExchangeType.Direct);
         _channel.QueueDeclare(queue: queue, durable: false, exclusive: false, autoDelete: false, arguments: null);
         _channel.QueueBind(queue: queue, exchange: "auction", routeKey);

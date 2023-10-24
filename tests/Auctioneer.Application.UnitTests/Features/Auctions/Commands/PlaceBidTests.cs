@@ -1,6 +1,5 @@
 using Auctioneer.Application.Common;
 using Auctioneer.Application.Common.Interfaces;
-using Auctioneer.Application.Common.Models;
 using Auctioneer.Application.Entities;
 using Auctioneer.Application.Features.Auctions.Commands;
 using NSubstitute;
@@ -84,7 +83,7 @@ public class PlaceBidTests
         {
             AuctionId = Guid.NewGuid(),
             MemberId = Guid.NewGuid(),
-            BidPrice = 50,
+            BidPrice = 50
         };
 
         var result = await _handler.Handle(request, new CancellationToken());
@@ -110,7 +109,7 @@ public class PlaceBidTests
         {
             AuctionId = Guid.NewGuid(),
             MemberId = Guid.NewGuid(),
-            BidPrice = 0,
+            BidPrice = 0
         };
 
         var result = await _handler.Handle(request, new CancellationToken());
@@ -206,7 +205,7 @@ public class PlaceBidTests
         {
             AuctionId = Guid.NewGuid(),
             MemberId = Guid.NewGuid(),
-            BidPrice = 110,
+            BidPrice = 110
         };
     }
 }

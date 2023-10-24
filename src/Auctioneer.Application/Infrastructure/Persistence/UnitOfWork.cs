@@ -9,7 +9,7 @@ public class UnitOfWork : IUnitOfWork
 {
     private readonly ILogger<UnitOfWork> _logger;
     private IClientSessionHandle session { get; }
-    public IDisposable Session => this.session;
+    public IDisposable Session => session;
 
     private List<Action> _operations { get; set; }
 

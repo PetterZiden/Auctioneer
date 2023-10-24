@@ -150,7 +150,7 @@ public class AuctionMutations
             await auctionRepository.UpdateAsync(command.Id, auction, cancellationToken);
             await unitOfWork.SaveAsync();
 
-            return new UpdateAuctionPayload(auction.Id, auction.LastModified.Value);
+            return new UpdateAuctionPayload(auction.Id, auction.LastModified!.Value);
         }
         catch (Exception ex)
         {
@@ -234,7 +234,7 @@ public class AuctionMutations
             {
                 throw new QueryException(
                     ErrorBuilder.New()
-                        .SetMessage(bidResult.Errors?.FirstOrDefault()?.Message)
+                        .SetMessage(bidResult.Errors?.FirstOrDefault()?.Message!)
                         .SetCode("BAD_REQUEST")
                         .Build());
             }
@@ -251,12 +251,12 @@ public class AuctionMutations
             }
 
             var memberResult = bidder.AddBid(bidResult.Value.AuctionId, bidResult.Value.BidPrice,
-                bidResult.Value.TimeStamp.Value);
+                bidResult.Value.TimeStamp!.Value);
             if (!memberResult.IsSuccess)
             {
                 throw new QueryException(
                     ErrorBuilder.New()
-                        .SetMessage(memberResult.Errors?.FirstOrDefault()?.Message)
+                        .SetMessage(memberResult.Errors?.FirstOrDefault()?.Message!)
                         .SetCode("BAD_REQUEST")
                         .Build());
             }

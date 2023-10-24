@@ -140,7 +140,7 @@ public class ChangeEmailMemberTests
         var command = new ChangeEmailMemberCommand
         {
             MemberId = Guid.NewGuid(),
-            Email = null,
+            Email = null
         };
 
         var result = _validator.TestValidate(command);
@@ -153,7 +153,7 @@ public class ChangeEmailMemberTests
         var command = new ChangeEmailMemberCommand
         {
             MemberId = Guid.Empty,
-            Email = "Test@test.se",
+            Email = "Test@test.se"
         };
 
         var result = _validator.TestValidate(command);

@@ -1,11 +1,13 @@
 using FluentResults;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace Auctioneer.Application.Common;
 
+[Authorize]
 [ApiController]
 public abstract class ApiControllerBase : ControllerBase
 {
@@ -29,7 +31,7 @@ public abstract class ApiControllerBase : ControllerBase
             {
                 "400" => BadRequest(errorMessage),
                 "404" => NotFound(errorMessage),
-                _ => StatusCode(500, errorMessage),
+                _ => StatusCode(500, errorMessage)
             };
         }
 

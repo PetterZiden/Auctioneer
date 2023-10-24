@@ -1,6 +1,5 @@
 using Auctioneer.Application.Common;
 using Auctioneer.Application.Common.Interfaces;
-using Auctioneer.Application.Common.Models;
 using Auctioneer.Application.Entities;
 using Auctioneer.Application.Features.Members.Commands;
 using FluentValidation.TestHelper;

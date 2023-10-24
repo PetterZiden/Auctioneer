@@ -1,6 +1,4 @@
 using Auctioneer.Application.Common.Interfaces;
-using Auctioneer.Application.Entities;
-using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Auctioneer.API.IntegrationTests;

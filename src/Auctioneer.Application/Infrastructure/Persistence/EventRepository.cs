@@ -31,7 +31,6 @@ public class EventRepository : IRepository<DomainEvent>
 
     public async Task CreateAsync(DomainEvent newEntity, CancellationToken cancellationToken)
     {
-        var type = newEntity.GetType();
         Action operation = async () =>
             await _eventCollection.InsertOneAsync(_unitOfWork.Session as IClientSessionHandle, newEntity,
                 cancellationToken: cancellationToken);

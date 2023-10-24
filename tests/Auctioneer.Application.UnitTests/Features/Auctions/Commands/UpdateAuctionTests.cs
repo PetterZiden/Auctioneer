@@ -154,7 +154,7 @@ public class UpdateAuctionTests
             Id = Guid.NewGuid(),
             Title = "MockAuction",
             Description = "MockediMock",
-            ImgRoute = "../images/test.jpg",
+            ImgRoute = "../images/test.jpg"
         };
     }
 }

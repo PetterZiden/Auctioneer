@@ -46,7 +46,7 @@ public class GetAuctionTests : BaseIntegrationTest
     {
         var client = _factory.CreateClient();
 
-        var response = await client.GetAsync($"https://localhost:7298/api/auction/id234");
+        var response = await client.GetAsync("https://localhost:7298/api/auction/id234");
 
         Assert.False(response.IsSuccessStatusCode);
         Assert.True(response.StatusCode == HttpStatusCode.NotFound);

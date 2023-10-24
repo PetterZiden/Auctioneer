@@ -35,7 +35,7 @@ public class GetMembersTests : BaseIntegrationTest
     {
         var client = _factory.CreateClient();
 
-        var response = await client.GetAsync($"https://localhost:7298/api/members");
+        var response = await client.GetAsync("https://localhost:7298/api/members");
         var content = JsonSerializer.Deserialize<string>(await response.Content.ReadAsStringAsync());
 
         Assert.False(response.IsSuccessStatusCode);

@@ -5,10 +5,12 @@ using Auctioneer.GraphQL.Members;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddInfrastructure();
+builder.AddApplicationAuth();
 builder.Services.AddApplication();
 
 builder.Services
     .AddGraphQLServer()
+    .AddAuthorization()
     .AddQueryType(x => x.Name("Query"))
     .AddType<MemberQueries>()
     .AddType<AuctionQueries>()
@@ -18,6 +20,10 @@ builder.Services
 
 
 var app = builder.Build();
+
+app.UseRouting();
+
+app.UseAuthentication();
 
 app.MapGraphQL();
 

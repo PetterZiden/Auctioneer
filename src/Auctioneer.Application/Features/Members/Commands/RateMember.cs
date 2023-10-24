@@ -1,5 +1,4 @@
 using System.Reflection;
-using System.Text.Json;
 using Auctioneer.Application.Common;
 using Auctioneer.Application.Common.Helpers;
 using Auctioneer.Application.Common.Interfaces;
@@ -7,10 +6,6 @@ using Auctioneer.Application.Common.Models;
 using Auctioneer.Application.Entities;
 using Auctioneer.Application.Features.Members.Dto;
 using Auctioneer.Application.Features.Members.Errors;
-using Auctioneer.Application.Infrastructure.Messaging.MassTransit;
-using Auctioneer.Application.Infrastructure.Messaging.RabbitMq;
-using Auctioneer.MessagingContracts.Email;
-using Auctioneer.MessagingContracts.Notification;
 using FluentResults;
 using FluentValidation;
 using MediatR;
