@@ -1,0 +1,125 @@
+[11:22:55 INF] Background service started...
+[11:23:14 INF] Background service stopped...
+[17:16:10 ERR] This operation is not supported for a relative URI.
+System.InvalidOperationException: This operation is not supported for a relative URI.
+   at System.Uri.get_Scheme()
+   at RabbitMQ.Client.ConnectionFactory.SetUri(Uri uri)
+   at RabbitMQ.Client.ConnectionFactory.set_Uri(Uri value)
+   at Auctioneer.EmailService.Services.RabbitMqService..ctor(IOptions`1 settings, ILogger`1 logger) in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.EmailService/Services/RabbitMqService.cs:line 23
+[17:16:10 INF] Background service started...
+[17:16:10 ERR] BackgroundService failed
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at RabbitMQ.Client.IModelExensions.ExchangeDeclare(IModel model, String exchange, String type, Boolean durable, Boolean autoDelete, IDictionary`2 arguments)
+   at Auctioneer.EmailService.Services.RabbitMqService.StartListeningOnQueue(String queue, String routeKey, Action`1 messageHandler) in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.EmailService/Services/RabbitMqService.cs:line 39
+   at Auctioneer.EmailService.Worker.<>c__DisplayClass4_0.<ExecuteAsync>b__0() in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.EmailService/Worker.cs:line 27
+   at System.Threading.ExecutionContext.RunFromThreadPoolDispatchLoop(Thread threadPoolThread, ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunFromThreadPoolDispatchLoop(Thread threadPoolThread, ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.Extensions.Hosting.Internal.Host.TryExecuteBackgroundServiceAsync(BackgroundService backgroundService)
+[17:16:10 FTL] The HostOptions.BackgroundServiceExceptionBehavior is configured to StopHost. A BackgroundService has thrown an unhandled exception, and the IHost instance is stopping. To avoid this behavior, configure this to Ignore; however the BackgroundService will not be restarted.
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at RabbitMQ.Client.IModelExensions.ExchangeDeclare(IModel model, String exchange, String type, Boolean durable, Boolean autoDelete, IDictionary`2 arguments)
+   at Auctioneer.EmailService.Services.RabbitMqService.StartListeningOnQueue(String queue, String routeKey, Action`1 messageHandler) in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.EmailService/Services/RabbitMqService.cs:line 39
+   at Auctioneer.EmailService.Worker.<>c__DisplayClass4_0.<ExecuteAsync>b__0() in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.EmailService/Worker.cs:line 27
+   at System.Threading.ExecutionContext.RunFromThreadPoolDispatchLoop(Thread threadPoolThread, ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunFromThreadPoolDispatchLoop(Thread threadPoolThread, ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.Extensions.Hosting.Internal.Host.TryExecuteBackgroundServiceAsync(BackgroundService backgroundService)
+[17:16:10 INF] Background service stopped...
+[18:09:28 ERR] This operation is not supported for a relative URI.
+System.InvalidOperationException: This operation is not supported for a relative URI.
+   at System.Uri.get_Scheme()
+   at RabbitMQ.Client.ConnectionFactory.SetUri(Uri uri)
+   at RabbitMQ.Client.ConnectionFactory.set_Uri(Uri value)
+   at Auctioneer.EmailService.Services.RabbitMqService..ctor(IOptions`1 settings, ILogger`1 logger) in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.EmailService/Services/RabbitMqService.cs:line 23
+[18:09:28 INF] Background service started...
+[18:09:28 ERR] BackgroundService failed
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at RabbitMQ.Client.IModelExensions.ExchangeDeclare(IModel model, String exchange, String type, Boolean durable, Boolean autoDelete, IDictionary`2 arguments)
+   at Auctioneer.EmailService.Services.RabbitMqService.StartListeningOnQueue(String queue, String routeKey, Action`1 messageHandler) in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.EmailService/Services/RabbitMqService.cs:line 39
+   at Auctioneer.EmailService.Worker.<>c__DisplayClass4_0.<ExecuteAsync>b__0() in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.EmailService/Worker.cs:line 27
+   at System.Threading.ExecutionContext.RunFromThreadPoolDispatchLoop(Thread threadPoolThread, ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunFromThreadPoolDispatchLoop(Thread threadPoolThread, ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.Extensions.Hosting.Internal.Host.TryExecuteBackgroundServiceAsync(BackgroundService backgroundService)
+[18:09:28 FTL] The HostOptions.BackgroundServiceExceptionBehavior is configured to StopHost. A BackgroundService has thrown an unhandled exception, and the IHost instance is stopping. To avoid this behavior, configure this to Ignore; however the BackgroundService will not be restarted.
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at RabbitMQ.Client.IModelExensions.ExchangeDeclare(IModel model, String exchange, String type, Boolean durable, Boolean autoDelete, IDictionary`2 arguments)
+   at Auctioneer.EmailService.Services.RabbitMqService.StartListeningOnQueue(String queue, String routeKey, Action`1 messageHandler) in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.EmailService/Services/RabbitMqService.cs:line 39
+   at Auctioneer.EmailService.Worker.<>c__DisplayClass4_0.<ExecuteAsync>b__0() in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.EmailService/Worker.cs:line 27
+   at System.Threading.ExecutionContext.RunFromThreadPoolDispatchLoop(Thread threadPoolThread, ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunFromThreadPoolDispatchLoop(Thread threadPoolThread, ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.Extensions.Hosting.Internal.Host.TryExecuteBackgroundServiceAsync(BackgroundService backgroundService)
+[18:09:28 INF] Background service stopped...
+[18:12:34 ERR] This operation is not supported for a relative URI.
+System.InvalidOperationException: This operation is not supported for a relative URI.
+   at System.Uri.get_Scheme()
+   at RabbitMQ.Client.ConnectionFactory.SetUri(Uri uri)
+   at RabbitMQ.Client.ConnectionFactory.set_Uri(Uri value)
+   at Auctioneer.EmailService.Services.RabbitMqService..ctor(IOptions`1 settings, ILogger`1 logger) in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.EmailService/Services/RabbitMqService.cs:line 23
+[18:12:34 INF] Background service started...
+[18:12:34 ERR] BackgroundService failed
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at RabbitMQ.Client.IModelExensions.ExchangeDeclare(IModel model, String exchange, String type, Boolean durable, Boolean autoDelete, IDictionary`2 arguments)
+   at Auctioneer.EmailService.Services.RabbitMqService.StartListeningOnQueue(String queue, String routeKey, Action`1 messageHandler) in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.EmailService/Services/RabbitMqService.cs:line 39
+   at Auctioneer.EmailService.Worker.<>c__DisplayClass4_0.<ExecuteAsync>b__0() in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.EmailService/Worker.cs:line 27
+   at System.Threading.ExecutionContext.RunFromThreadPoolDispatchLoop(Thread threadPoolThread, ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunFromThreadPoolDispatchLoop(Thread threadPoolThread, ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.Extensions.Hosting.Internal.Host.TryExecuteBackgroundServiceAsync(BackgroundService backgroundService)
+[18:12:34 FTL] The HostOptions.BackgroundServiceExceptionBehavior is configured to StopHost. A BackgroundService has thrown an unhandled exception, and the IHost instance is stopping. To avoid this behavior, configure this to Ignore; however the BackgroundService will not be restarted.
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at RabbitMQ.Client.IModelExensions.ExchangeDeclare(IModel model, String exchange, String type, Boolean durable, Boolean autoDelete, IDictionary`2 arguments)
+   at Auctioneer.EmailService.Services.RabbitMqService.StartListeningOnQueue(String queue, String routeKey, Action`1 messageHandler) in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.EmailService/Services/RabbitMqService.cs:line 39
+   at Auctioneer.EmailService.Worker.<>c__DisplayClass4_0.<ExecuteAsync>b__0() in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.EmailService/Worker.cs:line 27
+   at System.Threading.ExecutionContext.RunFromThreadPoolDispatchLoop(Thread threadPoolThread, ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunFromThreadPoolDispatchLoop(Thread threadPoolThread, ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.Extensions.Hosting.Internal.Host.TryExecuteBackgroundServiceAsync(BackgroundService backgroundService)
+[18:12:34 INF] Background service stopped...
+[18:27:28 ERR] This operation is not supported for a relative URI.
+System.InvalidOperationException: This operation is not supported for a relative URI.
+   at System.Uri.get_Scheme()
+   at RabbitMQ.Client.ConnectionFactory.SetUri(Uri uri)
+   at RabbitMQ.Client.ConnectionFactory.set_Uri(Uri value)
+   at Auctioneer.EmailService.Services.RabbitMqService..ctor(IOptions`1 settings, ILogger`1 logger) in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.EmailService/Services/RabbitMqService.cs:line 23
+[18:27:28 INF] Background service started...
+[18:27:28 ERR] BackgroundService failed
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at RabbitMQ.Client.IModelExensions.ExchangeDeclare(IModel model, String exchange, String type, Boolean durable, Boolean autoDelete, IDictionary`2 arguments)
+   at Auctioneer.EmailService.Services.RabbitMqService.StartListeningOnQueue(String queue, String routeKey, Action`1 messageHandler) in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.EmailService/Services/RabbitMqService.cs:line 39
+   at Auctioneer.EmailService.Worker.<>c__DisplayClass4_0.<ExecuteAsync>b__0() in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.EmailService/Worker.cs:line 27
+   at System.Threading.ExecutionContext.RunFromThreadPoolDispatchLoop(Thread threadPoolThread, ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunFromThreadPoolDispatchLoop(Thread threadPoolThread, ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.Extensions.Hosting.Internal.Host.TryExecuteBackgroundServiceAsync(BackgroundService backgroundService)
+[18:27:28 FTL] The HostOptions.BackgroundServiceExceptionBehavior is configured to StopHost. A BackgroundService has thrown an unhandled exception, and the IHost instance is stopping. To avoid this behavior, configure this to Ignore; however the BackgroundService will not be restarted.
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at RabbitMQ.Client.IModelExensions.ExchangeDeclare(IModel model, String exchange, String type, Boolean durable, Boolean autoDelete, IDictionary`2 arguments)
+   at Auctioneer.EmailService.Services.RabbitMqService.StartListeningOnQueue(String queue, String routeKey, Action`1 messageHandler) in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.EmailService/Services/RabbitMqService.cs:line 39
+   at Auctioneer.EmailService.Worker.<>c__DisplayClass4_0.<ExecuteAsync>b__0() in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.EmailService/Worker.cs:line 27
+   at System.Threading.ExecutionContext.RunFromThreadPoolDispatchLoop(Thread threadPoolThread, ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunFromThreadPoolDispatchLoop(Thread threadPoolThread, ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.Extensions.Hosting.Internal.Host.TryExecuteBackgroundServiceAsync(BackgroundService backgroundService)
+[18:27:28 INF] Background service stopped...
+[18:30:31 INF] Background service started...
+[18:34:03 INF] Processed RateMemberMessage: "Kalle Svensson" gave "Frida Törn" 4 stars, sending email to: "Törn@gmail.com"
+[18:34:42 INF] Background service stopped...

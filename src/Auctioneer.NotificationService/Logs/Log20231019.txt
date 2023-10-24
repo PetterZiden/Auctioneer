@@ -1,0 +1,9 @@
+[11:22:56 INF] Configured endpoint "place-bid-notification", Consumer: "Auctioneer.NotificationService.Consumers.PlaceBidNotificationConsumer"
+[11:22:56 INF] Configured endpoint "rate-member-notification", Consumer: "Auctioneer.NotificationService.Consumers.RateMemberNotificationConsumer"
+[11:22:56 INF] Bus started: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[11:23:15 INF] Bus stopped: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[18:30:31 INF] Configured endpoint "place-bid-notification", Consumer: "Auctioneer.NotificationService.Consumers.PlaceBidNotificationConsumer"
+[18:30:31 INF] Configured endpoint "rate-member-notification", Consumer: "Auctioneer.NotificationService.Consumers.RateMemberNotificationConsumer"
+[18:30:31 INF] Bus started: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[18:34:03 INF] "Kalle Svensson" gave you 4 stars
+[18:34:42 INF] Bus stopped: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj

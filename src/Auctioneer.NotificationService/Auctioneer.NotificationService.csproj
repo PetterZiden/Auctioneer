@@ -4,25 +4,20 @@
         <TargetFramework>net7.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
-        <UserSecretsId>dotnet-Auctioneer.NotifcationService-A81E0346-9ABA-4FCF-9C4D-BE353A49BF3A</UserSecretsId>
+        <UserSecretsId>dotnet-Auctioneer.NotificationService-FDD3C79B-E224-4247-AF8D-7F2EA730417A</UserSecretsId>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-        <RootNamespace>Auctioneer.NotificationService</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1"/>
         <PackageReference Include="MassTransit.RabbitMQ" Version="8.1.1"/>
         <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1"/>
-        <PackageReference Include="Serilog" Version="3.0.2-dev-02056"/>
-        <PackageReference Include="Serilog.AspNetCore" Version="7.0.0"/>
-        <PackageReference Include="Serilog.Extensions.Logging" Version="7.0.0"/>
+        <PackageReference Include="Serilog" Version="3.1.0-dev-02078"/>
+        <PackageReference Include="Serilog.Extensions.Logging" Version="7.0.1-dev-10354"/>
         <PackageReference Include="Serilog.Settings.Configuration" Version="7.0.2-dev-00546"/>
-        <PackageReference Include="Serilog.Sinks.File" Version="5.0.1-dev-00947"/>
-    </ItemGroup>
-
-    <ItemGroup>
-        <Content Include="..\..\.dockerignore">
-            <Link>.dockerignore</Link>
-        </Content>
+        <PackageReference Include="Serilog.Sinks.Console" Version="5.0.0-dev-00923"/>
+        <PackageReference Include="Serilog.Sinks.File" Version="5.0.1-dev-00968"/>
+        <PackageReference Include="Serilog.Sinks.Grafana.Loki" Version="8.2.0-beta.2"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -31,5 +26,11 @@
 
     <ItemGroup>
         <Folder Include="Logs\"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Content Include="..\..\.dockerignore">
+            <Link>.dockerignore</Link>
+        </Content>
     </ItemGroup>
 </Project>

@@ -1,0 +1,42 @@
+﻿services:
+  auctioneer.api:
+    image: auctioneer.api
+    build:
+      context: .
+      dockerfile: src/Auctioneer.API/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - USER_SECRETS_ID=33ff7e54-390b-4fea-b6e9-d6b6ab651b2f
+    ports:
+      - "53961:80"
+    volumes:
+      - $APPDATA/Microsoft/UserSecrets/$USER_SECRETS_ID:/root/.microsoft/usersecrets/$USER_SECRETS_ID
+      - $HOME/.microsoft/usersecrets/$USER_SECRETS_ID:/root/.microsoft/usersecrets/$USER_SECRETS_ID
+
+  auctioneer.emailservice:
+    image: auctioneer.emailservice
+    build:
+      context: .
+      dockerfile: src/Auctioneer.EmailService/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - USER_SECRETS_ID=dotnet-Auctioneer.EmailService-3EC286A3-4D2D-4936-BB3D-3930F7551DA2
+    ports:
+      - "54011:80"
+    volumes:
+      - $APPDATA/Microsoft/UserSecrets/$USER_SECRETS_ID:/root/.microsoft/usersecrets/$USER_SECRETS_ID
+      - $HOME/.microsoft/usersecrets/$USER_SECRETS_ID:/root/.microsoft/usersecrets/$USER_SECRETS_ID
+
+  auctioneer.notificationservice:
+    image: auctioneer.notificationservice
+    build:
+      context: .
+      dockerfile: src/Auctioneer.NotificationService/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - USER_SECRETS_ID=dotnet-Auctioneer.NotificationService-FDD3C79B-E224-4247-AF8D-7F2EA730417A
+    ports:
+      - "53811:80"
+    volumes:
+      - $APPDATA/Microsoft/UserSecrets/$USER_SECRETS_ID:/root/.microsoft/usersecrets/$USER_SECRETS_ID
+      - $HOME/.microsoft/usersecrets/$USER_SECRETS_ID:/root/.microsoft/usersecrets/$USER_SECRETS_ID

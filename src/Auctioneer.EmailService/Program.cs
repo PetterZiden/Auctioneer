@@ -4,11 +4,14 @@ using Auctioneer.EmailService.Services;
 using Auctioneer.EmailService.Settings;
 using Serilog;
 
+var config = new ConfigurationBuilder()
+    .AddUserSecrets<Program>()
+    .Build();
+
 var host = Host.CreateDefaultBuilder(args)
-    .ConfigureServices((hostContext, services) =>
+    .ConfigureServices(services =>
     {
-        var configuration = hostContext.Configuration;
-        services.Configure<CloudAmqpSettings>(configuration.GetSection("CloudAMQP"));
+        services.Configure<CloudAmqpSettings>(config.GetSection("CloudAMQP"));
         services.AddSingleton<IRabbitMqService, RabbitMqService>();
         services.AddSingleton<IMessageHandlerService, MessageHandlerService>();
         services.AddHostedService<Worker>();
@@ -22,10 +25,6 @@ var host = Host.CreateDefaultBuilder(args)
         logging.ClearProviders();
         logging.AddSerilog(logger);
     })
-    .Build();
-
-var config = new ConfigurationBuilder()
-    .AddUserSecrets<Program>()
     .Build();
 
 host.Run();
