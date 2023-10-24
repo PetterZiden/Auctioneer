@@ -1,11 +1,13 @@
 using MassTransit;
 using Serilog;
 
-var host = Host.CreateDefaultBuilder(args)
-    .ConfigureServices((hostContext, services) =>
-    {
-        var configuration = hostContext.Configuration;
+var config = new ConfigurationBuilder()
+    .AddUserSecrets<Program>()
+    .Build();
 
+var host = Host.CreateDefaultBuilder(args)
+    .ConfigureServices(services =>
+    {
         services.AddMassTransit(x =>
         {
             x.SetKebabCaseEndpointNameFormatter();
@@ -14,7 +16,7 @@ var host = Host.CreateDefaultBuilder(args)
 
             x.UsingRabbitMq((context, cfg) =>
             {
-                cfg.Host(configuration.GetSection("CloudAMQP:Url").Value);
+                cfg.Host(config.GetSection("CloudAMQP:Url").Value);
 
                 cfg.ConfigureEndpoints(context);
                 cfg.UseMessageRetry(r => { r.Interval(3, TimeSpan.FromSeconds(5)); });
@@ -30,10 +32,6 @@ var host = Host.CreateDefaultBuilder(args)
         logging.ClearProviders();
         logging.AddSerilog(logger);
     })
-    .Build();
-
-var config = new ConfigurationBuilder()
-    .AddUserSecrets<Program>()
     .Build();
 
 host.Run();

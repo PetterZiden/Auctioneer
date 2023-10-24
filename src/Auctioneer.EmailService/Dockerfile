@@ -1,9 +1,10 @@
-﻿FROM mcr.microsoft.com/dotnet/runtime:7.0 AS base
+﻿FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
 WORKDIR /app
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
 COPY ["src/Auctioneer.EmailService/Auctioneer.EmailService.csproj", "src/Auctioneer.EmailService/"]
+COPY ["src/Auctioneer.MessagingContracts/Auctioneer.MessagingContracts.csproj", "src/Auctioneer.MessagingContracts/"]
 RUN dotnet restore "src/Auctioneer.EmailService/Auctioneer.EmailService.csproj"
 COPY . .
 WORKDIR "/src/src/Auctioneer.EmailService"

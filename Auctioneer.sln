@@ -6,8 +6,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Auctioneer.Application", "s
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Auctioneer.EmailService", "src\Auctioneer.EmailService\Auctioneer.EmailService.csproj", "{B9BC6596-F2F8-4379-A471-95900768A8A7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Auctioneer.NotificationService", "src\Auctioneer.NotificationService\Auctioneer.NotificationService.csproj", "{67B67E75-C64D-4647-BC12-09EEA0E2974C}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Auctioneer.MessagingContracts", "src\Auctioneer.MessagingContracts\Auctioneer.MessagingContracts.csproj", "{E88CC30C-2E7C-47F2-8DF5-0FD56C47DA85}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Auctioneer.GraphQL", "src\Auctioneer.GraphQL\Auctioneer.GraphQL.csproj", "{40FBF97E-9DB0-4017-967E-C1229A4BA002}"
@@ -17,6 +15,13 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Auctioneer.API.IntegrationTests", "tests\Auctioneer.API.IntegrationTests\Auctioneer.API.IntegrationTests.csproj", "{7A5268AD-31B0-4272-8624-F5021EA448A0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Auctioneer.Application.UnitTests", "tests\Auctioneer.Application.UnitTests\Auctioneer.Application.UnitTests.csproj", "{451CFABB-8DD9-4BFE-965F-561374FB8F50}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Auctioneer.NotificationService", "src\Auctioneer.NotificationService\Auctioneer.NotificationService.csproj", "{21603459-9D28-4B39-BE3A-B3912C566D7E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1A4E6D2F-96AB-42B3-A839-72E068396B23}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose.yml = docker-compose.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -36,10 +41,6 @@ Global
 		{B9BC6596-F2F8-4379-A471-95900768A8A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B9BC6596-F2F8-4379-A471-95900768A8A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B9BC6596-F2F8-4379-A471-95900768A8A7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{67B67E75-C64D-4647-BC12-09EEA0E2974C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{67B67E75-C64D-4647-BC12-09EEA0E2974C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{67B67E75-C64D-4647-BC12-09EEA0E2974C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{67B67E75-C64D-4647-BC12-09EEA0E2974C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E88CC30C-2E7C-47F2-8DF5-0FD56C47DA85}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E88CC30C-2E7C-47F2-8DF5-0FD56C47DA85}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E88CC30C-2E7C-47F2-8DF5-0FD56C47DA85}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -60,5 +61,9 @@ Global
 		{451CFABB-8DD9-4BFE-965F-561374FB8F50}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{451CFABB-8DD9-4BFE-965F-561374FB8F50}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{451CFABB-8DD9-4BFE-965F-561374FB8F50}.Release|Any CPU.Build.0 = Release|Any CPU
+		{21603459-9D28-4B39-BE3A-B3912C566D7E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{21603459-9D28-4B39-BE3A-B3912C566D7E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{21603459-9D28-4B39-BE3A-B3912C566D7E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{21603459-9D28-4B39-BE3A-B3912C566D7E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
