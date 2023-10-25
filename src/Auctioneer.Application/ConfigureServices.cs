@@ -1,5 +1,7 @@
 using System.Text;
 using Auctioneer.Application.Auth;
+using Auctioneer.Application.Auth.Models;
+using Auctioneer.Application.Auth.Services;
 using Auctioneer.Application.Common;
 using Auctioneer.Application.Common.Behaviours;
 using Auctioneer.Application.Common.Interfaces;
@@ -39,7 +41,7 @@ public static class ConfigureServices
         builder.Services.AddDbContext<ApplicationDbContext>(options =>
             options.UseNpgsql(builder.Configuration.GetConnectionString("AuthDb")));
 
-        builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
+        builder.Services.AddIdentity<AuctioneerUser, IdentityRole>(options =>
             {
                 options.Password = new PasswordOptions
                 {
@@ -72,6 +74,8 @@ public static class ConfigureServices
                         new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"]!))
                 };
             });
+
+        builder.Services.AddScoped<IUserService, UserService>();
     }
 
     public static void AddInfrastructure(this WebApplicationBuilder builder)
