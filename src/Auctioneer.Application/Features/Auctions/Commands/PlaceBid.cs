@@ -117,10 +117,10 @@ public class PlaceBidCommandHandler : IRequestHandler<PlaceBidCommand, Result>
                 AuctionOwnerId = auctionOwner.Id,
                 AuctionTitle = auction.Title,
                 AuctionOwnerName = auctionOwner.FullName,
-                AuctionOwnerEmail = auctionOwner.Email,
+                AuctionOwnerEmail = auctionOwner.Email.Value,
                 Bid = request.BidPrice,
                 BidderName = bidder.FullName,
-                BidderEmail = bidder.Email,
+                BidderEmail = bidder.Email.Value,
                 TimeStamp = bidResult.Value.TimeStamp.Value,
                 AuctionUrl = $"https://localhost:7298/api/auction/{auction.Id}"
             };

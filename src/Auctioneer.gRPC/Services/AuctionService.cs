@@ -1,11 +1,12 @@
-using Auctioneer.Application.Common;
-using Auctioneer.Application.Common.Helpers;
-using Auctioneer.Application.Common.Interfaces;
+using System.Reflection;
+using Auctioneer.Application.Common.Models;
+using Auctioneer.Application.Common.Validators;
 using Auctioneer.Application.Features.Auctions.Commands;
-using Auctioneer.Application.Features.Auctions.Dto;
+using Auctioneer.Application.Features.Auctions.Queries;
+using Auctioneer.gRPC.Common;
 using Auctioneer.gRPC.Mappers;
-using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 
 namespace Auctioneer.gRPC.Services;
@@ -14,20 +15,12 @@ namespace Auctioneer.gRPC.Services;
 public class AuctionService : Auction.AuctionBase
 {
     private readonly ILogger<AuctionService> _logger;
-    private readonly IRepository<Auctioneer.Application.Entities.Auction> _auctionRepository;
-    private readonly IRepository<Auctioneer.Application.Entities.Member> _memberRepository;
-    private readonly IRepository<DomainEvent> _eventRepository;
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IMediator _mediator;
 
-    public AuctionService(ILogger<AuctionService> logger, IRepository<Application.Entities.Auction> auctionRepository,
-        IRepository<Application.Entities.Member> memberRepository, IRepository<DomainEvent> eventRepository,
-        IUnitOfWork unitOfWork)
+    public AuctionService(ILogger<AuctionService> logger, IMediator mediator)
     {
         _logger = logger;
-        _auctionRepository = auctionRepository;
-        _memberRepository = memberRepository;
-        _eventRepository = eventRepository;
-        _unitOfWork = unitOfWork;
+        _mediator = mediator;
     }
 
     public override async Task GetAuctions(GetAuctionsRequest request, IServerStreamWriter<AuctionModel> responseStream,
@@ -35,12 +28,15 @@ public class AuctionService : Auction.AuctionBase
     {
         try
         {
-            var auctions = await _auctionRepository.GetAsync();
+            var query = new GetAuctionsQuery();
 
-            if (auctions is null || !auctions.Any())
-                throw new RpcException(new Status(StatusCode.NotFound, "Auction not found"));
+            var result = await _mediator.Send(query);
+            if (!result.IsSuccess)
+            {
+                throw new RpcException(CustomErrorBuilder.CreateError(result.Errors[0]));
+            }
 
-            var auctionModels = Map.ApplicationAuctionToAuctionModelList(auctions);
+            var auctionModels = Map.AuctionDtoToAuctionModelList(result.Value);
 
             foreach (var auction in auctionModels)
             {
@@ -49,6 +45,7 @@ public class AuctionService : Auction.AuctionBase
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
             throw new RpcException(new Status(StatusCode.Internal, ex.Message));
         }
     }
@@ -60,15 +57,19 @@ public class AuctionService : Auction.AuctionBase
             if (!Guid.TryParse(request.Id, out var auctionId))
                 throw new RpcException(new Status(StatusCode.InvalidArgument, "AuctionId was in wrong format"));
 
-            var auction = await _auctionRepository.GetAsync(auctionId);
+            var query = new GetAuctionQuery { Id = auctionId };
 
-            if (auction is null)
-                throw new RpcException(new Status(StatusCode.NotFound, "Auction not found"));
+            var result = await _mediator.Send(query);
+            if (!result.IsSuccess)
+            {
+                throw new RpcException(CustomErrorBuilder.CreateError(result.Errors[0]));
+            }
 
-            return Map.ApplicationAuctionToAuctionModel(auction);
+            return Map.AuctionDtoToAuctionModel(result.Value);
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
             throw new RpcException(new Status(StatusCode.Internal, ex.Message));
         }
     }
@@ -77,34 +78,40 @@ public class AuctionService : Auction.AuctionBase
     {
         try
         {
-            var cancellationToken = new CancellationToken();
             if (!Guid.TryParse(request.MemberId, out var memberId))
                 throw new RpcException(new Status(StatusCode.InvalidArgument, "MemberId was in wrong format"));
 
-            var auction = Application.Entities.Auction.Create(
-                memberId,
-                request.Title,
-                request.Description,
-                request.StartTime.ToDateTimeOffset(),
-                request.EndTime.ToDateTimeOffset(),
-                (decimal)request.StartingPrice,
-                request.ImgRoute);
+            var command = new CreateAuctionCommand
+            {
+                MemberId = memberId,
+                Title = request.Title,
+                Description = request.Description,
+                StartTime = request.StartTime.ToDateTimeOffset(),
+                EndTime = request.EndTime.ToDateTimeOffset(),
+                StartingPrice = (decimal)request.StartingPrice,
+                ImgRoute = request.ImgRoute
+            };
 
-            var domainEvent = new AuctionCreatedEvent(auction, EventList.Auction.AuctionCreatedEvent);
+            var validationResult = await new CreateAuctionCommandValidator().ValidateAsync(command);
+            if (!validationResult.IsValid)
+            {
+                throw new RpcException(CustomErrorBuilder.CreateError(validationResult));
+            }
 
-            await _auctionRepository.CreateAsync(auction, cancellationToken);
-            await _eventRepository.CreateAsync(domainEvent, cancellationToken);
-            await _unitOfWork.SaveAsync();
+            var result = await _mediator.Send(command);
+            if (!result.IsSuccess)
+            {
+                throw new RpcException(CustomErrorBuilder.CreateError(result.Errors[0]));
+            }
 
             return new CreateAuctionResponse
             {
-                Id = auction.Id.ToString(),
-                CreatedAt = Timestamp.FromDateTimeOffset(auction.Created)
+                Id = result.Value.ToString()
             };
         }
         catch (Exception ex)
         {
-            _unitOfWork.CleanOperations();
+            _logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
             throw new RpcException(new Status(StatusCode.Internal, ex.Message));
         }
     }
@@ -114,15 +121,19 @@ public class AuctionService : Auction.AuctionBase
     {
         try
         {
-            var cancellationToken = new CancellationToken();
             if (!Guid.TryParse(request.Id, out var auctionId))
                 throw new RpcException(new Status(StatusCode.InvalidArgument, "AuctionId was in wrong format"));
 
-            var domainEvent = new AuctionDeletedEvent(auctionId, EventList.Auction.AuctionDeletedEvent);
+            var command = new DeleteAuctionCommand
+            {
+                AuctionId = auctionId
+            };
 
-            await _auctionRepository.DeleteAsync(auctionId, cancellationToken);
-            await _eventRepository.CreateAsync(domainEvent, cancellationToken);
-            await _unitOfWork.SaveAsync();
+            var result = await _mediator.Send(command);
+            if (!result.IsSuccess)
+            {
+                throw new RpcException(CustomErrorBuilder.CreateError(result.Errors[0]));
+            }
 
             return new DeleteAuctionResponse
             {
@@ -131,7 +142,7 @@ public class AuctionService : Auction.AuctionBase
         }
         catch (Exception ex)
         {
-            _unitOfWork.CleanOperations();
+            _logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
             throw new RpcException(new Status(StatusCode.Internal, ex.Message));
         }
     }
@@ -140,32 +151,37 @@ public class AuctionService : Auction.AuctionBase
     {
         try
         {
-            var cancellationToken = new CancellationToken();
             if (!Guid.TryParse(request.Id, out var auctionId))
                 throw new RpcException(new Status(StatusCode.InvalidArgument, "AuctionId was in wrong format"));
 
-            var auction = await _auctionRepository.GetAsync(auctionId);
+            var command = new UpdateAuctionCommand
+            {
+                Id = auctionId,
+                Title = request.Title,
+                Description = request.Description,
+                ImgRoute = request.ImgRoute
+            };
 
-            if (auction is null)
-                throw new RpcException(new Status(StatusCode.NotFound, "Auction not found"));
+            var validationResult = await new UpdateAuctionCommandValidator().ValidateAsync(command);
+            if (!validationResult.IsValid)
+            {
+                throw new RpcException(CustomErrorBuilder.CreateError(validationResult));
+            }
 
-            var domainEvent = new AuctionUpdatedEvent(auction, EventList.Auction.AuctionUpdatedEvent);
-
-            await _auctionRepository.UpdateAsync(auctionId, auction, cancellationToken);
-            await _eventRepository.CreateAsync(domainEvent, cancellationToken);
-            await _unitOfWork.SaveAsync();
+            var result = await _mediator.Send(command);
+            if (!result.IsSuccess)
+            {
+                throw new RpcException(CustomErrorBuilder.CreateError(result.Errors[0]));
+            }
 
             return new UpdateAuctionResponse
             {
-                Id = request.Id,
-                UpdatedAt = auction.LastModified.HasValue
-                    ? Timestamp.FromDateTimeOffset(auction.LastModified.Value)
-                    : null
+                Message = "Auction updated successfully"
             };
         }
         catch (Exception ex)
         {
-            _unitOfWork.CleanOperations();
+            _logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
             throw new RpcException(new Status(StatusCode.Internal, ex.Message));
         }
     }
@@ -174,64 +190,46 @@ public class AuctionService : Auction.AuctionBase
     {
         try
         {
-            var cancellationToken = new CancellationToken();
             if (!Guid.TryParse(request.AuctionId, out var auctionId))
                 throw new RpcException(new Status(StatusCode.InvalidArgument, "AuctionId was in wrong format"));
 
             if (!Guid.TryParse(request.MemberId, out var memberId))
                 throw new RpcException(new Status(StatusCode.InvalidArgument, "MemberId was in wrong format"));
 
-            var auction = await _auctionRepository.GetAsync(auctionId);
-
-            if (auction is null)
-                throw new RpcException(new Status(StatusCode.NotFound, "Auction not found"));
-
-            var bidder = await _memberRepository.GetAsync(memberId);
-
-            var auctionOwner = await _memberRepository.GetAsync(auction.MemberId);
-
-            if (bidder is null || auctionOwner is null)
-                throw new RpcException(new Status(StatusCode.NotFound, "Member not found"));
-
-            var bidResult = auction.PlaceBid(memberId, (decimal)request.BidPrice);
-
-            if (!bidResult.IsSuccess)
-                throw new RpcException(new Status(StatusCode.InvalidArgument, bidResult.Errors[0].Message));
-
-            var memberResult = bidder.AddBid(bidResult.Value.AuctionId, bidResult.Value.BidPrice,
-                bidResult.Value.TimeStamp!.Value);
-
-            if (!memberResult.IsSuccess)
-                throw new RpcException(new Status(StatusCode.InvalidArgument, memberResult.Errors[0].Message));
-
-            var placeBidDto = new PlaceBidDto
+            var bid = new Bid
             {
-                AuctionOwnerId = auctionOwner.Id,
-                AuctionTitle = auction.Title,
-                AuctionOwnerName = auctionOwner.FullName,
-                AuctionOwnerEmail = auctionOwner.Email,
-                Bid = (decimal)request.BidPrice,
-                BidderName = bidder.FullName,
-                BidderEmail = bidder.Email,
-                TimeStamp = bidResult.Value.TimeStamp.Value,
-                AuctionUrl = $"https://localhost:7298/api/auction/{auction.Id}"
+                AuctionId = auctionId,
+                MemberId = memberId,
+                BidPrice = (decimal)request.BidPrice
             };
-            var domainEvent = new AuctionPlaceBidEvent(placeBidDto, EventList.Auction.AuctionPlaceBidEvent);
 
-            await _auctionRepository.UpdateAsync(auction.Id, auction, cancellationToken);
-            await _memberRepository.UpdateAsync(bidder.Id, bidder, cancellationToken);
-            await _eventRepository.CreateAsync(domainEvent, cancellationToken);
-            await _unitOfWork.SaveAsync();
+            var validationResult = await new BidValidator().ValidateAsync(bid);
+            if (!validationResult.IsValid)
+            {
+                throw new RpcException(CustomErrorBuilder.CreateError(validationResult));
+            }
+
+            var command = new PlaceBidCommand
+            {
+                AuctionId = auctionId,
+                MemberId = memberId,
+                BidPrice = bid.BidPrice
+            };
+
+            var result = await _mediator.Send(command);
+            if (!result.IsSuccess)
+            {
+                throw new RpcException(CustomErrorBuilder.CreateError(result.Errors[0]));
+            }
 
             return new PlaceBidResponse
             {
-                Message =
-                    $"Member with id: {memberId} placed bid of {request.BidPrice}kr on {auction.Title} successfully"
+                Message = $"Member with id: {memberId} placed bid of {request.BidPrice}kr successfully"
             };
         }
         catch (Exception ex)
         {
-            _unitOfWork.CleanOperations();
+            _logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
             throw new RpcException(new Status(StatusCode.Internal, ex.Message));
         }
     }

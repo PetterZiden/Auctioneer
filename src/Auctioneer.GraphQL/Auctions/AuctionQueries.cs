@@ -1,43 +1,48 @@
-using Auctioneer.Application.Common.Extensions;
-using Auctioneer.Application.Common.Interfaces;
-using Auctioneer.Application.Entities;
 using Auctioneer.Application.Features.Auctions.Dto;
+using Auctioneer.Application.Features.Auctions.Queries;
+using Auctioneer.GraphQL.Common;
 using HotChocolate.Execution;
+using MediatR;
 
 namespace Auctioneer.GraphQL.Auctions;
 
 [ExtendObjectType("Query")]
 public class AuctionQueries
 {
-    public async Task<List<AuctionDto>> GetAuctions([Service] IRepository<Auction> auctionRepository)
+    private readonly IMediator _mediator;
+    private readonly ILogger<AuctionQueries> _logger;
+
+    public AuctionQueries(IMediator mediator, ILogger<AuctionQueries> logger)
     {
-        var result = await auctionRepository.GetAsync();
-
-        if (result is null)
-        {
-            throw new QueryException(
-                ErrorBuilder.New()
-                    .SetMessage("No auction found.")
-                    .SetCode("NOT_FOUND")
-                    .Build());
-        }
-
-        return result.ToDtos();
+        _mediator = mediator;
+        _logger = logger;
     }
 
-    public async Task<AuctionDto> GetAuction([Service] IRepository<Auction> auctionRepository, Guid auctionId)
+    public async Task<List<AuctionDto>> GetAuctions()
     {
-        var result = await auctionRepository.GetAsync(auctionId);
+        var query = new GetAuctionsQuery();
 
-        if (result is null)
+        var result = await _mediator.Send(query);
+
+        if (!result.IsSuccess)
         {
-            throw new QueryException(
-                ErrorBuilder.New()
-                    .SetMessage("No auction found.")
-                    .SetCode("NOT_FOUND")
-                    .Build());
+            throw new QueryException(CustomErrorBuilder.CreateError(result.Errors));
         }
 
-        return result.ToDto();
+        return result.Value;
+    }
+
+    public async Task<AuctionDto> GetAuction(Guid auctionId)
+    {
+        var query = new GetAuctionQuery { Id = auctionId };
+
+        var result = await _mediator.Send(query);
+
+        if (!result.IsSuccess)
+        {
+            throw new QueryException(CustomErrorBuilder.CreateError(result.Errors));
+        }
+
+        return result.Value;
     }
 }

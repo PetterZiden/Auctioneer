@@ -30,20 +30,8 @@ public class MemberRepository : IRepository<Member>
             page,
             pageSize);
 
-    public async Task<Member?> GetAsync(Guid id)
-    {
-        try
-        {
-            var member = await _memberCollection.Find(x => x.Id == id).FirstOrDefaultAsync();
-            return member;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex);
-            return null;
-        }
-    }
-
+    public async Task<Member?> GetAsync(Guid id) =>
+        await _memberCollection.Find(x => x.Id == id).FirstOrDefaultAsync();
 
     public async Task CreateAsync(Member newEntity, CancellationToken cancellationToken)
     {
@@ -52,7 +40,6 @@ public class MemberRepository : IRepository<Member>
                 cancellationToken: cancellationToken);
         _unitOfWork.AddOperation(operation);
     }
-
 
     public async Task UpdateAsync(Guid id, Member updatedEntity, CancellationToken cancellationToken)
     {

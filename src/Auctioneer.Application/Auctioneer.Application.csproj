@@ -12,7 +12,6 @@
         <Folder Include="Auth\Migrations\"/>
       <Folder Include="Common\Exceptions\" />
       <Folder Include="Resources\" />
-      <Folder Include="ValueObjects\" />
     </ItemGroup>
 
     <ItemGroup>

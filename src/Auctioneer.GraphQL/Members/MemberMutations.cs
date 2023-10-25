@@ -1,22 +1,26 @@
-using Auctioneer.Application.Common;
-using Auctioneer.Application.Common.Helpers;
-using Auctioneer.Application.Common.Interfaces;
-using Auctioneer.Application.Common.Models;
-using Auctioneer.Application.Entities;
+using System.Reflection;
 using Auctioneer.Application.Features.Members.Commands;
-using Auctioneer.Application.Features.Members.Dto;
+using Auctioneer.GraphQL.Common;
 using Auctioneer.GraphQL.Members.Inputs;
 using Auctioneer.GraphQL.Members.Payloads;
 using HotChocolate.Execution;
+using MediatR;
 
 namespace Auctioneer.GraphQL.Members;
 
 [ExtendObjectType("Mutation")]
 public class MemberMutations
 {
-    public async Task<CreateMemberPayload> CreateMember(CreateMemberInput input,
-        [Service] IRepository<Member> memberRepository, [Service] IRepository<DomainEvent> eventRepository,
-        [Service] IUnitOfWork unitOfWork, CancellationToken cancellationToken)
+    private readonly IMediator _mediator;
+    private readonly ILogger<MemberMutations> _logger;
+
+    public MemberMutations(IMediator mediator, ILogger<MemberMutations> logger)
+    {
+        _mediator = mediator;
+        _logger = logger;
+    }
+
+    public async Task<CreateMemberPayload> CreateMember(CreateMemberInput input, CancellationToken cancellationToken)
     {
         try
         {
@@ -34,34 +38,21 @@ public class MemberMutations
             var validationResult = await new CreateMemberCommandValidator().ValidateAsync(command, cancellationToken);
             if (!validationResult.IsValid)
             {
-                var errorMessages = validationResult.Errors.ConvertAll(x => x.ErrorMessage);
-                throw new QueryException(
-                    ErrorBuilder.New()
-                        .SetMessage(string.Join(Environment.NewLine, errorMessages))
-                        .SetCode("BAD_REQUEST")
-                        .Build());
+                throw new QueryException(CustomErrorBuilder.CreateError(validationResult));
             }
 
-            var member = Member.Create(
-                input.FirstName,
-                input.LastName,
-                input.Email,
-                input.PhoneNumber,
-                input.Street,
-                input.ZipCode,
-                input.City
-            );
+            var result = await _mediator.Send(command, cancellationToken);
 
-            var domainEvent = new MemberCreatedEvent(member, EventList.Member.MemberCreatedEvent);
+            if (!result.IsSuccess)
+            {
+                throw new QueryException(CustomErrorBuilder.CreateError(result.Errors));
+            }
 
-            await memberRepository.CreateAsync(member, cancellationToken);
-            await eventRepository.CreateAsync(domainEvent, cancellationToken);
-            await unitOfWork.SaveAsync();
-
-            return new CreateMemberPayload(member.Id, member.Created);
+            return new CreateMemberPayload(result.Value);
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
             throw new QueryException(
                 ErrorBuilder.New()
                     .SetMessage(ex.Message)
@@ -70,9 +61,7 @@ public class MemberMutations
         }
     }
 
-    public async Task<UpdateMemberPayload> UpdateMember(UpdateMemberInput input,
-        [Service] IRepository<Member> memberRepository, [Service] IRepository<DomainEvent> eventRepository,
-        [Service] IUnitOfWork unitOfWork, CancellationToken cancellationToken)
+    public async Task<UpdateMemberPayload> UpdateMember(UpdateMemberInput input, CancellationToken cancellationToken)
     {
         try
         {
@@ -82,7 +71,7 @@ public class MemberMutations
                 FirstName = input.FirstName,
                 LastName = input.LastName,
                 Street = input.Street,
-                ZipCode = input.ZipCode,
+                Zipcode = input.ZipCode,
                 City = input.City,
                 PhoneNumber = input.PhoneNumber
             };
@@ -90,95 +79,22 @@ public class MemberMutations
             var validationResult = await new UpdateMemberCommandValidator().ValidateAsync(command, cancellationToken);
             if (!validationResult.IsValid)
             {
-                var errorMessages = validationResult.Errors.ConvertAll(x => x.ErrorMessage);
-                throw new QueryException(
-                    ErrorBuilder.New()
-                        .SetMessage(string.Join(Environment.NewLine, errorMessages))
-                        .SetCode("BAD_REQUEST")
-                        .Build());
+                throw new QueryException(CustomErrorBuilder.CreateError(validationResult));
             }
 
 
-            var member = await memberRepository.GetAsync(command.Id);
+            var result = await _mediator.Send(command, cancellationToken);
 
-            if (member is null)
+            if (!result.IsSuccess)
             {
-                throw new QueryException(
-                    ErrorBuilder.New()
-                        .SetMessage("No member found.")
-                        .SetCode("NOT_FOUND")
-                        .Build());
+                throw new QueryException(CustomErrorBuilder.CreateError(result.Errors));
             }
 
-            if (!string.IsNullOrEmpty(command.FirstName))
-            {
-                var result = member.ChangeFirstName(command.FirstName);
-                if (!result.IsSuccess)
-                {
-                    throw new QueryException(
-                        ErrorBuilder.New()
-                            .SetMessage(result.Errors[0].Message)
-                            .SetCode("BAD_REQUEST")
-                            .Build());
-                }
-            }
-
-            if (!string.IsNullOrEmpty(command.LastName))
-            {
-                var result = member.ChangeLastName(command.LastName);
-                if (!result.IsSuccess)
-                {
-                    throw new QueryException(
-                        ErrorBuilder.New()
-                            .SetMessage(result.Errors[0].Message)
-                            .SetCode("BAD_REQUEST")
-                            .Build());
-                }
-            }
-
-            if (!string.IsNullOrEmpty(command.PhoneNumber))
-            {
-                var result = member.ChangePhoneNumber(command.PhoneNumber);
-                if (!result.IsSuccess)
-                {
-                    throw new QueryException(
-                        ErrorBuilder.New()
-                            .SetMessage(result.Errors[0].Message)
-                            .SetCode("BAD_REQUEST")
-                            .Build());
-                }
-            }
-
-            if (!string.IsNullOrEmpty(command.Street) || !string.IsNullOrEmpty(command.ZipCode) ||
-                !string.IsNullOrEmpty(command.City))
-            {
-                var addressToUpdate = new Address
-                {
-                    Street = command.Street ?? member.Address.Street,
-                    ZipCode = command.ZipCode ?? member.Address.ZipCode,
-                    City = command.City ?? member.Address.City
-                };
-                var result = member.ChangeAddress(addressToUpdate);
-                if (!result.IsSuccess)
-                {
-                    throw new QueryException(
-                        ErrorBuilder.New()
-                            .SetMessage(result.Errors[0].Message)
-                            .SetCode("BAD_REQUEST")
-                            .Build());
-                }
-            }
-
-            var domainEvent = new MemberUpdatedEvent(member, EventList.Member.MemberUpdatedEvent);
-
-            await eventRepository.CreateAsync(domainEvent, cancellationToken);
-            await memberRepository.UpdateAsync(command.Id, member, cancellationToken);
-            await unitOfWork.SaveAsync();
-
-            return new UpdateMemberPayload(member.Id, member.LastModified!.Value);
+            return new UpdateMemberPayload("Member updated successfully");
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
             throw new QueryException(
                 ErrorBuilder.New()
                     .SetMessage(ex.Message)
@@ -187,33 +103,27 @@ public class MemberMutations
         }
     }
 
-    public async Task<DeleteMemberPayload> DeleteMember(DeleteMemberInput input,
-        [Service] IRepository<Member> memberRepository, [Service] IRepository<DomainEvent> eventRepository,
-        [Service] IUnitOfWork unitOfWork, CancellationToken cancellationToken)
+    public async Task<DeleteMemberPayload> DeleteMember(DeleteMemberInput input, CancellationToken cancellationToken)
     {
         try
         {
-            var member = await memberRepository.GetAsync(input.MemberId);
-            if (member is null)
+            var command = new DeleteMemberCommand
             {
-                throw new QueryException(
-                    ErrorBuilder.New()
-                        .SetMessage("No member found.")
-                        .SetCode("NOT_FOUND")
-                        .Build());
+                MemberId = input.MemberId
+            };
+
+            var result = await _mediator.Send(command, cancellationToken);
+
+            if (!result.IsSuccess)
+            {
+                throw new QueryException(CustomErrorBuilder.CreateError(result.Errors));
             }
-
-
-            var domainEvent = new MemberDeletedEvent(input.MemberId, EventList.Member.MemberDeletedEvent);
-
-            await memberRepository.DeleteAsync(input.MemberId, cancellationToken);
-            await eventRepository.CreateAsync(domainEvent, cancellationToken);
-            await unitOfWork.SaveAsync();
 
             return new DeleteMemberPayload(input.MemberId, "Member deleted successfully");
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
             throw new QueryException(
                 ErrorBuilder.New()
                     .SetMessage(ex.Message)
@@ -222,9 +132,7 @@ public class MemberMutations
         }
     }
 
-    public async Task<ChangeEmailPayload> ChangeEmail(ChangeEmailInput input,
-        [Service] IRepository<Member> memberRepository, IRepository<DomainEvent> eventRepository,
-        [Service] IUnitOfWork unitOfWork, CancellationToken cancellationToken)
+    public async Task<ChangeEmailPayload> ChangeEmail(ChangeEmailInput input, CancellationToken cancellationToken)
     {
         try
         {
@@ -234,47 +142,21 @@ public class MemberMutations
                 await new ChangeEmailMemberCommandValidator().ValidateAsync(command, cancellationToken);
             if (!validationResult.IsValid)
             {
-                var errorMessages = validationResult.Errors.ConvertAll(x => x.ErrorMessage);
-                throw new QueryException(
-                    ErrorBuilder.New()
-                        .SetMessage(string.Join(Environment.NewLine, errorMessages))
-                        .SetCode("BAD_REQUEST")
-                        .Build());
+                throw new QueryException(CustomErrorBuilder.CreateError(validationResult));
             }
 
-            var member = await memberRepository.GetAsync(command.MemberId);
-
-            if (member is null)
-            {
-                throw new QueryException(
-                    ErrorBuilder.New()
-                        .SetMessage("No member found.")
-                        .SetCode("NOT_FOUND")
-                        .Build());
-            }
-
-            var result = member.ChangeEmail(command.Email);
+            var result = await _mediator.Send(command, cancellationToken);
 
             if (!result.IsSuccess)
             {
-                throw new QueryException(
-                    ErrorBuilder.New()
-                        .SetMessage(result.Errors[0].Message)
-                        .SetCode("BAD_REQUEST")
-                        .Build());
+                throw new QueryException(CustomErrorBuilder.CreateError(result.Errors));
             }
 
-            var domainEvent =
-                new MemberChangedEmailEvent(member.Id, command.Email, EventList.Member.MemberChangedEmailEvent);
-
-            await memberRepository.UpdateAsync(member.Id, member, cancellationToken);
-            await eventRepository.CreateAsync(domainEvent, cancellationToken);
-            await unitOfWork.SaveAsync();
-
-            return new ChangeEmailPayload($"Email for member with id: {member.Id} changed successfully");
+            return new ChangeEmailPayload($"Email for member with id: {input.MemberId} changed successfully");
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
             throw new QueryException(
                 ErrorBuilder.New()
                     .SetMessage(ex.Message)
@@ -283,9 +165,7 @@ public class MemberMutations
         }
     }
 
-    public async Task<RateMemberPayload> RateMember(RateMemberInput input,
-        [Service] IRepository<Member> memberRepository, IRepository<DomainEvent> eventRepository,
-        [Service] IUnitOfWork unitOfWork, CancellationToken cancellationToken)
+    public async Task<RateMemberPayload> RateMember(RateMemberInput input, CancellationToken cancellationToken)
     {
         try
         {
@@ -299,55 +179,21 @@ public class MemberMutations
             var validationResult = await new RateMemberCommandValidator().ValidateAsync(command, cancellationToken);
             if (!validationResult.IsValid)
             {
-                var errorMessages = validationResult.Errors.ConvertAll(x => x.ErrorMessage);
-                throw new QueryException(
-                    ErrorBuilder.New()
-                        .SetMessage(string.Join(Environment.NewLine, errorMessages))
-                        .SetCode("BAD_REQUEST")
-                        .Build());
+                throw new QueryException(CustomErrorBuilder.CreateError(validationResult));
             }
 
-            var ratedMember = await memberRepository.GetAsync(command.RatingForMemberId);
-            var ratedByMember = await memberRepository.GetAsync(command.RatingFromMemberId);
-
-            if (ratedMember is null || ratedByMember is null)
-            {
-                throw new QueryException(
-                    ErrorBuilder.New()
-                        .SetMessage("No member found.")
-                        .SetCode("NOT_FOUND")
-                        .Build());
-            }
-
-            var result = ratedMember.Rate(command.RatingFromMemberId, command.Stars);
+            var result = await _mediator.Send(command, cancellationToken);
 
             if (!result.IsSuccess)
             {
-                throw new QueryException(
-                    ErrorBuilder.New()
-                        .SetMessage(result.Errors[0].Message)
-                        .SetCode("BAD_REQUEST")
-                        .Build());
+                throw new QueryException(CustomErrorBuilder.CreateError(result.Errors));
             }
-
-            var rateMemberDto = new RateMemberDto
-            {
-                RatedName = ratedMember.FullName,
-                RatedMemberId = ratedMember.Id,
-                RatedEmail = ratedMember.Email,
-                RatedByName = ratedByMember.FullName,
-                Stars = command.Stars
-            };
-            var domainEvent = new RateMemberEvent(rateMemberDto, EventList.Member.RateMemberEvent);
-
-            await memberRepository.UpdateAsync(ratedMember.Id, ratedMember, cancellationToken);
-            await eventRepository.CreateAsync(domainEvent, cancellationToken);
-            await unitOfWork.SaveAsync();
 
             return new RateMemberPayload("Member rated successfully");
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
             throw new QueryException(
                 ErrorBuilder.New()
                     .SetMessage(ex.Message)

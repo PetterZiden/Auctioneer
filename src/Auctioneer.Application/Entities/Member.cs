@@ -3,6 +3,7 @@ using Auctioneer.Application.Common;
 using Auctioneer.Application.Common.Errors;
 using Auctioneer.Application.Common.Interfaces;
 using Auctioneer.Application.Common.Models;
+using Auctioneer.Application.ValueObjects;
 using FluentResults;
 using MongoDB.Bson.Serialization.Attributes;
 
@@ -14,7 +15,7 @@ public class Member : AuditableEntity, IAggregateRoot
     public string FirstName { get; private set; }
     public string LastName { get; private set; }
     public Address Address { get; private set; }
-    public string Email { get; private set; }
+    public Email Email { get; private set; }
     public string PhoneNumber { get; private set; }
 
     private List<Rating> _ratings = new();
@@ -47,33 +48,16 @@ public class Member : AuditableEntity, IAggregateRoot
         if (string.IsNullOrEmpty(lastname))
             throw new ArgumentNullException(nameof(lastname));
 
-        if (string.IsNullOrEmpty(email))
-            throw new ArgumentNullException(nameof(email));
-
         if (string.IsNullOrEmpty(phoneNumber))
             throw new ArgumentNullException(nameof(phoneNumber));
-
-        if (string.IsNullOrEmpty(street))
-            throw new ArgumentNullException(nameof(street));
-
-        if (string.IsNullOrEmpty(zipcode))
-            throw new ArgumentNullException(nameof(zipcode));
-
-        if (string.IsNullOrEmpty(city))
-            throw new ArgumentNullException(nameof(city));
 
         var member = new Member
         {
             Id = Guid.NewGuid(),
             FirstName = firstname,
             LastName = lastname,
-            Address = new Address
-            {
-                Street = street,
-                ZipCode = zipcode,
-                City = city
-            },
-            Email = email,
+            Address = new Address(street, zipcode, city),
+            Email = new Email(email),
             PhoneNumber = phoneNumber,
             Created = DateTimeOffset.Now,
             LastModified = null
@@ -82,9 +66,9 @@ public class Member : AuditableEntity, IAggregateRoot
         return member;
     }
 
-    public Result ChangeEmail(string email)
+    public Result ChangeEmail(Email email)
     {
-        if (string.IsNullOrEmpty(email))
+        if (string.IsNullOrEmpty(email.Value))
             throw new ArgumentNullException(nameof(email));
 
         if (Email.Equals(email))

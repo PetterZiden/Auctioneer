@@ -1,23 +1,28 @@
-using Auctioneer.Application.Common;
-using Auctioneer.Application.Common.Helpers;
-using Auctioneer.Application.Common.Interfaces;
+using System.Reflection;
 using Auctioneer.Application.Common.Models;
 using Auctioneer.Application.Common.Validators;
-using Auctioneer.Application.Entities;
 using Auctioneer.Application.Features.Auctions.Commands;
-using Auctioneer.Application.Features.Auctions.Dto;
 using Auctioneer.GraphQL.Auctions.Inputs;
 using Auctioneer.GraphQL.Auctions.Payloads;
+using Auctioneer.GraphQL.Common;
 using HotChocolate.Execution;
+using MediatR;
 
 namespace Auctioneer.GraphQL.Auctions;
 
 [ExtendObjectType("Mutation")]
 public class AuctionMutations
 {
-    public async Task<CreateAuctionPayload> CreateAuction(CreateAuctionInput input,
-        [Service] IRepository<Auction> auctionRepository, [Service] IRepository<DomainEvent> eventRepository,
-        [Service] IUnitOfWork unitOfWork, CancellationToken cancellationToken)
+    private readonly IMediator _mediator;
+    private readonly ILogger<AuctionMutations> _logger;
+
+    public AuctionMutations(IMediator mediator, ILogger<AuctionMutations> logger)
+    {
+        _mediator = mediator;
+        _logger = logger;
+    }
+
+    public async Task<CreateAuctionPayload> CreateAuction(CreateAuctionInput input, CancellationToken cancellationToken)
     {
         try
         {
@@ -35,34 +40,21 @@ public class AuctionMutations
             var validationResult = await new CreateAuctionCommandValidator().ValidateAsync(command, cancellationToken);
             if (!validationResult.IsValid)
             {
-                var errorMessages = validationResult.Errors.ConvertAll(x => x.ErrorMessage);
-                throw new QueryException(
-                    ErrorBuilder.New()
-                        .SetMessage(string.Join(Environment.NewLine, errorMessages))
-                        .SetCode("BAD_REQUEST")
-                        .Build());
+                throw new QueryException(CustomErrorBuilder.CreateError(validationResult));
             }
 
-            var auction = Auction.Create(
-                input.MemberId,
-                input.Title,
-                input.Description,
-                input.StartTime,
-                input.EndTime,
-                input.StartingPrice,
-                input.ImgRoute
-            );
+            var result = await _mediator.Send(command, cancellationToken);
 
-            var domainEvent = new AuctionCreatedEvent(auction, EventList.Auction.AuctionCreatedEvent);
+            if (!result.IsSuccess)
+            {
+                throw new QueryException(CustomErrorBuilder.CreateError(result.Errors));
+            }
 
-            await eventRepository.CreateAsync(domainEvent, cancellationToken);
-            await auctionRepository.CreateAsync(auction, cancellationToken);
-            await unitOfWork.SaveAsync();
-
-            return new CreateAuctionPayload(auction.Id, auction.Created);
+            return new CreateAuctionPayload(result.Value);
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
             throw new QueryException(
                 ErrorBuilder.New()
                     .SetMessage(ex.Message)
@@ -71,9 +63,7 @@ public class AuctionMutations
         }
     }
 
-    public async Task<UpdateAuctionPayload> UpdateAuction(UpdateAuctionInput input,
-        [Service] IRepository<Auction> auctionRepository, [Service] IRepository<DomainEvent> eventRepository,
-        [Service] IUnitOfWork unitOfWork, CancellationToken cancellationToken)
+    public async Task<UpdateAuctionPayload> UpdateAuction(UpdateAuctionInput input, CancellationToken cancellationToken)
     {
         try
         {
@@ -88,72 +78,21 @@ public class AuctionMutations
             var validationResult = await new UpdateAuctionCommandValidator().ValidateAsync(command, cancellationToken);
             if (!validationResult.IsValid)
             {
-                var errorMessages = validationResult.Errors.ConvertAll(x => x.ErrorMessage);
-                ErrorBuilder.New()
-                    .SetMessage(string.Join(Environment.NewLine, errorMessages))
-                    .SetCode("BAD_REQUEST")
-                    .Build();
+                throw new QueryException(CustomErrorBuilder.CreateError(validationResult));
             }
 
-            var auction = await auctionRepository.GetAsync(input.AuctionId);
-            if (auction is null)
+            var result = await _mediator.Send(command, cancellationToken);
+
+            if (!result.IsSuccess)
             {
-                throw new QueryException(
-                    ErrorBuilder.New()
-                        .SetMessage("No auction found.")
-                        .SetCode("NOT_FOUND")
-                        .Build());
+                throw new QueryException(CustomErrorBuilder.CreateError(result.Errors));
             }
 
-            if (!string.IsNullOrEmpty(command.Title))
-            {
-                var result = auction.ChangeTitle(command.Title);
-                if (!result.IsSuccess)
-                {
-                    throw new QueryException(
-                        ErrorBuilder.New()
-                            .SetMessage(result.Errors[0].Message)
-                            .SetCode("BAD_REQUEST")
-                            .Build());
-                }
-            }
-
-            if (!string.IsNullOrEmpty(command.Description))
-            {
-                var result = auction.ChangeDescription(command.Description);
-                if (!result.IsSuccess)
-                {
-                    throw new QueryException(
-                        ErrorBuilder.New()
-                            .SetMessage(result.Errors[0].Message)
-                            .SetCode("BAD_REQUEST")
-                            .Build());
-                }
-            }
-
-            if (!string.IsNullOrEmpty(command.ImgRoute))
-            {
-                var result = auction.ChangeImageRoute(command.ImgRoute);
-                if (!result.IsSuccess)
-                {
-                    throw new QueryException(
-                        ErrorBuilder.New()
-                            .SetMessage(result.Errors[0].Message)
-                            .SetCode("BAD_REQUEST")
-                            .Build());
-                }
-            }
-
-            var domainEvent = new AuctionUpdatedEvent(auction, EventList.Auction.AuctionUpdatedEvent);
-
-            await eventRepository.CreateAsync(domainEvent, cancellationToken);
-            await auctionRepository.UpdateAsync(command.Id, auction, cancellationToken);
-            await unitOfWork.SaveAsync();
-
-            return new UpdateAuctionPayload(auction.Id, auction.LastModified!.Value);
+            return new UpdateAuctionPayload("Auction updated successfully");
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
             throw new QueryException(
                 ErrorBuilder.New()
                     .SetMessage(ex.Message)
@@ -162,32 +101,27 @@ public class AuctionMutations
         }
     }
 
-    public async Task<DeleteAuctionPayload> DeleteAuction(DeleteAuctionInput input,
-        [Service] IRepository<Auction> auctionRepository, [Service] IRepository<DomainEvent> eventRepository,
-        [Service] IUnitOfWork unitOfWork, CancellationToken cancellationToken)
+    public async Task<DeleteAuctionPayload> DeleteAuction(DeleteAuctionInput input, CancellationToken cancellationToken)
     {
         try
         {
-            var auction = await auctionRepository.GetAsync(input.AuctionId);
-            if (auction is null)
+            var command = new DeleteAuctionCommand
             {
-                throw new QueryException(
-                    ErrorBuilder.New()
-                        .SetMessage("No auction found.")
-                        .SetCode("NOT_FOUND")
-                        .Build());
+                AuctionId = input.AuctionId
+            };
+
+            var result = await _mediator.Send(command, cancellationToken);
+
+            if (!result.IsSuccess)
+            {
+                throw new QueryException(CustomErrorBuilder.CreateError(result.Errors));
             }
-
-            var domainEvent = new AuctionDeletedEvent(input.AuctionId, EventList.Auction.AuctionDeletedEvent);
-
-            await eventRepository.CreateAsync(domainEvent, cancellationToken);
-            await auctionRepository.DeleteAsync(input.AuctionId, cancellationToken);
-            await unitOfWork.SaveAsync();
 
             return new DeleteAuctionPayload(input.AuctionId, "Auction deleted successfully");
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
             throw new QueryException(
                 ErrorBuilder.New()
                     .SetMessage(ex.Message)
@@ -196,94 +130,42 @@ public class AuctionMutations
         }
     }
 
-    public async Task<PlaceBidPayload> PlaceBid(PlaceBidInput input, [Service] IRepository<Auction> auctionRepository,
-        [Service] IRepository<Member> memberRepository, [Service] IRepository<DomainEvent> eventRepository,
-        [Service] IUnitOfWork unitOfWork, CancellationToken cancellationToken)
+    public async Task<PlaceBidPayload> PlaceBid(PlaceBidInput input, CancellationToken cancellationToken)
     {
         try
         {
-            var command = new Bid
+            var bid = new Bid
             {
                 AuctionId = input.AuctionId,
                 MemberId = input.MemberId,
                 BidPrice = input.BidPrice
             };
 
-            var validationResult = await new BidValidator().ValidateAsync(command, cancellationToken);
+            var validationResult = await new BidValidator().ValidateAsync(bid, cancellationToken);
             if (!validationResult.IsValid)
             {
-                var errorMessages = validationResult.Errors.ConvertAll(x => x.ErrorMessage);
-                ErrorBuilder.New()
-                    .SetMessage(string.Join(Environment.NewLine, errorMessages))
-                    .SetCode("BAD_REQUEST")
-                    .Build();
+                throw new QueryException(CustomErrorBuilder.CreateError(validationResult));
             }
 
-            var auction = await auctionRepository.GetAsync(input.AuctionId);
-            if (auction is null)
+            var command = new PlaceBidCommand
             {
-                throw new QueryException(
-                    ErrorBuilder.New()
-                        .SetMessage("No auction found.")
-                        .SetCode("NOT_FOUND")
-                        .Build());
-            }
-
-            var bidResult = auction.PlaceBid(input.MemberId, input.BidPrice);
-            if (!bidResult.IsSuccess)
-            {
-                throw new QueryException(
-                    ErrorBuilder.New()
-                        .SetMessage(bidResult.Errors?.FirstOrDefault()?.Message!)
-                        .SetCode("BAD_REQUEST")
-                        .Build());
-            }
-
-            var bidder = await memberRepository.GetAsync(input.MemberId);
-            var auctionOwner = await memberRepository.GetAsync(auction.MemberId);
-            if (bidder is null || auctionOwner is null)
-            {
-                throw new QueryException(
-                    ErrorBuilder.New()
-                        .SetMessage("No member found.")
-                        .SetCode("NOT_FOND")
-                        .Build());
-            }
-
-            var memberResult = bidder.AddBid(bidResult.Value.AuctionId, bidResult.Value.BidPrice,
-                bidResult.Value.TimeStamp!.Value);
-            if (!memberResult.IsSuccess)
-            {
-                throw new QueryException(
-                    ErrorBuilder.New()
-                        .SetMessage(memberResult.Errors?.FirstOrDefault()?.Message!)
-                        .SetCode("BAD_REQUEST")
-                        .Build());
-            }
-
-            var placeBidDto = new PlaceBidDto
-            {
-                AuctionOwnerId = auctionOwner.Id,
-                AuctionTitle = auction.Title,
-                AuctionOwnerName = auctionOwner.FullName,
-                AuctionOwnerEmail = auctionOwner.Email,
-                Bid = command.BidPrice,
-                BidderName = bidder.FullName,
-                BidderEmail = bidder.Email,
-                TimeStamp = bidResult.Value.TimeStamp.Value,
-                AuctionUrl = $"https://localhost:7298/api/auction/{auction.Id}"
+                AuctionId = bid.AuctionId,
+                MemberId = bid.MemberId,
+                BidPrice = bid.BidPrice
             };
-            var domainEvent = new AuctionPlaceBidEvent(placeBidDto, EventList.Auction.AuctionPlaceBidEvent);
 
-            await auctionRepository.UpdateAsync(auction.Id, auction, cancellationToken);
-            await memberRepository.UpdateAsync(bidder.Id, bidder, cancellationToken);
-            await eventRepository.CreateAsync(domainEvent, cancellationToken);
-            await unitOfWork.SaveAsync();
+            var result = await _mediator.Send(command, cancellationToken);
 
-            return new PlaceBidPayload($"Placed bid successfully on auction with id: {auction.Id}");
+            if (!result.IsSuccess)
+            {
+                throw new QueryException(CustomErrorBuilder.CreateError(result.Errors));
+            }
+
+            return new PlaceBidPayload($"Placed bid successfully on auction with id: {input.AuctionId}");
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
             throw new QueryException(
                 ErrorBuilder.New()
                     .SetMessage(ex.Message)

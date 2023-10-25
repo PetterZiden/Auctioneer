@@ -35,7 +35,7 @@ public class UpdateMemberTests : BaseIntegrationTest
         Assert.Equal(request.FirstName, member?.FirstName);
         Assert.Equal(request.LastName, member?.LastName);
         Assert.Equal(request.Street, member?.Address.Street);
-        Assert.Equal(request.ZipCode, member?.Address.ZipCode);
+        Assert.Equal(request.ZipCode, member?.Address.Zipcode);
         Assert.Equal(request.City, member?.Address.City);
         Assert.Equal(request.PhoneNumber, member?.PhoneNumber);
     }
@@ -56,7 +56,7 @@ public class UpdateMemberTests : BaseIntegrationTest
 
         Assert.True(response.IsSuccessStatusCode);
         Assert.Equal(request.Street, member?.Address.Street);
-        Assert.Equal(request.ZipCode, member?.Address.ZipCode);
+        Assert.Equal(request.ZipCode, member?.Address.Zipcode);
         Assert.Equal(request.City, member?.Address.City);
     }
 

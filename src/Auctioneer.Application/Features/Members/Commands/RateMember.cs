@@ -101,7 +101,7 @@ public class RateMemberCommandHandler : IRequestHandler<RateMemberCommand, Resul
             {
                 RatedName = ratedMember.FullName,
                 RatedMemberId = ratedMember.Id,
-                RatedEmail = ratedMember.Email,
+                RatedEmail = ratedMember.Email.Value,
                 RatedByName = ratedByMember.FullName,
                 Stars = request.Stars
             };

@@ -1,43 +1,48 @@
-using Auctioneer.Application.Common.Extensions;
-using Auctioneer.Application.Common.Interfaces;
-using Auctioneer.Application.Entities;
 using Auctioneer.Application.Features.Members.Dto;
+using Auctioneer.Application.Features.Members.Queries;
+using Auctioneer.GraphQL.Common;
 using HotChocolate.Execution;
+using MediatR;
 
 namespace Auctioneer.GraphQL.Members;
 
 [ExtendObjectType("Query")]
 public class MemberQueries
 {
-    public async Task<List<MemberDto>> GetMembers([Service] IRepository<Member> memberRepository)
+    private readonly IMediator _mediator;
+    private readonly ILogger<MemberQueries> _logger;
+
+    public MemberQueries(IMediator mediator, ILogger<MemberQueries> logger)
     {
-        var result = await memberRepository.GetAsync();
-
-        if (result is null)
-        {
-            throw new QueryException(
-                ErrorBuilder.New()
-                    .SetMessage("No member found.")
-                    .SetCode("NOT_FOUND")
-                    .Build());
-        }
-
-        return result.ToDtos();
+        _mediator = mediator;
+        _logger = logger;
     }
 
-    public async Task<MemberDto> GetMember([Service] IRepository<Member> memberRepository, Guid memberId)
+    public async Task<List<MemberDto>> GetMembers()
     {
-        var result = await memberRepository.GetAsync(memberId);
+        var query = new GetMembersQuery();
 
-        if (result is null)
+        var result = await _mediator.Send(query);
+
+        if (!result.IsSuccess)
         {
-            throw new QueryException(
-                ErrorBuilder.New()
-                    .SetMessage("No member found.")
-                    .SetCode("NOT_FOUND")
-                    .Build());
+            throw new QueryException(CustomErrorBuilder.CreateError(result.Errors));
         }
 
-        return result.ToDto();
+        return result.Value;
+    }
+
+    public async Task<MemberDto> GetMember(Guid memberId)
+    {
+        var query = new GetMemberQuery { Id = memberId };
+
+        var result = await _mediator.Send(query);
+
+        if (!result.IsSuccess)
+        {
+            throw new QueryException(CustomErrorBuilder.CreateError(result.Errors));
+        }
+
+        return result.Value;
     }
 }

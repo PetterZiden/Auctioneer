@@ -31,7 +31,7 @@ public class ChangeEmailMemberTests : BaseIntegrationTest
         var member = await MemberRepository.GetAsync(memberId);
 
         Assert.True(response.IsSuccessStatusCode);
-        Assert.Equal(request.Email, member?.Email);
+        Assert.Equal(request.Email, member?.Email.Value);
     }
 
     [Fact]

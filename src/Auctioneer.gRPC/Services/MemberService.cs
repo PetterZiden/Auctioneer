@@ -1,11 +1,10 @@
-using Auctioneer.Application.Common;
-using Auctioneer.Application.Common.Helpers;
-using Auctioneer.Application.Common.Interfaces;
+using System.Reflection;
 using Auctioneer.Application.Features.Members.Commands;
-using Auctioneer.Application.Features.Members.Dto;
+using Auctioneer.Application.Features.Members.Queries;
+using Auctioneer.gRPC.Common;
 using Auctioneer.gRPC.Mappers;
-using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 
 namespace Auctioneer.gRPC.Services;
@@ -14,17 +13,12 @@ namespace Auctioneer.gRPC.Services;
 public class MemberService : Member.MemberBase
 {
     private readonly ILogger<MemberService> _logger;
-    private readonly IRepository<Auctioneer.Application.Entities.Member> _memberRepository;
-    private readonly IRepository<DomainEvent> _eventRepository;
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IMediator _mediator;
 
-    public MemberService(ILogger<MemberService> logger, IRepository<Application.Entities.Member> memberRepository,
-        IRepository<DomainEvent> eventRepository, IUnitOfWork unitOfWork)
+    public MemberService(ILogger<MemberService> logger, IMediator mediator)
     {
         _logger = logger;
-        _memberRepository = memberRepository;
-        _eventRepository = eventRepository;
-        _unitOfWork = unitOfWork;
+        _mediator = mediator;
     }
 
     public override async Task<MemberModel> GetMember(GetMemberRequest request, ServerCallContext context)
@@ -34,15 +28,20 @@ public class MemberService : Member.MemberBase
             if (!Guid.TryParse(request.Id, out var memberId))
                 throw new RpcException(new Status(StatusCode.InvalidArgument, "MemberId was in wrong format"));
 
-            var member = await _memberRepository.GetAsync(memberId);
+            var query = new GetMemberQuery { Id = memberId };
 
-            if (member is null)
-                throw new RpcException(new Status(StatusCode.NotFound, "Member not found"));
+            var result = await _mediator.Send(query);
 
-            return Map.ApplicationMemberToMemberModel(member);
+            if (!result.IsSuccess)
+            {
+                throw new RpcException(CustomErrorBuilder.CreateError(result.Errors[0]));
+            }
+
+            return Map.MemberDtoToMemberModel(result.Value);
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
             throw new RpcException(new Status(StatusCode.Internal, ex.Message));
         }
     }
@@ -52,12 +51,17 @@ public class MemberService : Member.MemberBase
     {
         try
         {
-            var members = await _memberRepository.GetAsync();
+            var query = new GetMembersQuery();
 
-            if (members is null || !members.Any())
-                throw new RpcException(new Status(StatusCode.NotFound, "Member not found"));
+            var result = await _mediator.Send(query);
 
-            var memberModels = Map.ApplicationMemberToMemberModelList(members);
+            if (!result.IsSuccess)
+            {
+                throw new RpcException(CustomErrorBuilder.CreateError(result.Errors[0]));
+            }
+
+
+            var memberModels = Map.MemberDtoToMemberModelList(result.Value);
 
             foreach (var member in memberModels)
             {
@@ -66,6 +70,7 @@ public class MemberService : Member.MemberBase
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
             throw new RpcException(new Status(StatusCode.Internal, ex.Message));
         }
     }
@@ -74,31 +79,38 @@ public class MemberService : Member.MemberBase
     {
         try
         {
-            var cancellationToken = new CancellationToken();
-            var member = Application.Entities.Member.Create(
-                request.FirstName,
-                request.LastName,
-                request.Email,
-                request.PhoneNumber,
-                request.Street,
-                request.Zipcode,
-                request.City);
+            var command = new CreateMemberCommand
+            {
+                FirstName = request.FirstName,
+                LastName = request.LastName,
+                Street = request.Street,
+                ZipCode = request.Zipcode,
+                City = request.City,
+                Email = request.Email,
+                PhoneNumber = request.PhoneNumber
+            };
 
-            var domainEvent = new MemberCreatedEvent(member, EventList.Member.MemberCreatedEvent);
+            var validationResult = await new CreateMemberCommandValidator().ValidateAsync(command);
+            if (!validationResult.IsValid)
+            {
+                throw new RpcException(CustomErrorBuilder.CreateError(validationResult));
+            }
 
-            await _memberRepository.CreateAsync(member, cancellationToken);
-            await _eventRepository.CreateAsync(domainEvent, cancellationToken);
-            await _unitOfWork.SaveAsync();
+            var result = await _mediator.Send(command);
+
+            if (!result.IsSuccess)
+            {
+                throw new RpcException(CustomErrorBuilder.CreateError(result.Errors[0]));
+            }
 
             return new CreateMemberResponse
             {
-                Id = member.Id.ToString(),
-                CreatedAt = Timestamp.FromDateTimeOffset(member.Created)
+                Id = result.Value.ToString()
             };
         }
         catch (Exception ex)
         {
-            _unitOfWork.CleanOperations();
+            _logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
             throw new RpcException(new Status(StatusCode.Internal, ex.Message));
         }
     }
@@ -108,15 +120,20 @@ public class MemberService : Member.MemberBase
     {
         try
         {
-            var cancellationToken = new CancellationToken();
             if (!Guid.TryParse(request.Id, out var memberId))
                 throw new RpcException(new Status(StatusCode.InvalidArgument, "MemberId was in wrong format"));
 
-            var domainEvent = new MemberDeletedEvent(memberId, EventList.Member.MemberDeletedEvent);
+            var command = new DeleteMemberCommand
+            {
+                MemberId = memberId
+            };
 
-            await _memberRepository.DeleteAsync(memberId, cancellationToken);
-            await _eventRepository.CreateAsync(domainEvent, cancellationToken);
-            await _unitOfWork.SaveAsync();
+            var result = await _mediator.Send(command);
+
+            if (!result.IsSuccess)
+            {
+                throw new RpcException(CustomErrorBuilder.CreateError(result.Errors[0]));
+            }
 
             return new DeleteMemberResponse
             {
@@ -125,7 +142,7 @@ public class MemberService : Member.MemberBase
         }
         catch (Exception ex)
         {
-            _unitOfWork.CleanOperations();
+            _logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
             throw new RpcException(new Status(StatusCode.Internal, ex.Message));
         }
     }
@@ -134,32 +151,41 @@ public class MemberService : Member.MemberBase
     {
         try
         {
-            var cancellationToken = new CancellationToken();
             if (!Guid.TryParse(request.Id, out var memberId))
                 throw new RpcException(new Status(StatusCode.InvalidArgument, "MemberId was in wrong format"));
 
-            var member = await _memberRepository.GetAsync(memberId);
+            var command = new UpdateMemberCommand
+            {
+                Id = memberId,
+                FirstName = request.FirstName,
+                LastName = request.LastName,
+                Street = request.Street,
+                Zipcode = request.Zipcode,
+                City = request.City,
+                PhoneNumber = request.PhoneNumber
+            };
 
-            if (member is null)
-                throw new RpcException(new Status(StatusCode.NotFound, "Member not found"));
+            var validationResult = await new UpdateMemberCommandValidator().ValidateAsync(command);
+            if (!validationResult.IsValid)
+            {
+                throw new RpcException(CustomErrorBuilder.CreateError(validationResult));
+            }
 
-            var domainEvent = new MemberUpdatedEvent(member, EventList.Member.MemberUpdatedEvent);
+            var result = await _mediator.Send(command);
 
-            await _eventRepository.CreateAsync(domainEvent, cancellationToken);
-            await _memberRepository.UpdateAsync(memberId, member, cancellationToken);
-            await _unitOfWork.SaveAsync();
+            if (!result.IsSuccess)
+            {
+                throw new RpcException(CustomErrorBuilder.CreateError(result.Errors[0]));
+            }
 
             return new UpdateMemberResponse
             {
-                Id = request.Id,
-                UpdatedAt = member.LastModified.HasValue
-                    ? Timestamp.FromDateTimeOffset(member.LastModified.Value)
-                    : null
+                Message = "Member updated successfully"
             };
         }
         catch (Exception ex)
         {
-            _unitOfWork.CleanOperations();
+            _logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
             throw new RpcException(new Status(StatusCode.Internal, ex.Message));
         }
     }
@@ -168,37 +194,30 @@ public class MemberService : Member.MemberBase
     {
         try
         {
-            var cancellationToken = new CancellationToken();
             if (!Guid.TryParse(request.RatingForMemberId, out var memberForId))
                 throw new RpcException(new Status(StatusCode.InvalidArgument, "MemberId was in wrong format"));
 
             if (!Guid.TryParse(request.RatingFromMemberId, out var memberFromId))
                 throw new RpcException(new Status(StatusCode.InvalidArgument, "MemberId was in wrong format"));
-
-            var ratedMember = await _memberRepository.GetAsync(memberForId);
-            var ratedByMember = await _memberRepository.GetAsync(memberFromId);
-
-            if (ratedMember is null || ratedByMember is null)
-                throw new RpcException(new Status(StatusCode.NotFound, "Member not found"));
-
-            var result = ratedMember.Rate(memberFromId, request.Stars);
-
-            if (!result.IsSuccess)
-                throw new RpcException(new Status(StatusCode.InvalidArgument, result.Errors[0].Message));
-
-            var rateMemberDto = new RateMemberDto
+            var command = new RateMemberCommand
             {
-                RatedName = ratedMember.FullName,
-                RatedMemberId = ratedMember.Id,
-                RatedEmail = ratedMember.Email,
-                RatedByName = ratedByMember.FullName,
+                RatingForMemberId = memberForId,
+                RatingFromMemberId = memberFromId,
                 Stars = request.Stars
             };
-            var domainEvent = new RateMemberEvent(rateMemberDto, EventList.Member.RateMemberEvent);
 
-            await _memberRepository.UpdateAsync(ratedMember.Id, ratedMember, cancellationToken);
-            await _eventRepository.CreateAsync(domainEvent, cancellationToken);
-            await _unitOfWork.SaveAsync();
+            var validationResult = await new RateMemberCommandValidator().ValidateAsync(command);
+            if (!validationResult.IsValid)
+            {
+                throw new RpcException(CustomErrorBuilder.CreateError(validationResult));
+            }
+
+            var result = await _mediator.Send(command);
+
+            if (!result.IsSuccess)
+            {
+                throw new RpcException(CustomErrorBuilder.CreateError(result.Errors[0]));
+            }
 
             return new RateMemberResponse
             {
@@ -207,7 +226,7 @@ public class MemberService : Member.MemberBase
         }
         catch (Exception ex)
         {
-            _unitOfWork.CleanOperations();
+            _logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
             throw new RpcException(new Status(StatusCode.Internal, ex.Message));
         }
     }

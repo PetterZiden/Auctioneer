@@ -5,6 +5,7 @@ using Auctioneer.Application.Common.Interfaces;
 using Auctioneer.Application.Entities;
 using Auctioneer.Application.Features.Members.Contracts;
 using Auctioneer.Application.Features.Members.Errors;
+using Auctioneer.Application.ValueObjects;
 using FluentResults;
 using FluentValidation;
 using MediatR;
@@ -85,7 +86,7 @@ public class ChangeEmailMemberCommandHandler : IRequestHandler<ChangeEmailMember
             if (member is null)
                 return Result.Fail(new MemberNotFoundError());
 
-            var result = member.ChangeEmail(request.Email);
+            var result = member.ChangeEmail(new Email(request.Email));
 
             if (!result.IsSuccess)
                 return result;

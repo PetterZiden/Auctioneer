@@ -2,8 +2,6 @@ syntax = "proto3";
 
 option csharp_namespace = "Auctioneer.gRPC";
 
-import "google/protobuf/timestamp.proto";
-
 package Member;
 
 service Member {
@@ -22,11 +20,9 @@ message GetMemberRequest {
 }
 message CreateMemberResponse {
     string id = 1;
-    google.protobuf.Timestamp created_at = 2;
 }
 message UpdateMemberResponse {
-    string id = 1;
-    google.protobuf.Timestamp updated_at = 2;
+    string message = 1;
 }
 message DeleteMemberRequest {
     string id = 1;

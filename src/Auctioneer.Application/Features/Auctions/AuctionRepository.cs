@@ -41,7 +41,6 @@ public class AuctionRepository : IRepository<Auction>
         _unitOfWork.AddOperation(operation);
     }
 
-
     public async Task UpdateAsync(Guid id, Auction updatedEntity, CancellationToken cancellationToken)
     {
         Action operation = async () =>
@@ -49,7 +48,6 @@ public class AuctionRepository : IRepository<Auction>
                 updatedEntity, cancellationToken: cancellationToken);
         _unitOfWork.AddOperation(operation);
     }
-
 
     public async Task DeleteAsync(Guid id, CancellationToken cancellationToken)
     {

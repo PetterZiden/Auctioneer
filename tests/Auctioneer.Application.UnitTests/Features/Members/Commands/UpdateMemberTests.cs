@@ -111,7 +111,7 @@ public class UpdateMemberTests
             FirstName = "Test",
             LastName = "Testsson",
             Street = "Testgatan 2",
-            ZipCode = "12345",
+            Zipcode = "12345",
             City = "Testholm",
             PhoneNumber = "0732223311"
         };
@@ -129,7 +129,7 @@ public class UpdateMemberTests
             FirstName = "Test22",
             LastName = "Testsson22",
             Street = "Testgatan 222",
-            ZipCode = "12341",
+            Zipcode = "12341",
             City = "Testborg",
             PhoneNumber = "0734443311"
         };

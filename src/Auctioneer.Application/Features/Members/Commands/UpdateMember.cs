@@ -6,6 +6,7 @@ using Auctioneer.Application.Common.Models;
 using Auctioneer.Application.Entities;
 using Auctioneer.Application.Features.Members.Contracts;
 using Auctioneer.Application.Features.Members.Errors;
+using Auctioneer.Application.ValueObjects;
 using FluentResults;
 using FluentValidation;
 using MediatR;
@@ -38,7 +39,7 @@ public class UpdateMemberController : ApiControllerBase
                 FirstName = request.FirstName,
                 LastName = request.LastName,
                 Street = request.Street,
-                ZipCode = request.ZipCode,
+                Zipcode = request.ZipCode,
                 City = request.City,
                 PhoneNumber = request.PhoneNumber
             };
@@ -72,7 +73,7 @@ public class UpdateMemberCommand : IRequest<Result>
     public string? FirstName { get; init; }
     public string? LastName { get; init; }
     public string? Street { get; init; }
-    public string? ZipCode { get; init; }
+    public string? Zipcode { get; init; }
     public string? City { get; init; }
     public string? PhoneNumber { get; init; }
 #nullable disable
@@ -122,15 +123,12 @@ public class UpdateMemberCommandHandler : IRequestHandler<UpdateMemberCommand, R
                     return result;
             }
 
-            if (!string.IsNullOrEmpty(request.Street) || !string.IsNullOrEmpty(request.ZipCode) ||
+            if (!string.IsNullOrEmpty(request.Street) || !string.IsNullOrEmpty(request.Zipcode) ||
                 !string.IsNullOrEmpty(request.City))
             {
-                var addressToUpdate = new Address
-                {
-                    Street = request.Street ?? member.Address.Street,
-                    ZipCode = request.ZipCode ?? member.Address.ZipCode,
-                    City = request.City ?? member.Address.City
-                };
+                var addressToUpdate = new Address(request.Street ?? member.Address.Street,
+                    request.Zipcode ?? member.Address.Zipcode, request.City ?? member.Address.City);
+
                 var result = member.ChangeAddress(addressToUpdate);
                 if (!result.IsSuccess)
                     return result;

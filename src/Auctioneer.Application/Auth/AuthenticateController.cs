@@ -1,8 +1,10 @@
 using System.IdentityModel.Tokens.Jwt;
+using System.Reflection;
 using System.Security.Claims;
 using System.Text;
 using Auctioneer.Application.Auth.Models;
 using Auctioneer.Application.Common;
+using Auctioneer.Application.Common.Validators;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -38,21 +40,36 @@ public class AuthenticateController : ApiControllerBase
     [ProducesResponseType(500)]
     public async Task<IActionResult> GetToken([FromBody] LoginUser userToLogin)
     {
-        var user = await _userManager.FindByNameAsync(userToLogin.Username);
-        if (user is null || !await _userManager.CheckPasswordAsync(user, userToLogin.Password))
-            return Unauthorized();
-
-        var userRoles = await _userManager.GetRolesAsync(user);
-        var claims = new List<Claim>
+        try
         {
-            new(ClaimTypes.Name, user.UserName!),
-            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-        };
-        claims.AddRange(userRoles.Select(userRole => new Claim(ClaimTypes.Role, userRole)));
+            var validationResult = await new LoginUserValidator().ValidateAsync(userToLogin);
+            if (!validationResult.IsValid)
+            {
+                var errorMessages = validationResult.Errors.ConvertAll(x => x.ErrorMessage);
+                return BadRequest(errorMessages);
+            }
 
-        var token = GetToken(claims);
+            var user = await _userManager.FindByNameAsync(userToLogin.Username);
+            if (user is null || !await _userManager.CheckPasswordAsync(user, userToLogin.Password))
+                return Unauthorized();
 
-        return Ok(new { token = new JwtSecurityTokenHandler().WriteToken(token), expiration = token.ValidTo });
+            var userRoles = await _userManager.GetRolesAsync(user);
+            var claims = new List<Claim>
+            {
+                new(ClaimTypes.Name, user.UserName!),
+                new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            };
+            claims.AddRange(userRoles.Select(userRole => new Claim(ClaimTypes.Role, userRole)));
+
+            var token = GetToken(claims);
+
+            return Ok(new { token = new JwtSecurityTokenHandler().WriteToken(token), expiration = token.ValidTo });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
+            return StatusCode(500);
+        }
     }
 
     [HttpPost("register")]
@@ -62,6 +79,13 @@ public class AuthenticateController : ApiControllerBase
     [ProducesResponseType(500)]
     public async Task<IActionResult> Register([FromBody] RegisterUser userToRegister)
     {
+        var validationResult = await new RegisterUserValidator().ValidateAsync(userToRegister);
+        if (!validationResult.IsValid)
+        {
+            var errorMessages = validationResult.Errors.ConvertAll(x => x.ErrorMessage);
+            return BadRequest(errorMessages);
+        }
+
         var userExist = await _userManager.FindByNameAsync(userToRegister.Username);
         if (userExist is not null)
             return StatusCode(StatusCodes.Status400BadRequest,
@@ -101,6 +125,13 @@ public class AuthenticateController : ApiControllerBase
     [ProducesResponseType(500)]
     public async Task<IActionResult> RegisterAdmin([FromBody] RegisterUser userToRegister)
     {
+        var validationResult = await new RegisterUserValidator().ValidateAsync(userToRegister);
+        if (!validationResult.IsValid)
+        {
+            var errorMessages = validationResult.Errors.ConvertAll(x => x.ErrorMessage);
+            return BadRequest(errorMessages);
+        }
+
         var userExist = await _userManager.FindByNameAsync(userToRegister.Username);
         if (userExist is not null)
             return StatusCode(StatusCodes.Status400BadRequest,
