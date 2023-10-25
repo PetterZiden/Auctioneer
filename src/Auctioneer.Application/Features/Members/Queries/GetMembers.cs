@@ -1,4 +1,5 @@
 using System.Reflection;
+using Auctioneer.Application.Auth.Services;
 using Auctioneer.Application.Common;
 using Auctioneer.Application.Common.Extensions;
 using Auctioneer.Application.Common.Interfaces;
@@ -15,10 +16,12 @@ namespace Auctioneer.Application.Features.Members.Queries;
 public class GetMembersController : ApiControllerBase
 {
     private readonly ILogger<GetMembersController> _logger;
+    private readonly CurrentUserService _currentUser;
 
-    public GetMembersController(ILogger<GetMembersController> logger) : base(logger)
+    public GetMembersController(ILogger<GetMembersController> logger, CurrentUserService currentUser) : base(logger)
     {
         _logger = logger;
+        _currentUser = currentUser;
     }
 
     [HttpGet("api/members")]

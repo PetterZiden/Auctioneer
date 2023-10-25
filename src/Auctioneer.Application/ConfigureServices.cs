@@ -14,6 +14,7 @@ using Auctioneer.Application.Infrastructure.Persistence;
 using Auctioneer.Application.Infrastructure.Services;
 using MassTransit;
 using MediatR;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
@@ -76,6 +77,8 @@ public static class ConfigureServices
             });
 
         builder.Services.AddScoped<IUserService, UserService>();
+        builder.Services.AddScoped<CurrentUserService>();
+        builder.Services.AddScoped<IClaimsTransformation, ClaimsTransformation>();
     }
 
     public static void AddInfrastructure(this WebApplicationBuilder builder)

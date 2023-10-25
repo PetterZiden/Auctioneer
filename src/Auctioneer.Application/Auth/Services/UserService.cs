@@ -40,7 +40,8 @@ public class UserService : IUserService
             var userRoles = await _userManager.GetRolesAsync(user);
             var claims = new List<Claim>
             {
-                new(ClaimTypes.Name, user.UserName!),
+                new(ClaimTypes.NameIdentifier, user.UserName!),
+                new("MemberId", user.MemberId.ToString()),
                 new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
             claims.AddRange(userRoles.Select(userRole => new Claim(ClaimTypes.Role, userRole)));

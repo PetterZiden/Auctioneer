@@ -5,7 +5,7 @@ namespace Auctioneer.Application.ValueObjects;
 
 public class Email : ValueObject
 {
-    public string Value { get; }
+    public string Value { get; set; }
 
     public Email(string email)
     {
