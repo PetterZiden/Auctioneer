@@ -1,6 +1,8 @@
+using System.Threading.RateLimiting;
 using Auctioneer.Application;
 using Auctioneer.GraphQL.Auctions;
 using Auctioneer.GraphQL.Members;
+using Microsoft.AspNetCore.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +26,21 @@ var app = builder.Build();
 app.UseRouting();
 
 app.UseAuthentication();
+
+app.UseRateLimiter(new RateLimiterOptions
+{
+    GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(_ =>
+    {
+        return RateLimitPartition.GetConcurrencyLimiter<string>("GeneralLimit",
+            _ => new ConcurrencyLimiterOptions
+            {
+                PermitLimit = 1,
+                QueueLimit = 10,
+                QueueProcessingOrder = QueueProcessingOrder.NewestFirst
+            });
+    }),
+    RejectionStatusCode = 429
+});
 
 app.MapGraphQL();
 

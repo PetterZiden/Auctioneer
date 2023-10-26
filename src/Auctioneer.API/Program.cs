@@ -1,4 +1,6 @@
+using System.Threading.RateLimiting;
 using Auctioneer.Application;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -40,6 +42,21 @@ app.UseExceptionHandler(app.Environment.IsDevelopment() ? "/error-development" :
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseRateLimiter(new RateLimiterOptions
+{
+    GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(_ =>
+    {
+        return RateLimitPartition.GetConcurrencyLimiter<string>("GeneralLimit",
+            _ => new ConcurrencyLimiterOptions
+            {
+                PermitLimit = 1,
+                QueueLimit = 10,
+                QueueProcessingOrder = QueueProcessingOrder.NewestFirst
+            });
+    }),
+    RejectionStatusCode = 429
+});
 
 app.MapControllers();
 
