@@ -25,7 +25,7 @@ public class AuthenticateController : ApiControllerBase
     }
 
     [HttpPost("token")]
-    [ProducesResponseType(typeof(AuthResponse), 200)]
+    [ProducesResponseType(200)]
     [ProducesResponseType(400)]
     [ProducesResponseType(404)]
     [ProducesResponseType(500)]
