@@ -1,0 +1,14 @@
+[17:39:59 INF] Configured endpoint "place-bid-notification", Consumer: "Auctioneer.NotificationService.Consumers.PlaceBidNotificationConsumer"
+[17:39:59 INF] Configured endpoint "rate-member-notification", Consumer: "Auctioneer.NotificationService.Consumers.RateMemberNotificationConsumer"
+[17:40:00 INF] Bus started: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[17:50:47 INF] Configured endpoint "place-bid-notification", Consumer: "Auctioneer.NotificationService.Consumers.PlaceBidNotificationConsumer"
+[17:50:47 INF] Configured endpoint "rate-member-notification", Consumer: "Auctioneer.NotificationService.Consumers.RateMemberNotificationConsumer"
+[17:50:48 INF] Bus started: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[17:52:46 INF] Bus stopped: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[19:17:19 INF] Configured endpoint "place-bid-notification", Consumer: "Auctioneer.NotificationService.Consumers.PlaceBidNotificationConsumer"
+[19:17:19 INF] Configured endpoint "rate-member-notification", Consumer: "Auctioneer.NotificationService.Consumers.RateMemberNotificationConsumer"
+[19:17:19 INF] Bus started: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[19:18:58 INF] Bus stopped: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[19:19:07 INF] Configured endpoint "place-bid-notification", Consumer: "Auctioneer.NotificationService.Consumers.PlaceBidNotificationConsumer"
+[19:19:07 INF] Configured endpoint "rate-member-notification", Consumer: "Auctioneer.NotificationService.Consumers.RateMemberNotificationConsumer"
+[19:19:08 INF] Bus started: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj

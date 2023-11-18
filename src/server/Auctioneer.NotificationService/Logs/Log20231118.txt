@@ -1,0 +1,19 @@
+[11:32:35 INF] Configured endpoint "place-bid-notification", Consumer: "Auctioneer.NotificationService.Consumers.PlaceBidNotificationConsumer"
+[11:32:35 INF] Configured endpoint "rate-member-notification", Consumer: "Auctioneer.NotificationService.Consumers.RateMemberNotificationConsumer"
+[11:32:35 INF] Bus started: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[11:46:16 INF] Bus stopped: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[11:46:22 INF] Configured endpoint "place-bid-notification", Consumer: "Auctioneer.NotificationService.Consumers.PlaceBidNotificationConsumer"
+[11:46:22 INF] Configured endpoint "rate-member-notification", Consumer: "Auctioneer.NotificationService.Consumers.RateMemberNotificationConsumer"
+[11:46:22 INF] Bus started: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[11:46:54 INF] Bus stopped: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[11:47:20 INF] Configured endpoint "place-bid-notification", Consumer: "Auctioneer.NotificationService.Consumers.PlaceBidNotificationConsumer"
+[11:47:20 INF] Configured endpoint "rate-member-notification", Consumer: "Auctioneer.NotificationService.Consumers.RateMemberNotificationConsumer"
+[11:47:20 INF] Bus started: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[12:25:36 INF] Configured endpoint "place-bid-notification", Consumer: "Auctioneer.NotificationService.Consumers.PlaceBidNotificationConsumer"
+[12:25:36 INF] Configured endpoint "rate-member-notification", Consumer: "Auctioneer.NotificationService.Consumers.RateMemberNotificationConsumer"
+[12:25:36 INF] Bus started: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[12:28:13 INF] Bus stopped: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[12:28:48 INF] Configured endpoint "place-bid-notification", Consumer: "Auctioneer.NotificationService.Consumers.PlaceBidNotificationConsumer"
+[12:28:48 INF] Configured endpoint "rate-member-notification", Consumer: "Auctioneer.NotificationService.Consumers.RateMemberNotificationConsumer"
+[12:28:48 INF] Bus started: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[12:29:45 INF] Bus stopped: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj

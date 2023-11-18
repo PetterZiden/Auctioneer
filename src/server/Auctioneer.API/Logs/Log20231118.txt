@@ -1,0 +1,401 @@
+[11:32:33 INF] Outbox publisher background service started...
+[11:32:33 INF] Bus started: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[11:37:26 ERR] No member found
+[11:42:16 ERR] No member found
+[11:46:20 INF] Outbox publisher background service started...
+[11:46:20 INF] Bus started: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[11:46:20 ERR] Error in publishing events "Unknown discriminator value 'AuctionCreatedEvent'."
+MongoDB.Bson.BsonSerializationException: Unknown discriminator value 'AuctionCreatedEvent'.
+   at MongoDB.Bson.Serialization.BsonSerializer.LookupActualType(Type nominalType, BsonValue discriminator)
+   at MongoDB.Bson.Serialization.Conventions.StandardDiscriminatorConvention.GetActualType(IBsonReader bsonReader, Type nominalType)
+   at MongoDB.Bson.Serialization.BsonClassMapSerializer`1.Deserialize(BsonDeserializationContext context, BsonDeserializationArgs args)
+   at MongoDB.Bson.Serialization.IBsonSerializerExtensions.Deserialize[TValue](IBsonSerializer`1 serializer, BsonDeserializationContext context)
+   at MongoDB.Driver.Core.Operations.CursorBatchDeserializationHelper.DeserializeBatch[TDocument](RawBsonArray batch, IBsonSerializer`1 documentSerializer, MessageEncoderSettings messageEncoderSettings)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.CreateFirstCursorBatch(BsonDocument cursorDocument)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.CreateCursor(IChannelSourceHandle channelSource, IChannelHandle channel, BsonDocument commandResult)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.ExecuteAsync(RetryableReadContext context, CancellationToken cancellationToken)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.ExecuteAsync(IReadBinding binding, CancellationToken cancellationToken)
+   at MongoDB.Driver.OperationExecutor.ExecuteReadOperationAsync[TResult](IReadBinding binding, IReadOperation`1 operation, CancellationToken cancellationToken)
+   at MongoDB.Driver.MongoCollectionImpl`1.ExecuteReadOperationAsync[TResult](IClientSessionHandle session, IReadOperation`1 operation, ReadPreference readPreference, CancellationToken cancellationToken)
+   at MongoDB.Driver.MongoCollectionImpl`1.UsingImplicitSessionAsync[TResult](Func`2 funcAsync, CancellationToken cancellationToken)
+   at MongoDB.Driver.IAsyncCursorSourceExtensions.ToListAsync[TDocument](IAsyncCursorSource`1 source, CancellationToken cancellationToken)
+   at Auctioneer.Application.Infrastructure.Persistence.EventRepository.GetAsync() in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.Application/Infrastructure/Persistence/EventRepository.cs:line 22
+   at Auctioneer.Application.Infrastructure.Services.OutboxPublisher.ExecuteAsync(CancellationToken stoppingToken) in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.Application/Infrastructure/Services/OutboxPublisher.cs:line 31
+[11:46:25 ERR] Error in publishing events "Unknown discriminator value 'AuctionCreatedEvent'."
+MongoDB.Bson.BsonSerializationException: Unknown discriminator value 'AuctionCreatedEvent'.
+   at MongoDB.Bson.Serialization.BsonSerializer.LookupActualType(Type nominalType, BsonValue discriminator)
+   at MongoDB.Bson.Serialization.Conventions.StandardDiscriminatorConvention.GetActualType(IBsonReader bsonReader, Type nominalType)
+   at MongoDB.Bson.Serialization.BsonClassMapSerializer`1.Deserialize(BsonDeserializationContext context, BsonDeserializationArgs args)
+   at MongoDB.Bson.Serialization.IBsonSerializerExtensions.Deserialize[TValue](IBsonSerializer`1 serializer, BsonDeserializationContext context)
+   at MongoDB.Driver.Core.Operations.CursorBatchDeserializationHelper.DeserializeBatch[TDocument](RawBsonArray batch, IBsonSerializer`1 documentSerializer, MessageEncoderSettings messageEncoderSettings)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.CreateFirstCursorBatch(BsonDocument cursorDocument)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.CreateCursor(IChannelSourceHandle channelSource, IChannelHandle channel, BsonDocument commandResult)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.ExecuteAsync(RetryableReadContext context, CancellationToken cancellationToken)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.ExecuteAsync(IReadBinding binding, CancellationToken cancellationToken)
+   at MongoDB.Driver.OperationExecutor.ExecuteReadOperationAsync[TResult](IReadBinding binding, IReadOperation`1 operation, CancellationToken cancellationToken)
+   at MongoDB.Driver.MongoCollectionImpl`1.ExecuteReadOperationAsync[TResult](IClientSessionHandle session, IReadOperation`1 operation, ReadPreference readPreference, CancellationToken cancellationToken)
+   at MongoDB.Driver.MongoCollectionImpl`1.UsingImplicitSessionAsync[TResult](Func`2 funcAsync, CancellationToken cancellationToken)
+   at MongoDB.Driver.IAsyncCursorSourceExtensions.ToListAsync[TDocument](IAsyncCursorSource`1 source, CancellationToken cancellationToken)
+   at Auctioneer.Application.Infrastructure.Persistence.EventRepository.GetAsync() in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.Application/Infrastructure/Persistence/EventRepository.cs:line 22
+   at Auctioneer.Application.Infrastructure.Services.OutboxPublisher.ExecuteAsync(CancellationToken stoppingToken) in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.Application/Infrastructure/Services/OutboxPublisher.cs:line 31
+[11:46:30 ERR] Error in publishing events "Unknown discriminator value 'AuctionCreatedEvent'."
+MongoDB.Bson.BsonSerializationException: Unknown discriminator value 'AuctionCreatedEvent'.
+   at MongoDB.Bson.Serialization.BsonSerializer.LookupActualType(Type nominalType, BsonValue discriminator)
+   at MongoDB.Bson.Serialization.Conventions.StandardDiscriminatorConvention.GetActualType(IBsonReader bsonReader, Type nominalType)
+   at MongoDB.Bson.Serialization.BsonClassMapSerializer`1.Deserialize(BsonDeserializationContext context, BsonDeserializationArgs args)
+   at MongoDB.Bson.Serialization.IBsonSerializerExtensions.Deserialize[TValue](IBsonSerializer`1 serializer, BsonDeserializationContext context)
+   at MongoDB.Driver.Core.Operations.CursorBatchDeserializationHelper.DeserializeBatch[TDocument](RawBsonArray batch, IBsonSerializer`1 documentSerializer, MessageEncoderSettings messageEncoderSettings)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.CreateFirstCursorBatch(BsonDocument cursorDocument)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.CreateCursor(IChannelSourceHandle channelSource, IChannelHandle channel, BsonDocument commandResult)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.ExecuteAsync(RetryableReadContext context, CancellationToken cancellationToken)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.ExecuteAsync(IReadBinding binding, CancellationToken cancellationToken)
+   at MongoDB.Driver.OperationExecutor.ExecuteReadOperationAsync[TResult](IReadBinding binding, IReadOperation`1 operation, CancellationToken cancellationToken)
+   at MongoDB.Driver.MongoCollectionImpl`1.ExecuteReadOperationAsync[TResult](IClientSessionHandle session, IReadOperation`1 operation, ReadPreference readPreference, CancellationToken cancellationToken)
+   at MongoDB.Driver.MongoCollectionImpl`1.UsingImplicitSessionAsync[TResult](Func`2 funcAsync, CancellationToken cancellationToken)
+   at MongoDB.Driver.IAsyncCursorSourceExtensions.ToListAsync[TDocument](IAsyncCursorSource`1 source, CancellationToken cancellationToken)
+   at Auctioneer.Application.Infrastructure.Persistence.EventRepository.GetAsync() in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.Application/Infrastructure/Persistence/EventRepository.cs:line 22
+   at Auctioneer.Application.Infrastructure.Services.OutboxPublisher.ExecuteAsync(CancellationToken stoppingToken) in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.Application/Infrastructure/Services/OutboxPublisher.cs:line 31
+[11:46:35 ERR] Error in publishing events "Unknown discriminator value 'AuctionCreatedEvent'."
+MongoDB.Bson.BsonSerializationException: Unknown discriminator value 'AuctionCreatedEvent'.
+   at MongoDB.Bson.Serialization.BsonSerializer.LookupActualType(Type nominalType, BsonValue discriminator)
+   at MongoDB.Bson.Serialization.Conventions.StandardDiscriminatorConvention.GetActualType(IBsonReader bsonReader, Type nominalType)
+   at MongoDB.Bson.Serialization.BsonClassMapSerializer`1.Deserialize(BsonDeserializationContext context, BsonDeserializationArgs args)
+   at MongoDB.Bson.Serialization.IBsonSerializerExtensions.Deserialize[TValue](IBsonSerializer`1 serializer, BsonDeserializationContext context)
+   at MongoDB.Driver.Core.Operations.CursorBatchDeserializationHelper.DeserializeBatch[TDocument](RawBsonArray batch, IBsonSerializer`1 documentSerializer, MessageEncoderSettings messageEncoderSettings)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.CreateFirstCursorBatch(BsonDocument cursorDocument)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.CreateCursor(IChannelSourceHandle channelSource, IChannelHandle channel, BsonDocument commandResult)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.ExecuteAsync(RetryableReadContext context, CancellationToken cancellationToken)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.ExecuteAsync(IReadBinding binding, CancellationToken cancellationToken)
+   at MongoDB.Driver.OperationExecutor.ExecuteReadOperationAsync[TResult](IReadBinding binding, IReadOperation`1 operation, CancellationToken cancellationToken)
+   at MongoDB.Driver.MongoCollectionImpl`1.ExecuteReadOperationAsync[TResult](IClientSessionHandle session, IReadOperation`1 operation, ReadPreference readPreference, CancellationToken cancellationToken)
+   at MongoDB.Driver.MongoCollectionImpl`1.UsingImplicitSessionAsync[TResult](Func`2 funcAsync, CancellationToken cancellationToken)
+   at MongoDB.Driver.IAsyncCursorSourceExtensions.ToListAsync[TDocument](IAsyncCursorSource`1 source, CancellationToken cancellationToken)
+   at Auctioneer.Application.Infrastructure.Persistence.EventRepository.GetAsync() in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.Application/Infrastructure/Persistence/EventRepository.cs:line 22
+   at Auctioneer.Application.Infrastructure.Services.OutboxPublisher.ExecuteAsync(CancellationToken stoppingToken) in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.Application/Infrastructure/Services/OutboxPublisher.cs:line 31
+[11:46:40 ERR] Error in publishing events "Unknown discriminator value 'AuctionCreatedEvent'."
+MongoDB.Bson.BsonSerializationException: Unknown discriminator value 'AuctionCreatedEvent'.
+   at MongoDB.Bson.Serialization.BsonSerializer.LookupActualType(Type nominalType, BsonValue discriminator)
+   at MongoDB.Bson.Serialization.Conventions.StandardDiscriminatorConvention.GetActualType(IBsonReader bsonReader, Type nominalType)
+   at MongoDB.Bson.Serialization.BsonClassMapSerializer`1.Deserialize(BsonDeserializationContext context, BsonDeserializationArgs args)
+   at MongoDB.Bson.Serialization.IBsonSerializerExtensions.Deserialize[TValue](IBsonSerializer`1 serializer, BsonDeserializationContext context)
+   at MongoDB.Driver.Core.Operations.CursorBatchDeserializationHelper.DeserializeBatch[TDocument](RawBsonArray batch, IBsonSerializer`1 documentSerializer, MessageEncoderSettings messageEncoderSettings)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.CreateFirstCursorBatch(BsonDocument cursorDocument)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.CreateCursor(IChannelSourceHandle channelSource, IChannelHandle channel, BsonDocument commandResult)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.ExecuteAsync(RetryableReadContext context, CancellationToken cancellationToken)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.ExecuteAsync(IReadBinding binding, CancellationToken cancellationToken)
+   at MongoDB.Driver.OperationExecutor.ExecuteReadOperationAsync[TResult](IReadBinding binding, IReadOperation`1 operation, CancellationToken cancellationToken)
+   at MongoDB.Driver.MongoCollectionImpl`1.ExecuteReadOperationAsync[TResult](IClientSessionHandle session, IReadOperation`1 operation, ReadPreference readPreference, CancellationToken cancellationToken)
+   at MongoDB.Driver.MongoCollectionImpl`1.UsingImplicitSessionAsync[TResult](Func`2 funcAsync, CancellationToken cancellationToken)
+   at MongoDB.Driver.IAsyncCursorSourceExtensions.ToListAsync[TDocument](IAsyncCursorSource`1 source, CancellationToken cancellationToken)
+   at Auctioneer.Application.Infrastructure.Persistence.EventRepository.GetAsync() in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.Application/Infrastructure/Persistence/EventRepository.cs:line 22
+   at Auctioneer.Application.Infrastructure.Services.OutboxPublisher.ExecuteAsync(CancellationToken stoppingToken) in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.Application/Infrastructure/Services/OutboxPublisher.cs:line 31
+[11:46:45 ERR] Error in publishing events "Unknown discriminator value 'AuctionCreatedEvent'."
+MongoDB.Bson.BsonSerializationException: Unknown discriminator value 'AuctionCreatedEvent'.
+   at MongoDB.Bson.Serialization.BsonSerializer.LookupActualType(Type nominalType, BsonValue discriminator)
+   at MongoDB.Bson.Serialization.Conventions.StandardDiscriminatorConvention.GetActualType(IBsonReader bsonReader, Type nominalType)
+   at MongoDB.Bson.Serialization.BsonClassMapSerializer`1.Deserialize(BsonDeserializationContext context, BsonDeserializationArgs args)
+   at MongoDB.Bson.Serialization.IBsonSerializerExtensions.Deserialize[TValue](IBsonSerializer`1 serializer, BsonDeserializationContext context)
+   at MongoDB.Driver.Core.Operations.CursorBatchDeserializationHelper.DeserializeBatch[TDocument](RawBsonArray batch, IBsonSerializer`1 documentSerializer, MessageEncoderSettings messageEncoderSettings)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.CreateFirstCursorBatch(BsonDocument cursorDocument)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.CreateCursor(IChannelSourceHandle channelSource, IChannelHandle channel, BsonDocument commandResult)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.ExecuteAsync(RetryableReadContext context, CancellationToken cancellationToken)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.ExecuteAsync(IReadBinding binding, CancellationToken cancellationToken)
+   at MongoDB.Driver.OperationExecutor.ExecuteReadOperationAsync[TResult](IReadBinding binding, IReadOperation`1 operation, CancellationToken cancellationToken)
+   at MongoDB.Driver.MongoCollectionImpl`1.ExecuteReadOperationAsync[TResult](IClientSessionHandle session, IReadOperation`1 operation, ReadPreference readPreference, CancellationToken cancellationToken)
+   at MongoDB.Driver.MongoCollectionImpl`1.UsingImplicitSessionAsync[TResult](Func`2 funcAsync, CancellationToken cancellationToken)
+   at MongoDB.Driver.IAsyncCursorSourceExtensions.ToListAsync[TDocument](IAsyncCursorSource`1 source, CancellationToken cancellationToken)
+   at Auctioneer.Application.Infrastructure.Persistence.EventRepository.GetAsync() in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.Application/Infrastructure/Persistence/EventRepository.cs:line 22
+   at Auctioneer.Application.Infrastructure.Services.OutboxPublisher.ExecuteAsync(CancellationToken stoppingToken) in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.Application/Infrastructure/Services/OutboxPublisher.cs:line 31
+[11:46:50 ERR] Error in publishing events "Unknown discriminator value 'AuctionCreatedEvent'."
+MongoDB.Bson.BsonSerializationException: Unknown discriminator value 'AuctionCreatedEvent'.
+   at MongoDB.Bson.Serialization.BsonSerializer.LookupActualType(Type nominalType, BsonValue discriminator)
+   at MongoDB.Bson.Serialization.Conventions.StandardDiscriminatorConvention.GetActualType(IBsonReader bsonReader, Type nominalType)
+   at MongoDB.Bson.Serialization.BsonClassMapSerializer`1.Deserialize(BsonDeserializationContext context, BsonDeserializationArgs args)
+   at MongoDB.Bson.Serialization.IBsonSerializerExtensions.Deserialize[TValue](IBsonSerializer`1 serializer, BsonDeserializationContext context)
+   at MongoDB.Driver.Core.Operations.CursorBatchDeserializationHelper.DeserializeBatch[TDocument](RawBsonArray batch, IBsonSerializer`1 documentSerializer, MessageEncoderSettings messageEncoderSettings)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.CreateFirstCursorBatch(BsonDocument cursorDocument)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.CreateCursor(IChannelSourceHandle channelSource, IChannelHandle channel, BsonDocument commandResult)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.ExecuteAsync(RetryableReadContext context, CancellationToken cancellationToken)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.ExecuteAsync(IReadBinding binding, CancellationToken cancellationToken)
+   at MongoDB.Driver.OperationExecutor.ExecuteReadOperationAsync[TResult](IReadBinding binding, IReadOperation`1 operation, CancellationToken cancellationToken)
+   at MongoDB.Driver.MongoCollectionImpl`1.ExecuteReadOperationAsync[TResult](IClientSessionHandle session, IReadOperation`1 operation, ReadPreference readPreference, CancellationToken cancellationToken)
+   at MongoDB.Driver.MongoCollectionImpl`1.UsingImplicitSessionAsync[TResult](Func`2 funcAsync, CancellationToken cancellationToken)
+   at MongoDB.Driver.IAsyncCursorSourceExtensions.ToListAsync[TDocument](IAsyncCursorSource`1 source, CancellationToken cancellationToken)
+   at Auctioneer.Application.Infrastructure.Persistence.EventRepository.GetAsync() in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.Application/Infrastructure/Persistence/EventRepository.cs:line 22
+   at Auctioneer.Application.Infrastructure.Services.OutboxPublisher.ExecuteAsync(CancellationToken stoppingToken) in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.Application/Infrastructure/Services/OutboxPublisher.cs:line 31
+[11:46:54 INF] Bus stopped: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[11:46:54 INF] Outbox publisher background service stopped...
+[11:47:03 INF] Outbox publisher background service started...
+[11:47:04 ERR] Error in publishing events "Unknown discriminator value 'AuctionCreatedEvent'."
+MongoDB.Bson.BsonSerializationException: Unknown discriminator value 'AuctionCreatedEvent'.
+   at MongoDB.Bson.Serialization.BsonSerializer.LookupActualType(Type nominalType, BsonValue discriminator)
+   at MongoDB.Bson.Serialization.Conventions.StandardDiscriminatorConvention.GetActualType(IBsonReader bsonReader, Type nominalType)
+   at MongoDB.Bson.Serialization.BsonClassMapSerializer`1.Deserialize(BsonDeserializationContext context, BsonDeserializationArgs args)
+   at MongoDB.Bson.Serialization.IBsonSerializerExtensions.Deserialize[TValue](IBsonSerializer`1 serializer, BsonDeserializationContext context)
+   at MongoDB.Driver.Core.Operations.CursorBatchDeserializationHelper.DeserializeBatch[TDocument](RawBsonArray batch, IBsonSerializer`1 documentSerializer, MessageEncoderSettings messageEncoderSettings)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.CreateFirstCursorBatch(BsonDocument cursorDocument)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.CreateCursor(IChannelSourceHandle channelSource, IChannelHandle channel, BsonDocument commandResult)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.ExecuteAsync(RetryableReadContext context, CancellationToken cancellationToken)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.ExecuteAsync(IReadBinding binding, CancellationToken cancellationToken)
+   at MongoDB.Driver.OperationExecutor.ExecuteReadOperationAsync[TResult](IReadBinding binding, IReadOperation`1 operation, CancellationToken cancellationToken)
+   at MongoDB.Driver.MongoCollectionImpl`1.ExecuteReadOperationAsync[TResult](IClientSessionHandle session, IReadOperation`1 operation, ReadPreference readPreference, CancellationToken cancellationToken)
+   at MongoDB.Driver.MongoCollectionImpl`1.UsingImplicitSessionAsync[TResult](Func`2 funcAsync, CancellationToken cancellationToken)
+   at MongoDB.Driver.IAsyncCursorSourceExtensions.ToListAsync[TDocument](IAsyncCursorSource`1 source, CancellationToken cancellationToken)
+   at Auctioneer.Application.Infrastructure.Persistence.EventRepository.GetAsync() in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.Application/Infrastructure/Persistence/EventRepository.cs:line 22
+   at Auctioneer.Application.Infrastructure.Services.OutboxPublisher.ExecuteAsync(CancellationToken stoppingToken) in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.Application/Infrastructure/Services/OutboxPublisher.cs:line 31
+[11:47:04 INF] Bus started: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[11:47:09 ERR] Error in publishing events "Unknown discriminator value 'AuctionCreatedEvent'."
+MongoDB.Bson.BsonSerializationException: Unknown discriminator value 'AuctionCreatedEvent'.
+   at MongoDB.Bson.Serialization.BsonSerializer.LookupActualType(Type nominalType, BsonValue discriminator)
+   at MongoDB.Bson.Serialization.Conventions.StandardDiscriminatorConvention.GetActualType(IBsonReader bsonReader, Type nominalType)
+   at MongoDB.Bson.Serialization.BsonClassMapSerializer`1.Deserialize(BsonDeserializationContext context, BsonDeserializationArgs args)
+   at MongoDB.Bson.Serialization.IBsonSerializerExtensions.Deserialize[TValue](IBsonSerializer`1 serializer, BsonDeserializationContext context)
+   at MongoDB.Driver.Core.Operations.CursorBatchDeserializationHelper.DeserializeBatch[TDocument](RawBsonArray batch, IBsonSerializer`1 documentSerializer, MessageEncoderSettings messageEncoderSettings)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.CreateFirstCursorBatch(BsonDocument cursorDocument)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.CreateCursor(IChannelSourceHandle channelSource, IChannelHandle channel, BsonDocument commandResult)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.ExecuteAsync(RetryableReadContext context, CancellationToken cancellationToken)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.ExecuteAsync(IReadBinding binding, CancellationToken cancellationToken)
+   at MongoDB.Driver.OperationExecutor.ExecuteReadOperationAsync[TResult](IReadBinding binding, IReadOperation`1 operation, CancellationToken cancellationToken)
+   at MongoDB.Driver.MongoCollectionImpl`1.ExecuteReadOperationAsync[TResult](IClientSessionHandle session, IReadOperation`1 operation, ReadPreference readPreference, CancellationToken cancellationToken)
+   at MongoDB.Driver.MongoCollectionImpl`1.UsingImplicitSessionAsync[TResult](Func`2 funcAsync, CancellationToken cancellationToken)
+   at MongoDB.Driver.IAsyncCursorSourceExtensions.ToListAsync[TDocument](IAsyncCursorSource`1 source, CancellationToken cancellationToken)
+   at Auctioneer.Application.Infrastructure.Persistence.EventRepository.GetAsync() in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.Application/Infrastructure/Persistence/EventRepository.cs:line 22
+   at Auctioneer.Application.Infrastructure.Services.OutboxPublisher.ExecuteAsync(CancellationToken stoppingToken) in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.Application/Infrastructure/Services/OutboxPublisher.cs:line 31
+[11:47:14 ERR] Error in publishing events "Unknown discriminator value 'AuctionCreatedEvent'."
+MongoDB.Bson.BsonSerializationException: Unknown discriminator value 'AuctionCreatedEvent'.
+   at MongoDB.Bson.Serialization.BsonSerializer.LookupActualType(Type nominalType, BsonValue discriminator)
+   at MongoDB.Bson.Serialization.Conventions.StandardDiscriminatorConvention.GetActualType(IBsonReader bsonReader, Type nominalType)
+   at MongoDB.Bson.Serialization.BsonClassMapSerializer`1.Deserialize(BsonDeserializationContext context, BsonDeserializationArgs args)
+   at MongoDB.Bson.Serialization.IBsonSerializerExtensions.Deserialize[TValue](IBsonSerializer`1 serializer, BsonDeserializationContext context)
+   at MongoDB.Driver.Core.Operations.CursorBatchDeserializationHelper.DeserializeBatch[TDocument](RawBsonArray batch, IBsonSerializer`1 documentSerializer, MessageEncoderSettings messageEncoderSettings)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.CreateFirstCursorBatch(BsonDocument cursorDocument)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.CreateCursor(IChannelSourceHandle channelSource, IChannelHandle channel, BsonDocument commandResult)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.ExecuteAsync(RetryableReadContext context, CancellationToken cancellationToken)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.ExecuteAsync(IReadBinding binding, CancellationToken cancellationToken)
+   at MongoDB.Driver.OperationExecutor.ExecuteReadOperationAsync[TResult](IReadBinding binding, IReadOperation`1 operation, CancellationToken cancellationToken)
+   at MongoDB.Driver.MongoCollectionImpl`1.ExecuteReadOperationAsync[TResult](IClientSessionHandle session, IReadOperation`1 operation, ReadPreference readPreference, CancellationToken cancellationToken)
+   at MongoDB.Driver.MongoCollectionImpl`1.UsingImplicitSessionAsync[TResult](Func`2 funcAsync, CancellationToken cancellationToken)
+   at MongoDB.Driver.IAsyncCursorSourceExtensions.ToListAsync[TDocument](IAsyncCursorSource`1 source, CancellationToken cancellationToken)
+   at Auctioneer.Application.Infrastructure.Persistence.EventRepository.GetAsync() in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.Application/Infrastructure/Persistence/EventRepository.cs:line 22
+   at Auctioneer.Application.Infrastructure.Services.OutboxPublisher.ExecuteAsync(CancellationToken stoppingToken) in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.Application/Infrastructure/Services/OutboxPublisher.cs:line 31
+[11:47:19 ERR] Error in publishing events "Unknown discriminator value 'AuctionCreatedEvent'."
+MongoDB.Bson.BsonSerializationException: Unknown discriminator value 'AuctionCreatedEvent'.
+   at MongoDB.Bson.Serialization.BsonSerializer.LookupActualType(Type nominalType, BsonValue discriminator)
+   at MongoDB.Bson.Serialization.Conventions.StandardDiscriminatorConvention.GetActualType(IBsonReader bsonReader, Type nominalType)
+   at MongoDB.Bson.Serialization.BsonClassMapSerializer`1.Deserialize(BsonDeserializationContext context, BsonDeserializationArgs args)
+   at MongoDB.Bson.Serialization.IBsonSerializerExtensions.Deserialize[TValue](IBsonSerializer`1 serializer, BsonDeserializationContext context)
+   at MongoDB.Driver.Core.Operations.CursorBatchDeserializationHelper.DeserializeBatch[TDocument](RawBsonArray batch, IBsonSerializer`1 documentSerializer, MessageEncoderSettings messageEncoderSettings)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.CreateFirstCursorBatch(BsonDocument cursorDocument)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.CreateCursor(IChannelSourceHandle channelSource, IChannelHandle channel, BsonDocument commandResult)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.ExecuteAsync(RetryableReadContext context, CancellationToken cancellationToken)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.ExecuteAsync(IReadBinding binding, CancellationToken cancellationToken)
+   at MongoDB.Driver.OperationExecutor.ExecuteReadOperationAsync[TResult](IReadBinding binding, IReadOperation`1 operation, CancellationToken cancellationToken)
+   at MongoDB.Driver.MongoCollectionImpl`1.ExecuteReadOperationAsync[TResult](IClientSessionHandle session, IReadOperation`1 operation, ReadPreference readPreference, CancellationToken cancellationToken)
+   at MongoDB.Driver.MongoCollectionImpl`1.UsingImplicitSessionAsync[TResult](Func`2 funcAsync, CancellationToken cancellationToken)
+   at MongoDB.Driver.IAsyncCursorSourceExtensions.ToListAsync[TDocument](IAsyncCursorSource`1 source, CancellationToken cancellationToken)
+   at Auctioneer.Application.Infrastructure.Persistence.EventRepository.GetAsync() in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.Application/Infrastructure/Persistence/EventRepository.cs:line 22
+   at Auctioneer.Application.Infrastructure.Services.OutboxPublisher.ExecuteAsync(CancellationToken stoppingToken) in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.Application/Infrastructure/Services/OutboxPublisher.cs:line 31
+[11:47:25 ERR] Error in publishing events "Unknown discriminator value 'AuctionCreatedEvent'."
+MongoDB.Bson.BsonSerializationException: Unknown discriminator value 'AuctionCreatedEvent'.
+   at MongoDB.Bson.Serialization.BsonSerializer.LookupActualType(Type nominalType, BsonValue discriminator)
+   at MongoDB.Bson.Serialization.Conventions.StandardDiscriminatorConvention.GetActualType(IBsonReader bsonReader, Type nominalType)
+   at MongoDB.Bson.Serialization.BsonClassMapSerializer`1.Deserialize(BsonDeserializationContext context, BsonDeserializationArgs args)
+   at MongoDB.Bson.Serialization.IBsonSerializerExtensions.Deserialize[TValue](IBsonSerializer`1 serializer, BsonDeserializationContext context)
+   at MongoDB.Driver.Core.Operations.CursorBatchDeserializationHelper.DeserializeBatch[TDocument](RawBsonArray batch, IBsonSerializer`1 documentSerializer, MessageEncoderSettings messageEncoderSettings)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.CreateFirstCursorBatch(BsonDocument cursorDocument)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.CreateCursor(IChannelSourceHandle channelSource, IChannelHandle channel, BsonDocument commandResult)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.ExecuteAsync(RetryableReadContext context, CancellationToken cancellationToken)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.ExecuteAsync(IReadBinding binding, CancellationToken cancellationToken)
+   at MongoDB.Driver.OperationExecutor.ExecuteReadOperationAsync[TResult](IReadBinding binding, IReadOperation`1 operation, CancellationToken cancellationToken)
+   at MongoDB.Driver.MongoCollectionImpl`1.ExecuteReadOperationAsync[TResult](IClientSessionHandle session, IReadOperation`1 operation, ReadPreference readPreference, CancellationToken cancellationToken)
+   at MongoDB.Driver.MongoCollectionImpl`1.UsingImplicitSessionAsync[TResult](Func`2 funcAsync, CancellationToken cancellationToken)
+   at MongoDB.Driver.IAsyncCursorSourceExtensions.ToListAsync[TDocument](IAsyncCursorSource`1 source, CancellationToken cancellationToken)
+   at Auctioneer.Application.Infrastructure.Persistence.EventRepository.GetAsync() in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.Application/Infrastructure/Persistence/EventRepository.cs:line 22
+   at Auctioneer.Application.Infrastructure.Services.OutboxPublisher.ExecuteAsync(CancellationToken stoppingToken) in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.Application/Infrastructure/Services/OutboxPublisher.cs:line 31
+[11:47:30 ERR] Error in publishing events "Unknown discriminator value 'AuctionCreatedEvent'."
+MongoDB.Bson.BsonSerializationException: Unknown discriminator value 'AuctionCreatedEvent'.
+   at MongoDB.Bson.Serialization.BsonSerializer.LookupActualType(Type nominalType, BsonValue discriminator)
+   at MongoDB.Bson.Serialization.Conventions.StandardDiscriminatorConvention.GetActualType(IBsonReader bsonReader, Type nominalType)
+   at MongoDB.Bson.Serialization.BsonClassMapSerializer`1.Deserialize(BsonDeserializationContext context, BsonDeserializationArgs args)
+   at MongoDB.Bson.Serialization.IBsonSerializerExtensions.Deserialize[TValue](IBsonSerializer`1 serializer, BsonDeserializationContext context)
+   at MongoDB.Driver.Core.Operations.CursorBatchDeserializationHelper.DeserializeBatch[TDocument](RawBsonArray batch, IBsonSerializer`1 documentSerializer, MessageEncoderSettings messageEncoderSettings)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.CreateFirstCursorBatch(BsonDocument cursorDocument)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.CreateCursor(IChannelSourceHandle channelSource, IChannelHandle channel, BsonDocument commandResult)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.ExecuteAsync(RetryableReadContext context, CancellationToken cancellationToken)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.ExecuteAsync(IReadBinding binding, CancellationToken cancellationToken)
+   at MongoDB.Driver.OperationExecutor.ExecuteReadOperationAsync[TResult](IReadBinding binding, IReadOperation`1 operation, CancellationToken cancellationToken)
+   at MongoDB.Driver.MongoCollectionImpl`1.ExecuteReadOperationAsync[TResult](IClientSessionHandle session, IReadOperation`1 operation, ReadPreference readPreference, CancellationToken cancellationToken)
+   at MongoDB.Driver.MongoCollectionImpl`1.UsingImplicitSessionAsync[TResult](Func`2 funcAsync, CancellationToken cancellationToken)
+   at MongoDB.Driver.IAsyncCursorSourceExtensions.ToListAsync[TDocument](IAsyncCursorSource`1 source, CancellationToken cancellationToken)
+   at Auctioneer.Application.Infrastructure.Persistence.EventRepository.GetAsync() in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.Application/Infrastructure/Persistence/EventRepository.cs:line 22
+   at Auctioneer.Application.Infrastructure.Services.OutboxPublisher.ExecuteAsync(CancellationToken stoppingToken) in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.Application/Infrastructure/Services/OutboxPublisher.cs:line 31
+[11:47:35 ERR] Error in publishing events "Unknown discriminator value 'AuctionCreatedEvent'."
+MongoDB.Bson.BsonSerializationException: Unknown discriminator value 'AuctionCreatedEvent'.
+   at MongoDB.Bson.Serialization.BsonSerializer.LookupActualType(Type nominalType, BsonValue discriminator)
+   at MongoDB.Bson.Serialization.Conventions.StandardDiscriminatorConvention.GetActualType(IBsonReader bsonReader, Type nominalType)
+   at MongoDB.Bson.Serialization.BsonClassMapSerializer`1.Deserialize(BsonDeserializationContext context, BsonDeserializationArgs args)
+   at MongoDB.Bson.Serialization.IBsonSerializerExtensions.Deserialize[TValue](IBsonSerializer`1 serializer, BsonDeserializationContext context)
+   at MongoDB.Driver.Core.Operations.CursorBatchDeserializationHelper.DeserializeBatch[TDocument](RawBsonArray batch, IBsonSerializer`1 documentSerializer, MessageEncoderSettings messageEncoderSettings)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.CreateFirstCursorBatch(BsonDocument cursorDocument)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.CreateCursor(IChannelSourceHandle channelSource, IChannelHandle channel, BsonDocument commandResult)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.ExecuteAsync(RetryableReadContext context, CancellationToken cancellationToken)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.ExecuteAsync(IReadBinding binding, CancellationToken cancellationToken)
+   at MongoDB.Driver.OperationExecutor.ExecuteReadOperationAsync[TResult](IReadBinding binding, IReadOperation`1 operation, CancellationToken cancellationToken)
+   at MongoDB.Driver.MongoCollectionImpl`1.ExecuteReadOperationAsync[TResult](IClientSessionHandle session, IReadOperation`1 operation, ReadPreference readPreference, CancellationToken cancellationToken)
+   at MongoDB.Driver.MongoCollectionImpl`1.UsingImplicitSessionAsync[TResult](Func`2 funcAsync, CancellationToken cancellationToken)
+   at MongoDB.Driver.IAsyncCursorSourceExtensions.ToListAsync[TDocument](IAsyncCursorSource`1 source, CancellationToken cancellationToken)
+   at Auctioneer.Application.Infrastructure.Persistence.EventRepository.GetAsync() in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.Application/Infrastructure/Persistence/EventRepository.cs:line 22
+   at Auctioneer.Application.Infrastructure.Services.OutboxPublisher.ExecuteAsync(CancellationToken stoppingToken) in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.Application/Infrastructure/Services/OutboxPublisher.cs:line 31
+[11:47:40 ERR] Error in publishing events "Unknown discriminator value 'AuctionCreatedEvent'."
+MongoDB.Bson.BsonSerializationException: Unknown discriminator value 'AuctionCreatedEvent'.
+   at MongoDB.Bson.Serialization.BsonSerializer.LookupActualType(Type nominalType, BsonValue discriminator)
+   at MongoDB.Bson.Serialization.Conventions.StandardDiscriminatorConvention.GetActualType(IBsonReader bsonReader, Type nominalType)
+   at MongoDB.Bson.Serialization.BsonClassMapSerializer`1.Deserialize(BsonDeserializationContext context, BsonDeserializationArgs args)
+   at MongoDB.Bson.Serialization.IBsonSerializerExtensions.Deserialize[TValue](IBsonSerializer`1 serializer, BsonDeserializationContext context)
+   at MongoDB.Driver.Core.Operations.CursorBatchDeserializationHelper.DeserializeBatch[TDocument](RawBsonArray batch, IBsonSerializer`1 documentSerializer, MessageEncoderSettings messageEncoderSettings)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.CreateFirstCursorBatch(BsonDocument cursorDocument)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.CreateCursor(IChannelSourceHandle channelSource, IChannelHandle channel, BsonDocument commandResult)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.ExecuteAsync(RetryableReadContext context, CancellationToken cancellationToken)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.ExecuteAsync(IReadBinding binding, CancellationToken cancellationToken)
+   at MongoDB.Driver.OperationExecutor.ExecuteReadOperationAsync[TResult](IReadBinding binding, IReadOperation`1 operation, CancellationToken cancellationToken)
+   at MongoDB.Driver.MongoCollectionImpl`1.ExecuteReadOperationAsync[TResult](IClientSessionHandle session, IReadOperation`1 operation, ReadPreference readPreference, CancellationToken cancellationToken)
+   at MongoDB.Driver.MongoCollectionImpl`1.UsingImplicitSessionAsync[TResult](Func`2 funcAsync, CancellationToken cancellationToken)
+   at MongoDB.Driver.IAsyncCursorSourceExtensions.ToListAsync[TDocument](IAsyncCursorSource`1 source, CancellationToken cancellationToken)
+   at Auctioneer.Application.Infrastructure.Persistence.EventRepository.GetAsync() in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.Application/Infrastructure/Persistence/EventRepository.cs:line 22
+   at Auctioneer.Application.Infrastructure.Services.OutboxPublisher.ExecuteAsync(CancellationToken stoppingToken) in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.Application/Infrastructure/Services/OutboxPublisher.cs:line 31
+[11:47:45 ERR] Error in publishing events "Unknown discriminator value 'AuctionCreatedEvent'."
+MongoDB.Bson.BsonSerializationException: Unknown discriminator value 'AuctionCreatedEvent'.
+   at MongoDB.Bson.Serialization.BsonSerializer.LookupActualType(Type nominalType, BsonValue discriminator)
+   at MongoDB.Bson.Serialization.Conventions.StandardDiscriminatorConvention.GetActualType(IBsonReader bsonReader, Type nominalType)
+   at MongoDB.Bson.Serialization.BsonClassMapSerializer`1.Deserialize(BsonDeserializationContext context, BsonDeserializationArgs args)
+   at MongoDB.Bson.Serialization.IBsonSerializerExtensions.Deserialize[TValue](IBsonSerializer`1 serializer, BsonDeserializationContext context)
+   at MongoDB.Driver.Core.Operations.CursorBatchDeserializationHelper.DeserializeBatch[TDocument](RawBsonArray batch, IBsonSerializer`1 documentSerializer, MessageEncoderSettings messageEncoderSettings)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.CreateFirstCursorBatch(BsonDocument cursorDocument)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.CreateCursor(IChannelSourceHandle channelSource, IChannelHandle channel, BsonDocument commandResult)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.ExecuteAsync(RetryableReadContext context, CancellationToken cancellationToken)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.ExecuteAsync(IReadBinding binding, CancellationToken cancellationToken)
+   at MongoDB.Driver.OperationExecutor.ExecuteReadOperationAsync[TResult](IReadBinding binding, IReadOperation`1 operation, CancellationToken cancellationToken)
+   at MongoDB.Driver.MongoCollectionImpl`1.ExecuteReadOperationAsync[TResult](IClientSessionHandle session, IReadOperation`1 operation, ReadPreference readPreference, CancellationToken cancellationToken)
+   at MongoDB.Driver.MongoCollectionImpl`1.UsingImplicitSessionAsync[TResult](Func`2 funcAsync, CancellationToken cancellationToken)
+   at MongoDB.Driver.IAsyncCursorSourceExtensions.ToListAsync[TDocument](IAsyncCursorSource`1 source, CancellationToken cancellationToken)
+   at Auctioneer.Application.Infrastructure.Persistence.EventRepository.GetAsync() in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.Application/Infrastructure/Persistence/EventRepository.cs:line 22
+   at Auctioneer.Application.Infrastructure.Services.OutboxPublisher.ExecuteAsync(CancellationToken stoppingToken) in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.Application/Infrastructure/Services/OutboxPublisher.cs:line 31
+[11:47:50 ERR] Error in publishing events "Unknown discriminator value 'AuctionCreatedEvent'."
+MongoDB.Bson.BsonSerializationException: Unknown discriminator value 'AuctionCreatedEvent'.
+   at MongoDB.Bson.Serialization.BsonSerializer.LookupActualType(Type nominalType, BsonValue discriminator)
+   at MongoDB.Bson.Serialization.Conventions.StandardDiscriminatorConvention.GetActualType(IBsonReader bsonReader, Type nominalType)
+   at MongoDB.Bson.Serialization.BsonClassMapSerializer`1.Deserialize(BsonDeserializationContext context, BsonDeserializationArgs args)
+   at MongoDB.Bson.Serialization.IBsonSerializerExtensions.Deserialize[TValue](IBsonSerializer`1 serializer, BsonDeserializationContext context)
+   at MongoDB.Driver.Core.Operations.CursorBatchDeserializationHelper.DeserializeBatch[TDocument](RawBsonArray batch, IBsonSerializer`1 documentSerializer, MessageEncoderSettings messageEncoderSettings)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.CreateFirstCursorBatch(BsonDocument cursorDocument)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.CreateCursor(IChannelSourceHandle channelSource, IChannelHandle channel, BsonDocument commandResult)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.ExecuteAsync(RetryableReadContext context, CancellationToken cancellationToken)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.ExecuteAsync(IReadBinding binding, CancellationToken cancellationToken)
+   at MongoDB.Driver.OperationExecutor.ExecuteReadOperationAsync[TResult](IReadBinding binding, IReadOperation`1 operation, CancellationToken cancellationToken)
+   at MongoDB.Driver.MongoCollectionImpl`1.ExecuteReadOperationAsync[TResult](IClientSessionHandle session, IReadOperation`1 operation, ReadPreference readPreference, CancellationToken cancellationToken)
+   at MongoDB.Driver.MongoCollectionImpl`1.UsingImplicitSessionAsync[TResult](Func`2 funcAsync, CancellationToken cancellationToken)
+   at MongoDB.Driver.IAsyncCursorSourceExtensions.ToListAsync[TDocument](IAsyncCursorSource`1 source, CancellationToken cancellationToken)
+   at Auctioneer.Application.Infrastructure.Persistence.EventRepository.GetAsync() in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.Application/Infrastructure/Persistence/EventRepository.cs:line 22
+   at Auctioneer.Application.Infrastructure.Services.OutboxPublisher.ExecuteAsync(CancellationToken stoppingToken) in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.Application/Infrastructure/Services/OutboxPublisher.cs:line 31
+[11:47:55 ERR] Error in publishing events "Unknown discriminator value 'AuctionCreatedEvent'."
+MongoDB.Bson.BsonSerializationException: Unknown discriminator value 'AuctionCreatedEvent'.
+   at MongoDB.Bson.Serialization.BsonSerializer.LookupActualType(Type nominalType, BsonValue discriminator)
+   at MongoDB.Bson.Serialization.Conventions.StandardDiscriminatorConvention.GetActualType(IBsonReader bsonReader, Type nominalType)
+   at MongoDB.Bson.Serialization.BsonClassMapSerializer`1.Deserialize(BsonDeserializationContext context, BsonDeserializationArgs args)
+   at MongoDB.Bson.Serialization.IBsonSerializerExtensions.Deserialize[TValue](IBsonSerializer`1 serializer, BsonDeserializationContext context)
+   at MongoDB.Driver.Core.Operations.CursorBatchDeserializationHelper.DeserializeBatch[TDocument](RawBsonArray batch, IBsonSerializer`1 documentSerializer, MessageEncoderSettings messageEncoderSettings)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.CreateFirstCursorBatch(BsonDocument cursorDocument)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.CreateCursor(IChannelSourceHandle channelSource, IChannelHandle channel, BsonDocument commandResult)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.ExecuteAsync(RetryableReadContext context, CancellationToken cancellationToken)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.ExecuteAsync(IReadBinding binding, CancellationToken cancellationToken)
+   at MongoDB.Driver.OperationExecutor.ExecuteReadOperationAsync[TResult](IReadBinding binding, IReadOperation`1 operation, CancellationToken cancellationToken)
+   at MongoDB.Driver.MongoCollectionImpl`1.ExecuteReadOperationAsync[TResult](IClientSessionHandle session, IReadOperation`1 operation, ReadPreference readPreference, CancellationToken cancellationToken)
+   at MongoDB.Driver.MongoCollectionImpl`1.UsingImplicitSessionAsync[TResult](Func`2 funcAsync, CancellationToken cancellationToken)
+   at MongoDB.Driver.IAsyncCursorSourceExtensions.ToListAsync[TDocument](IAsyncCursorSource`1 source, CancellationToken cancellationToken)
+   at Auctioneer.Application.Infrastructure.Persistence.EventRepository.GetAsync() in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.Application/Infrastructure/Persistence/EventRepository.cs:line 22
+   at Auctioneer.Application.Infrastructure.Services.OutboxPublisher.ExecuteAsync(CancellationToken stoppingToken) in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.Application/Infrastructure/Services/OutboxPublisher.cs:line 31
+[11:48:00 ERR] Error in publishing events "Unknown discriminator value 'AuctionCreatedEvent'."
+MongoDB.Bson.BsonSerializationException: Unknown discriminator value 'AuctionCreatedEvent'.
+   at MongoDB.Bson.Serialization.BsonSerializer.LookupActualType(Type nominalType, BsonValue discriminator)
+   at MongoDB.Bson.Serialization.Conventions.StandardDiscriminatorConvention.GetActualType(IBsonReader bsonReader, Type nominalType)
+   at MongoDB.Bson.Serialization.BsonClassMapSerializer`1.Deserialize(BsonDeserializationContext context, BsonDeserializationArgs args)
+   at MongoDB.Bson.Serialization.IBsonSerializerExtensions.Deserialize[TValue](IBsonSerializer`1 serializer, BsonDeserializationContext context)
+   at MongoDB.Driver.Core.Operations.CursorBatchDeserializationHelper.DeserializeBatch[TDocument](RawBsonArray batch, IBsonSerializer`1 documentSerializer, MessageEncoderSettings messageEncoderSettings)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.CreateFirstCursorBatch(BsonDocument cursorDocument)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.CreateCursor(IChannelSourceHandle channelSource, IChannelHandle channel, BsonDocument commandResult)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.ExecuteAsync(RetryableReadContext context, CancellationToken cancellationToken)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.ExecuteAsync(IReadBinding binding, CancellationToken cancellationToken)
+   at MongoDB.Driver.OperationExecutor.ExecuteReadOperationAsync[TResult](IReadBinding binding, IReadOperation`1 operation, CancellationToken cancellationToken)
+   at MongoDB.Driver.MongoCollectionImpl`1.ExecuteReadOperationAsync[TResult](IClientSessionHandle session, IReadOperation`1 operation, ReadPreference readPreference, CancellationToken cancellationToken)
+   at MongoDB.Driver.MongoCollectionImpl`1.UsingImplicitSessionAsync[TResult](Func`2 funcAsync, CancellationToken cancellationToken)
+   at MongoDB.Driver.IAsyncCursorSourceExtensions.ToListAsync[TDocument](IAsyncCursorSource`1 source, CancellationToken cancellationToken)
+   at Auctioneer.Application.Infrastructure.Persistence.EventRepository.GetAsync() in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.Application/Infrastructure/Persistence/EventRepository.cs:line 22
+   at Auctioneer.Application.Infrastructure.Services.OutboxPublisher.ExecuteAsync(CancellationToken stoppingToken) in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.Application/Infrastructure/Services/OutboxPublisher.cs:line 31
+[11:48:05 ERR] Error in publishing events "Unknown discriminator value 'AuctionCreatedEvent'."
+MongoDB.Bson.BsonSerializationException: Unknown discriminator value 'AuctionCreatedEvent'.
+   at MongoDB.Bson.Serialization.BsonSerializer.LookupActualType(Type nominalType, BsonValue discriminator)
+   at MongoDB.Bson.Serialization.Conventions.StandardDiscriminatorConvention.GetActualType(IBsonReader bsonReader, Type nominalType)
+   at MongoDB.Bson.Serialization.BsonClassMapSerializer`1.Deserialize(BsonDeserializationContext context, BsonDeserializationArgs args)
+   at MongoDB.Bson.Serialization.IBsonSerializerExtensions.Deserialize[TValue](IBsonSerializer`1 serializer, BsonDeserializationContext context)
+   at MongoDB.Driver.Core.Operations.CursorBatchDeserializationHelper.DeserializeBatch[TDocument](RawBsonArray batch, IBsonSerializer`1 documentSerializer, MessageEncoderSettings messageEncoderSettings)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.CreateFirstCursorBatch(BsonDocument cursorDocument)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.CreateCursor(IChannelSourceHandle channelSource, IChannelHandle channel, BsonDocument commandResult)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.ExecuteAsync(RetryableReadContext context, CancellationToken cancellationToken)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.ExecuteAsync(IReadBinding binding, CancellationToken cancellationToken)
+   at MongoDB.Driver.OperationExecutor.ExecuteReadOperationAsync[TResult](IReadBinding binding, IReadOperation`1 operation, CancellationToken cancellationToken)
+   at MongoDB.Driver.MongoCollectionImpl`1.ExecuteReadOperationAsync[TResult](IClientSessionHandle session, IReadOperation`1 operation, ReadPreference readPreference, CancellationToken cancellationToken)
+   at MongoDB.Driver.MongoCollectionImpl`1.UsingImplicitSessionAsync[TResult](Func`2 funcAsync, CancellationToken cancellationToken)
+   at MongoDB.Driver.IAsyncCursorSourceExtensions.ToListAsync[TDocument](IAsyncCursorSource`1 source, CancellationToken cancellationToken)
+   at Auctioneer.Application.Infrastructure.Persistence.EventRepository.GetAsync() in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.Application/Infrastructure/Persistence/EventRepository.cs:line 22
+   at Auctioneer.Application.Infrastructure.Services.OutboxPublisher.ExecuteAsync(CancellationToken stoppingToken) in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.Application/Infrastructure/Services/OutboxPublisher.cs:line 31
+[11:48:10 ERR] Error in publishing events "Unknown discriminator value 'AuctionCreatedEvent'."
+MongoDB.Bson.BsonSerializationException: Unknown discriminator value 'AuctionCreatedEvent'.
+   at MongoDB.Bson.Serialization.BsonSerializer.LookupActualType(Type nominalType, BsonValue discriminator)
+   at MongoDB.Bson.Serialization.Conventions.StandardDiscriminatorConvention.GetActualType(IBsonReader bsonReader, Type nominalType)
+   at MongoDB.Bson.Serialization.BsonClassMapSerializer`1.Deserialize(BsonDeserializationContext context, BsonDeserializationArgs args)
+   at MongoDB.Bson.Serialization.IBsonSerializerExtensions.Deserialize[TValue](IBsonSerializer`1 serializer, BsonDeserializationContext context)
+   at MongoDB.Driver.Core.Operations.CursorBatchDeserializationHelper.DeserializeBatch[TDocument](RawBsonArray batch, IBsonSerializer`1 documentSerializer, MessageEncoderSettings messageEncoderSettings)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.CreateFirstCursorBatch(BsonDocument cursorDocument)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.CreateCursor(IChannelSourceHandle channelSource, IChannelHandle channel, BsonDocument commandResult)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.ExecuteAsync(RetryableReadContext context, CancellationToken cancellationToken)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.ExecuteAsync(IReadBinding binding, CancellationToken cancellationToken)
+   at MongoDB.Driver.OperationExecutor.ExecuteReadOperationAsync[TResult](IReadBinding binding, IReadOperation`1 operation, CancellationToken cancellationToken)
+   at MongoDB.Driver.MongoCollectionImpl`1.ExecuteReadOperationAsync[TResult](IClientSessionHandle session, IReadOperation`1 operation, ReadPreference readPreference, CancellationToken cancellationToken)
+   at MongoDB.Driver.MongoCollectionImpl`1.UsingImplicitSessionAsync[TResult](Func`2 funcAsync, CancellationToken cancellationToken)
+   at MongoDB.Driver.IAsyncCursorSourceExtensions.ToListAsync[TDocument](IAsyncCursorSource`1 source, CancellationToken cancellationToken)
+   at Auctioneer.Application.Infrastructure.Persistence.EventRepository.GetAsync() in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.Application/Infrastructure/Persistence/EventRepository.cs:line 22
+   at Auctioneer.Application.Infrastructure.Services.OutboxPublisher.ExecuteAsync(CancellationToken stoppingToken) in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.Application/Infrastructure/Services/OutboxPublisher.cs:line 31
+[11:48:21 ERR] Error in publishing events "Unknown discriminator value 'AuctionCreatedEvent'."
+MongoDB.Bson.BsonSerializationException: Unknown discriminator value 'AuctionCreatedEvent'.
+   at MongoDB.Bson.Serialization.BsonSerializer.LookupActualType(Type nominalType, BsonValue discriminator)
+   at MongoDB.Bson.Serialization.Conventions.StandardDiscriminatorConvention.GetActualType(IBsonReader bsonReader, Type nominalType)
+   at MongoDB.Bson.Serialization.BsonClassMapSerializer`1.Deserialize(BsonDeserializationContext context, BsonDeserializationArgs args)
+   at MongoDB.Bson.Serialization.IBsonSerializerExtensions.Deserialize[TValue](IBsonSerializer`1 serializer, BsonDeserializationContext context)
+   at MongoDB.Driver.Core.Operations.CursorBatchDeserializationHelper.DeserializeBatch[TDocument](RawBsonArray batch, IBsonSerializer`1 documentSerializer, MessageEncoderSettings messageEncoderSettings)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.CreateFirstCursorBatch(BsonDocument cursorDocument)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.CreateCursor(IChannelSourceHandle channelSource, IChannelHandle channel, BsonDocument commandResult)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.ExecuteAsync(RetryableReadContext context, CancellationToken cancellationToken)
+   at MongoDB.Driver.Core.Operations.FindOperation`1.ExecuteAsync(IReadBinding binding, CancellationToken cancellationToken)
+   at MongoDB.Driver.OperationExecutor.ExecuteReadOperationAsync[TResult](IReadBinding binding, IReadOperation`1 operation, CancellationToken cancellationToken)
+   at MongoDB.Driver.MongoCollectionImpl`1.ExecuteReadOperationAsync[TResult](IClientSessionHandle session, IReadOperation`1 operation, ReadPreference readPreference, CancellationToken cancellationToken)
+   at MongoDB.Driver.MongoCollectionImpl`1.UsingImplicitSessionAsync[TResult](Func`2 funcAsync, CancellationToken cancellationToken)
+   at MongoDB.Driver.IAsyncCursorSourceExtensions.ToListAsync[TDocument](IAsyncCursorSource`1 source, CancellationToken cancellationToken)
+   at Auctioneer.Application.Infrastructure.Persistence.EventRepository.GetAsync() in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.Application/Infrastructure/Persistence/EventRepository.cs:line 22
+   at Auctioneer.Application.Infrastructure.Services.OutboxPublisher.ExecuteAsync(CancellationToken stoppingToken) in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.Application/Infrastructure/Services/OutboxPublisher.cs:line 31
+[11:48:36 INF] Publishing Domain Event: Event - "AuctionCreatedEvent"
+[11:48:36 INF] Finished Publishing Domain Event: "AuctionCreatedEvent" - 12f2220d-79e9-4419-b758-e5ddcdaced37
+[11:48:36 INF] Publishing Domain Event: Event - "AuctionCreatedEvent"
+[11:48:36 INF] Finished Publishing Domain Event: "AuctionCreatedEvent" - 70870c74-3611-4789-9739-4db6e702bfa1
+[12:18:06 INF] Outbox publisher background service started...
+[12:18:06 INF] Bus started: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[12:19:31 INF] Bus stopped: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[12:19:31 INF] Outbox publisher background service stopped...
+[12:25:33 INF] Outbox publisher background service started...
+[12:25:34 INF] Bus started: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[12:27:28 WRN] Failed to determine the https port for redirect.
+[12:28:13 INF] Bus stopped: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[12:28:13 INF] Outbox publisher background service stopped...
+[12:28:47 INF] Outbox publisher background service started...
+[12:28:47 INF] Bus started: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[12:29:45 INF] Bus stopped: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[12:29:45 INF] Outbox publisher background service stopped...

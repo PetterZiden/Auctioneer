@@ -1,0 +1,32 @@
+[13:00:16 WRN] BasicCancel faulted: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj/place-bid-notification - "amq.ctag-XUYSL_7q9vUuNyxXx7UFfw"
+System.TimeoutException: The operation has timed out.
+   at RabbitMQ.Client.Impl.SimpleBlockingRpcContinuation.GetReply(TimeSpan timeout)
+   at RabbitMQ.Client.Impl.ModelBase.BasicCancel(String consumerTag)
+   at MassTransit.RabbitMqTransport.RabbitMqModelContext.<>c__DisplayClass26_0.<BasicCancel>b__0() in /_/src/Transports/MassTransit.RabbitMqTransport/RabbitMqTransport/RabbitMqModelContext.cs:line 165
+   at MassTransit.Util.ChannelExecutor.<>c__DisplayClass13_0.<Run>b__1() in /_/src/MassTransit/Util/ChannelExecutor.cs:line 140
+   at MassTransit.Util.ChannelExecutor.SynchronousFuture`1.Run() in /_/src/MassTransit/Util/ChannelExecutor.cs:line 296
+--- End of stack trace from previous location ---
+   at MassTransit.Util.ChannelExecutor.Run[T](Func`1 method, CancellationToken cancellationToken) in /_/src/MassTransit/Util/ChannelExecutor.cs:line 150
+   at MassTransit.RabbitMqTransport.RabbitMqBasicConsumer.ActiveAndActualAgentsCompleted(StopContext context) in /_/src/Transports/MassTransit.RabbitMqTransport/RabbitMqTransport/RabbitMqBasicConsumer.cs:line 230
+[13:00:16 WRN] BasicCancel faulted: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj/rate-member-notification - "amq.ctag-czdOj0KKgkOsfRMdfwzxVQ"
+System.TimeoutException: The operation has timed out.
+   at RabbitMQ.Client.Impl.SimpleBlockingRpcContinuation.GetReply(TimeSpan timeout)
+   at RabbitMQ.Client.Impl.ModelBase.BasicCancel(String consumerTag)
+   at MassTransit.RabbitMqTransport.RabbitMqModelContext.<>c__DisplayClass26_0.<BasicCancel>b__0() in /_/src/Transports/MassTransit.RabbitMqTransport/RabbitMqTransport/RabbitMqModelContext.cs:line 165
+   at MassTransit.Util.ChannelExecutor.<>c__DisplayClass13_0.<Run>b__1() in /_/src/MassTransit/Util/ChannelExecutor.cs:line 140
+   at MassTransit.Util.ChannelExecutor.SynchronousFuture`1.Run() in /_/src/MassTransit/Util/ChannelExecutor.cs:line 296
+--- End of stack trace from previous location ---
+   at MassTransit.Util.ChannelExecutor.Run[T](Func`1 method, CancellationToken cancellationToken) in /_/src/MassTransit/Util/ChannelExecutor.cs:line 150
+   at MassTransit.RabbitMqTransport.RabbitMqBasicConsumer.ActiveAndActualAgentsCompleted(StopContext context) in /_/src/Transports/MassTransit.RabbitMqTransport/RabbitMqTransport/RabbitMqBasicConsumer.cs:line 230
+[13:00:22 INF] Bus stopped: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[13:53:09 INF] Configured endpoint "place-bid-notification", Consumer: "Auctioneer.NotificationService.Consumers.PlaceBidNotificationConsumer"
+[13:53:09 INF] Configured endpoint "rate-member-notification", Consumer: "Auctioneer.NotificationService.Consumers.RateMemberNotificationConsumer"
+[13:53:10 INF] Bus started: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[14:50:01 INF] Bus stopped: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[14:50:22 INF] Configured endpoint "place-bid-notification", Consumer: "Auctioneer.NotificationService.Consumers.PlaceBidNotificationConsumer"
+[14:50:22 INF] Configured endpoint "rate-member-notification", Consumer: "Auctioneer.NotificationService.Consumers.RateMemberNotificationConsumer"
+[14:50:23 INF] Bus started: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[15:11:11 INF] Bus stopped: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[15:11:55 INF] Configured endpoint "place-bid-notification", Consumer: "Auctioneer.NotificationService.Consumers.PlaceBidNotificationConsumer"
+[15:11:55 INF] Configured endpoint "rate-member-notification", Consumer: "Auctioneer.NotificationService.Consumers.RateMemberNotificationConsumer"
+[15:11:56 INF] Bus started: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
