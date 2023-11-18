@@ -25,7 +25,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\src\Auctioneer.API\Auctioneer.API.csproj"/>
+        <ProjectReference Include="..\..\src\server\Auctioneer.API\Auctioneer.API.csproj"/>
     </ItemGroup>
 
 </Project>

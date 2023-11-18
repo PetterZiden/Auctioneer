@@ -1,0 +1,62 @@
+# This is a generated file. Not intended for manual editing.
+services:
+  auctioneer.api:
+    build:
+      context: "/Users/petterziden/Projects/Auctioneer"
+      dockerfile: "src/Auctioneer.API/Dockerfile"
+      target: "base"
+    command: []
+    entrypoint:
+    - "dotnet"
+    - "/app/bin/Debug/net7.0/Auctioneer.API.dll"
+    environment:
+      DOTNET_USE_POLLING_FILE_WATCHER: "true"
+      NUGET_PACKAGES: "/Users/petterziden/.nuget/packages"
+      NUGET_FALLBACK_PACKAGES: "/Users/petterziden/.nuget/packages"
+    image: "auctioneer.api:dev"
+    ports: []
+    volumes:
+    - "/Users/petterziden/.nuget/packages:/root/.nuget/fallbackpackages"
+    - "/Users/petterziden/Projects/Auctioneer/src/Auctioneer.API:/app:rw"
+    - "/Users/petterziden/Projects/Auctioneer:/src:rw"
+    working_dir: "/app"
+  auctioneer.emailservice:
+    build:
+      context: "/Users/petterziden/Projects/Auctioneer"
+      dockerfile: "src/Auctioneer.EmailService/Dockerfile"
+      target: "base"
+    command: []
+    entrypoint:
+    - "dotnet"
+    - "/app/bin/Debug/net7.0/Auctioneer.EmailService.dll"
+    environment:
+      DOTNET_USE_POLLING_FILE_WATCHER: "true"
+      NUGET_PACKAGES: "/Users/petterziden/.nuget/packages"
+      NUGET_FALLBACK_PACKAGES: "/Users/petterziden/.nuget/packages"
+    image: "auctioneer.emailservice:dev"
+    ports: []
+    volumes:
+    - "/Users/petterziden/.nuget/packages:/root/.nuget/fallbackpackages"
+    - "/Users/petterziden/Projects/Auctioneer/src/Auctioneer.EmailService:/app:rw"
+    - "/Users/petterziden/Projects/Auctioneer:/src:rw"
+    working_dir: "/app"
+  auctioneer.notificationservice:
+    build:
+      context: "/Users/petterziden/Projects/Auctioneer"
+      dockerfile: "src/Auctioneer.NotificationService/Dockerfile"
+      target: "base"
+    command: []
+    entrypoint:
+    - "dotnet"
+    - "/app/bin/Debug/net7.0/Auctioneer.NotificationService.dll"
+    environment:
+      DOTNET_USE_POLLING_FILE_WATCHER: "true"
+      NUGET_PACKAGES: "/Users/petterziden/.nuget/packages"
+      NUGET_FALLBACK_PACKAGES: "/Users/petterziden/.nuget/packages"
+    image: "auctioneer.notificationservice:dev"
+    ports: []
+    volumes:
+    - "/Users/petterziden/.nuget/packages:/root/.nuget/fallbackpackages"
+    - "/Users/petterziden/Projects/Auctioneer/src/Auctioneer.NotificationService:/app:rw"
+    - "/Users/petterziden/Projects/Auctioneer:/src:rw"
+    working_dir: "/app"

@@ -1,0 +1,73 @@
+[11:00:37 INF] Outbox publisher background service started...
+[11:00:38 INF] Bus started: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[11:16:47 ERR] No auction found
+[11:17:36 ERR] Could not find HttpStatusCode in Error-Metadata
+[11:17:49 INF] Publishing Domain Event: Event - "AuctionCreatedEvent"
+[11:17:49 INF] Finished Publishing Domain Event: "AuctionCreatedEvent" - cc031074-b19b-4dd8-8da7-6458b0fea39d
+[11:18:19 INF] Publishing Domain Event: Event - "AuctionCreatedEvent"
+[11:18:19 INF] Finished Publishing Domain Event: "AuctionCreatedEvent" - 681cb336-00e0-45ff-ac0a-81e651122dfc
+[12:08:15 INF] Outbox publisher background service started...
+[12:08:16 INF] Bus started: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[12:50:12 INF] Bus stopped: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[12:50:12 INF] Outbox publisher background service stopped...
+[14:04:21 INF] Outbox publisher background service started...
+[14:04:22 INF] Bus started: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[14:05:17 INF] Publishing Domain Event: Event - "MemberCreatedEvent"
+[14:05:17 INF] Finished Publishing Domain Event: "MemberCreatedEvent" - 05f134a0-9445-4d63-9a4b-2623515dc62a
+[14:05:57 INF] Publishing Domain Event: Event - "MemberCreatedEvent"
+[14:05:57 INF] Finished Publishing Domain Event: "MemberCreatedEvent" - a0ab83e3-0b59-4e89-95ca-909fa1c7d37b
+[14:06:32 INF] Publishing Domain Event: Event - "MemberCreatedEvent"
+[14:06:32 INF] Finished Publishing Domain Event: "MemberCreatedEvent" - 5c7e8d2f-44c4-4f8d-a70f-0a20d4e8044a
+[14:09:35 ERR] Command commitTransaction failed: Given transaction number 7 does not match any in-progress transactions. The active transaction number is 6.
+MongoDB.Driver.MongoCommandException: Command commitTransaction failed: Given transaction number 7 does not match any in-progress transactions. The active transaction number is 6.
+   at MongoDB.Driver.Core.WireProtocol.CommandUsingCommandMessageWireProtocol`1.ProcessResponse(ConnectionId connectionId, CommandMessage responseMessage)
+   at MongoDB.Driver.Core.WireProtocol.CommandUsingCommandMessageWireProtocol`1.ExecuteAsync(IConnection connection, CancellationToken cancellationToken)
+   at MongoDB.Driver.Core.Servers.Server.ServerChannel.ExecuteProtocolAsync[TResult](IWireProtocol`1 protocol, ICoreSession session, CancellationToken cancellationToken)
+   at MongoDB.Driver.Core.Operations.RetryableReadOperationExecutor.ExecuteAsync[TResult](IRetryableReadOperation`1 operation, RetryableReadContext context, CancellationToken cancellationToken)
+   at MongoDB.Driver.Core.Operations.ReadCommandOperation`1.ExecuteAsync(RetryableReadContext context, CancellationToken cancellationToken)
+   at MongoDB.Driver.Core.Operations.ReadCommandOperation`1.ExecuteAsync(IReadBinding binding, CancellationToken cancellationToken)
+   at MongoDB.Driver.Core.Operations.EndTransactionOperation.ExecuteAsync(IReadBinding binding, CancellationToken cancellationToken)
+   at MongoDB.Driver.Core.Operations.CommitTransactionOperation.ExecuteAsync(IReadBinding binding, CancellationToken cancellationToken)
+   at MongoDB.Driver.Core.Bindings.CoreSession.ExecuteEndTransactionOnPrimaryAsync[TResult](IReadOperation`1 operation, CancellationToken cancellationToken)
+   at MongoDB.Driver.Core.Bindings.CoreSession.CommitTransactionAsync(CancellationToken cancellationToken)
+   at Auctioneer.Application.Infrastructure.Persistence.UnitOfWork.SaveAsync() in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.Application/Infrastructure/Persistence/UnitOfWork.cs:line 43
+[14:10:55 INF] Outbox publisher background service started...
+[14:10:56 INF] Bus started: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[14:11:06 INF] Publishing Domain Event: Event - "AuctionCreatedEvent"
+[14:11:06 INF] Finished Publishing Domain Event: "AuctionCreatedEvent" - e2ae29a6-9316-44de-ab9d-7367ec3ff1b2
+[14:12:35 ERR] Command commitTransaction failed: Given transaction number 3 does not match any in-progress transactions. The active transaction number is 2.
+MongoDB.Driver.MongoCommandException: Command commitTransaction failed: Given transaction number 3 does not match any in-progress transactions. The active transaction number is 2.
+   at MongoDB.Driver.Core.WireProtocol.CommandUsingCommandMessageWireProtocol`1.ProcessResponse(ConnectionId connectionId, CommandMessage responseMessage)
+   at MongoDB.Driver.Core.WireProtocol.CommandUsingCommandMessageWireProtocol`1.ExecuteAsync(IConnection connection, CancellationToken cancellationToken)
+   at MongoDB.Driver.Core.Servers.Server.ServerChannel.ExecuteProtocolAsync[TResult](IWireProtocol`1 protocol, ICoreSession session, CancellationToken cancellationToken)
+   at MongoDB.Driver.Core.Operations.RetryableReadOperationExecutor.ExecuteAsync[TResult](IRetryableReadOperation`1 operation, RetryableReadContext context, CancellationToken cancellationToken)
+   at MongoDB.Driver.Core.Operations.ReadCommandOperation`1.ExecuteAsync(RetryableReadContext context, CancellationToken cancellationToken)
+   at MongoDB.Driver.Core.Operations.ReadCommandOperation`1.ExecuteAsync(IReadBinding binding, CancellationToken cancellationToken)
+   at MongoDB.Driver.Core.Operations.EndTransactionOperation.ExecuteAsync(IReadBinding binding, CancellationToken cancellationToken)
+   at MongoDB.Driver.Core.Operations.CommitTransactionOperation.ExecuteAsync(IReadBinding binding, CancellationToken cancellationToken)
+   at MongoDB.Driver.Core.Bindings.CoreSession.ExecuteEndTransactionOnPrimaryAsync[TResult](IReadOperation`1 operation, CancellationToken cancellationToken)
+   at MongoDB.Driver.Core.Bindings.CoreSession.CommitTransactionAsync(CancellationToken cancellationToken)
+   at Auctioneer.Application.Infrastructure.Persistence.UnitOfWork.SaveAsync() in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.Application/Infrastructure/Persistence/UnitOfWork.cs:line 43
+[14:12:45 INF] Outbox publisher background service started...
+[14:12:46 INF] Bus started: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[14:12:56 INF] Publishing Domain Event: Event - "AuctionCreatedEvent"
+[14:12:56 INF] Finished Publishing Domain Event: "AuctionCreatedEvent" - 8799c8ff-b654-4087-8431-9643ddbc9a46
+[14:14:16 INF] Publishing Domain Event: Event - "AuctionCreatedEvent"
+[14:14:16 INF] Finished Publishing Domain Event: "AuctionCreatedEvent" - f450b107-1f97-4816-bbdb-07231df5a921
+[14:14:16 ERR] Command commitTransaction failed: Given transaction number 4 does not match any in-progress transactions. The active transaction number is 3.
+MongoDB.Driver.MongoCommandException: Command commitTransaction failed: Given transaction number 4 does not match any in-progress transactions. The active transaction number is 3.
+   at MongoDB.Driver.Core.WireProtocol.CommandUsingCommandMessageWireProtocol`1.ProcessResponse(ConnectionId connectionId, CommandMessage responseMessage)
+   at MongoDB.Driver.Core.WireProtocol.CommandUsingCommandMessageWireProtocol`1.ExecuteAsync(IConnection connection, CancellationToken cancellationToken)
+   at MongoDB.Driver.Core.Servers.Server.ServerChannel.ExecuteProtocolAsync[TResult](IWireProtocol`1 protocol, ICoreSession session, CancellationToken cancellationToken)
+   at MongoDB.Driver.Core.Operations.RetryableReadOperationExecutor.ExecuteAsync[TResult](IRetryableReadOperation`1 operation, RetryableReadContext context, CancellationToken cancellationToken)
+   at MongoDB.Driver.Core.Operations.ReadCommandOperation`1.ExecuteAsync(RetryableReadContext context, CancellationToken cancellationToken)
+   at MongoDB.Driver.Core.Operations.ReadCommandOperation`1.ExecuteAsync(IReadBinding binding, CancellationToken cancellationToken)
+   at MongoDB.Driver.Core.Operations.EndTransactionOperation.ExecuteAsync(IReadBinding binding, CancellationToken cancellationToken)
+   at MongoDB.Driver.Core.Operations.CommitTransactionOperation.ExecuteAsync(IReadBinding binding, CancellationToken cancellationToken)
+   at MongoDB.Driver.Core.Bindings.CoreSession.ExecuteEndTransactionOnPrimaryAsync[TResult](IReadOperation`1 operation, CancellationToken cancellationToken)
+   at MongoDB.Driver.Core.Bindings.CoreSession.CommitTransactionAsync(CancellationToken cancellationToken)
+   at Auctioneer.Application.Infrastructure.Persistence.UnitOfWork.SaveAsync() in /Users/petterziden/Projects/Auctioneer/src/Auctioneer.Application/Infrastructure/Persistence/UnitOfWork.cs:line 43
+[14:14:21 INF] Publishing Domain Event: Event - "AuctionCreatedEvent"
+[14:14:21 INF] Finished Publishing Domain Event: "AuctionCreatedEvent" - f450b107-1f97-4816-bbdb-07231df5a921
+[14:54:45 INF] Bus stopped: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[14:54:45 INF] Outbox publisher background service stopped...

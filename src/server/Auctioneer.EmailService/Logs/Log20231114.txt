@@ -1,0 +1,3 @@
+[13:11:19 INF] Background service started...
+[13:11:19 INF] Start listening on queue: "rate-member-email"
+[13:11:19 INF] Start listening on queue: "place-bid-email"

@@ -29,7 +29,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\src\Auctioneer.Application\Auctioneer.Application.csproj"/>
+        <ProjectReference Include="..\..\src\server\Auctioneer.Application\Auctioneer.Application.csproj"/>
     </ItemGroup>
 
 </Project>
