@@ -1,5 +1,5 @@
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0;
-import type { Guid } from 'guid-typescript';
+//import type { Guid } from 'guid-typescript';
 import { Ok, Err, Result } from 'ts-results';
 import type { Update } from 'vite';
 
@@ -10,8 +10,8 @@ const headers = {
 };
 
 export interface AuctionModel {
-	id: Guid | null;
-	memberId: Guid;
+	id: string;
+	memberId: string;
 	title: string;
 	description: string;
 	startTime: Date;
@@ -23,8 +23,8 @@ export interface AuctionModel {
 }
 
 export interface BidModel {
-	auctionId: Guid;
-	memberId: Guid;
+	auctionId: string;
+	memberId: string;
 	bidPrice: number;
 	timeStamp: Date;
 }
@@ -40,7 +40,7 @@ export interface CreateAuctionRequest {
 }
 
 export interface UpdateAuctionRequest {
-	auctionId: Guid;
+	auctionId: string;
 	title: string | null;
 	description: string | null;
 	imgRoute: string | null;
@@ -60,7 +60,7 @@ export async function getAuctions(): Promise<Result<AuctionModel[], Error>> {
 	}
 }
 
-export async function getAuctionById(id: Guid): Promise<Result<AuctionModel, Error>> {
+export async function getAuctionById(id: string): Promise<Result<AuctionModel, Error>> {
 	//TryCatch
 	const response = await fetch(`${apiUrl}/api/auction/${id}`, {
 		method: 'GET',
@@ -77,10 +77,6 @@ export async function getAuctionById(id: Guid): Promise<Result<AuctionModel, Err
 export async function createAuction(
 	auction: CreateAuctionRequest
 ): Promise<Result<boolean, Error>> {
-	console.log('CREATE AUCTION API CALL');
-	console.log(apiUrl + '/api/auction');
-	console.log(auction);
-
 	let body = JSON.stringify(auction);
 	const response = await fetch(`${apiUrl}/api/auction`, {
 		method: 'POST',
@@ -88,8 +84,6 @@ export async function createAuction(
 		body: body
 	});
 
-	console.log('RESPONSE');
-	console.log(response.status);
 	if (response.status === 200) {
 		return Ok(true);
 	} else {
@@ -115,7 +109,7 @@ export async function updateAuction(
 	}
 }
 
-export async function deleteAuctionById(id: Guid): Promise<Result<boolean, Error>> {
+export async function deleteAuctionById(id: string): Promise<Result<boolean, Error>> {
 	//TryCatch
 	const response = await fetch(`${apiUrl}/api/auction/${id}`, {
 		method: 'DELETE',
