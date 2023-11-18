@@ -29,7 +29,7 @@
   <p class="float-right mb-3 font-normal text-gray-700 dark:text-gray-400 leading-tight">{bidCount()}</p>
   <br />
   <Button class="float-left">
-    Go to auction
+    <a href="/auction/{auction.id.toString()}"> Go to auction</a>
     <ArrowRightOutline class="float-left w-3.5 h-3.5 ml-2 text-white" />
   </Button>
 </Card>

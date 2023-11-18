@@ -1,7 +1,5 @@
 import { writeFileSync } from 'fs';
 import { createAuction } from '$lib/models/auction.model';
-import { redirect } from '@sveltejs/kit';
-import { fail } from '@sveltejs/kit';
 import { Guid } from 'guid-typescript';
 
 export const actions = {
