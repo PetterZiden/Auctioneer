@@ -3,7 +3,7 @@
 <br />
 <!-- ABOUT THE PROJECT -->
 <h2 id="about-the-project">About The Project</h2>
-<p>An ongoing project to showcase different technologies and architectural patterns. The current state of the project is
+<p>An ongoing project to showcase/test different technologies. The current state of the project is
   the following:</p>
 <pre><code class="lang-bash">.
 ├── src/
