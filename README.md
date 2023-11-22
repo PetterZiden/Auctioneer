@@ -6,7 +6,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-An ongoing project to showcase  different technologies and architectural patterns. The current state of the project is the following:
+An ongoing project showcase/test different technologies. The current state of the project is the following:
 
 ```bash
 .
