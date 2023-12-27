@@ -39,37 +39,44 @@ public class Member : AuditableEntity, IAggregateRoot
     public string FullName =>
         $"{(!string.IsNullOrEmpty(FirstName) ? FirstName : "")} {(!string.IsNullOrEmpty(LastName) ? LastName : "")}";
 
-    public static Member Create(string firstname, string lastname, string email, string phoneNumber, string street,
+    public static Result<Member> Create(string firstname, string lastname, string email, string phoneNumber,
+        string street,
         string zipcode, string city)
     {
         if (string.IsNullOrEmpty(firstname))
-            throw new ArgumentNullException(nameof(firstname));
+            return Result.Fail(new BadRequestError("First name can not be empty"));
 
         if (string.IsNullOrEmpty(lastname))
-            throw new ArgumentNullException(nameof(lastname));
+            return Result.Fail(new BadRequestError("Last name can not be empty"));
 
         if (string.IsNullOrEmpty(phoneNumber))
-            throw new ArgumentNullException(nameof(phoneNumber));
+            return Result.Fail(new BadRequestError("Phone number can not be empty"));
 
-        var member = new Member
+        try
         {
-            Id = Guid.NewGuid(),
-            FirstName = firstname,
-            LastName = lastname,
-            Address = new Address(street, zipcode, city),
-            Email = new Email(email),
-            PhoneNumber = phoneNumber,
-            Created = DateTimeOffset.Now,
-            LastModified = null
-        };
-
-        return member;
+            var member = new Member
+            {
+                Id = Guid.NewGuid(),
+                FirstName = firstname,
+                LastName = lastname,
+                Address = new Address(street, zipcode, city),
+                Email = new Email(email),
+                PhoneNumber = phoneNumber,
+                Created = DateTimeOffset.Now,
+                LastModified = null
+            };
+            return Result.Ok(member);
+        }
+        catch (Exception ex)
+        {
+            return Result.Fail(new BadRequestError(ex.Message));
+        }
     }
 
     public Result ChangeEmail(Email email)
     {
         if (string.IsNullOrEmpty(email.Value))
-            throw new ArgumentNullException(nameof(email));
+            return Result.Fail(new BadRequestError("Email can not be empty"));
 
         if (Email.Equals(email))
             return Result.Fail(new BadRequestError("Email can not be the same as current email"));
@@ -82,7 +89,7 @@ public class Member : AuditableEntity, IAggregateRoot
     public Result ChangePhoneNumber(string phoneNumber)
     {
         if (string.IsNullOrEmpty(phoneNumber))
-            throw new ArgumentNullException(nameof(phoneNumber));
+            return Result.Fail(new BadRequestError("Phone number can not be empty"));
 
         if (PhoneNumber.Equals(phoneNumber))
             return Result.Fail(new BadRequestError("Phone number can not be the same as current phone number"));
@@ -95,7 +102,7 @@ public class Member : AuditableEntity, IAggregateRoot
     public Result ChangeFirstName(string firstName)
     {
         if (string.IsNullOrEmpty(firstName))
-            throw new ArgumentNullException(nameof(firstName));
+            return Result.Fail(new BadRequestError("First name can not be empty"));
 
         if (FirstName.Equals(firstName))
             return Result.Fail(new BadRequestError("First name can not be the same as current first name"));
@@ -108,7 +115,7 @@ public class Member : AuditableEntity, IAggregateRoot
     public Result ChangeLastName(string lastName)
     {
         if (string.IsNullOrEmpty(lastName))
-            throw new ArgumentNullException(nameof(lastName));
+            return Result.Fail(new BadRequestError("Last name can not be empty"));
 
         if (LastName.Equals(lastName))
             return Result.Fail(new BadRequestError("Last name can not be the same as current last name"));
@@ -120,7 +127,10 @@ public class Member : AuditableEntity, IAggregateRoot
 
     public Result ChangeAddress(Address address)
     {
-        Address = address ?? throw new ArgumentNullException(nameof(address));
+        if (address == Address)
+            return Result.Fail(new BadRequestError("Address can not be the same as current address"));
+
+        Address = address;
         LastModified = DateTimeOffset.Now;
         return Result.Ok();
     }

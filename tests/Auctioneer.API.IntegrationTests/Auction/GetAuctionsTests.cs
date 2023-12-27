@@ -51,7 +51,7 @@ public class GetAuctionsTests : BaseIntegrationTest
             DateTimeOffset.Now.AddHours(6),
             DateTimeOffset.Now.AddDays(7),
             100,
-            "../images.test.jpg");
+            "../images.test.jpg").Value;
 
         var auction2 = Application.Entities.Auction.Create(
             Guid.NewGuid(),
@@ -60,7 +60,7 @@ public class GetAuctionsTests : BaseIntegrationTest
             DateTimeOffset.Now.AddHours(6),
             DateTimeOffset.Now.AddDays(7),
             150,
-            "../images.test2.jpg");
+            "../images.test2.jpg").Value;
 
         await AuctionRepository.CreateAsync(auction, new CancellationToken());
         await AuctionRepository.CreateAsync(auction2, new CancellationToken());

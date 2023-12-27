@@ -34,6 +34,10 @@ public class DeleteMemberTests
         var result = await _handler.Handle(GetValidCommand(), new CancellationToken());
 
         Assert.True(result.IsSuccess);
+        await _memberRepository.Received(1).GetAsync(Arg.Any<Guid>());
+        await _memberRepository.Received(1).DeleteAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>());
+        await _eventRepository.Received(1).CreateAsync(Arg.Any<DomainEvent>(), Arg.Any<CancellationToken>());
+        await _unitOfWork.Received(1).SaveAsync();
     }
 
     [Fact]
@@ -51,6 +55,10 @@ public class DeleteMemberTests
 
         Assert.True(result.IsFailed);
         Assert.Equal("MemberRepository failed", result.Errors[0].Message);
+        await _memberRepository.Received(1).GetAsync(Arg.Any<Guid>());
+        await _memberRepository.Received(1).DeleteAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>());
+        await _eventRepository.Received(0).CreateAsync(Arg.Any<DomainEvent>(), Arg.Any<CancellationToken>());
+        await _unitOfWork.Received(0).SaveAsync();
     }
 
     [Fact]
@@ -68,6 +76,10 @@ public class DeleteMemberTests
 
         Assert.True(result.IsFailed);
         Assert.Equal("EventRepository failed", result.Errors[0].Message);
+        await _memberRepository.Received(1).GetAsync(Arg.Any<Guid>());
+        await _memberRepository.Received(1).DeleteAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>());
+        await _eventRepository.Received(1).CreateAsync(Arg.Any<DomainEvent>(), Arg.Any<CancellationToken>());
+        await _unitOfWork.Received(0).SaveAsync();
     }
 
     [Fact]
@@ -84,6 +96,10 @@ public class DeleteMemberTests
 
         Assert.True(result.IsFailed);
         Assert.Equal("UnitOfWork failed", result.Errors[0].Message);
+        await _memberRepository.Received(1).GetAsync(Arg.Any<Guid>());
+        await _memberRepository.Received(1).DeleteAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>());
+        await _eventRepository.Received(1).CreateAsync(Arg.Any<DomainEvent>(), Arg.Any<CancellationToken>());
+        await _unitOfWork.Received(1).SaveAsync();
     }
 
     private static DeleteMemberCommand GetValidCommand()

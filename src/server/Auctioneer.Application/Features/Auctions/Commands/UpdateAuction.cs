@@ -136,7 +136,6 @@ public class UpdateAuctionCommandValidator : AbstractValidator<UpdateAuctionComm
 {
     public UpdateAuctionCommandValidator()
     {
-        //Todo: fixa all validering
         RuleFor(v => v.Id)
             .NotEmpty()
             .NotNull();

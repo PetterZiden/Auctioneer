@@ -35,6 +35,9 @@ public class CreateMemberTests
 
         Assert.True(result.IsSuccess);
         Assert.IsType<Guid>(result.Value);
+        await _memberRepository.Received(1).CreateAsync(Arg.Any<Member>(), Arg.Any<CancellationToken>());
+        await _eventRepository.Received(1).CreateAsync(Arg.Any<DomainEvent>(), Arg.Any<CancellationToken>());
+        await _unitOfWork.Received(1).SaveAsync();
     }
 
     [Fact]
@@ -54,7 +57,10 @@ public class CreateMemberTests
         var result = await _handler.Handle(request, new CancellationToken());
 
         Assert.True(result.IsFailed);
-        Assert.Equal("Value cannot be null. (Parameter 'firstname')", result.Errors[0].Message);
+        Assert.Equal("First name can not be empty", result.Errors[0].Message);
+        await _memberRepository.Received(0).CreateAsync(Arg.Any<Member>(), Arg.Any<CancellationToken>());
+        await _eventRepository.Received(0).CreateAsync(Arg.Any<DomainEvent>(), Arg.Any<CancellationToken>());
+        await _unitOfWork.Received(0).SaveAsync();
     }
 
     [Fact]
@@ -74,7 +80,7 @@ public class CreateMemberTests
         var result = await _handler.Handle(request, new CancellationToken());
 
         Assert.True(result.IsFailed);
-        Assert.Equal("Value cannot be null. (Parameter 'lastname')", result.Errors[0].Message);
+        Assert.Equal("Last name can not be empty", result.Errors[0].Message);
     }
 
     [Fact]
@@ -114,7 +120,7 @@ public class CreateMemberTests
         var result = await _handler.Handle(request, new CancellationToken());
 
         Assert.True(result.IsFailed);
-        Assert.Equal("Value cannot be null. (Parameter 'phoneNumber')", result.Errors[0].Message);
+        Assert.Equal("Phone number can not be empty", result.Errors[0].Message);
     }
 
     [Fact]
@@ -190,6 +196,9 @@ public class CreateMemberTests
 
         Assert.True(result.IsFailed);
         Assert.Equal("MemberRepository failed", result.Errors[0].Message);
+        await _memberRepository.Received(1).CreateAsync(Arg.Any<Member>(), Arg.Any<CancellationToken>());
+        await _eventRepository.Received(0).CreateAsync(Arg.Any<DomainEvent>(), Arg.Any<CancellationToken>());
+        await _unitOfWork.Received(0).SaveAsync();
     }
 
     [Fact]
@@ -205,6 +214,9 @@ public class CreateMemberTests
 
         Assert.True(result.IsFailed);
         Assert.Equal("EventRepository failed", result.Errors[0].Message);
+        await _memberRepository.Received(1).CreateAsync(Arg.Any<Member>(), Arg.Any<CancellationToken>());
+        await _eventRepository.Received(1).CreateAsync(Arg.Any<DomainEvent>(), Arg.Any<CancellationToken>());
+        await _unitOfWork.Received(0).SaveAsync();
     }
 
     [Fact]
@@ -219,6 +231,9 @@ public class CreateMemberTests
 
         Assert.True(result.IsFailed);
         Assert.Equal("UnitOfWork failed", result.Errors[0].Message);
+        await _memberRepository.Received(1).CreateAsync(Arg.Any<Member>(), Arg.Any<CancellationToken>());
+        await _eventRepository.Received(1).CreateAsync(Arg.Any<DomainEvent>(), Arg.Any<CancellationToken>());
+        await _unitOfWork.Received(1).SaveAsync();
     }
 
     [Fact]
