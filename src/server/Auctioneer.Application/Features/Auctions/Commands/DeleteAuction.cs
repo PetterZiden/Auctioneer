@@ -11,15 +11,8 @@ using Microsoft.Extensions.Logging;
 
 namespace Auctioneer.Application.Features.Auctions.Commands;
 
-public class DeleteAuctionController : ApiControllerBase
+public class DeleteAuctionController(ILogger<DeleteAuctionController> logger) : ApiControllerBase(logger)
 {
-    private readonly ILogger<DeleteAuctionController> _logger;
-
-    public DeleteAuctionController(ILogger<DeleteAuctionController> logger) : base(logger)
-    {
-        _logger = logger;
-    }
-
     [HttpDelete("api/auction/{id:guid}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
@@ -27,6 +20,7 @@ public class DeleteAuctionController : ApiControllerBase
     [ProducesResponseType(500)]
     public async Task<ActionResult> Delete(Guid id, CancellationToken cancellationToken)
     {
+        using var _ = AuctioneerMetrics.MeasureRequestDuration();
         try
         {
             var command = new DeleteAuctionCommand { AuctionId = id };
@@ -40,8 +34,12 @@ public class DeleteAuctionController : ApiControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
+            logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
             return StatusCode(500);
+        }
+        finally
+        {
+            AuctioneerMetrics.IncreaseAuctioneerRequestCount();
         }
     }
 }
@@ -51,39 +49,31 @@ public class DeleteAuctionCommand : IRequest<Result>
     public Guid AuctionId { get; init; }
 }
 
-public class DeleteAuctionCommandHandler : IRequestHandler<DeleteAuctionCommand, Result>
+public class DeleteAuctionCommandHandler(
+    IRepository<Auction> auctionRepository,
+    IRepository<DomainEvent> eventRepository,
+    IUnitOfWork unitOfWork)
+    : IRequestHandler<DeleteAuctionCommand, Result>
 {
-    private readonly IRepository<Auction> _auctionRepository;
-    private readonly IRepository<DomainEvent> _eventRepository;
-    private readonly IUnitOfWork _unitOfWork;
-
-    public DeleteAuctionCommandHandler(IRepository<Auction> auctionRepository, IRepository<DomainEvent> eventRepository,
-        IUnitOfWork unitOfWork)
-    {
-        _auctionRepository = auctionRepository;
-        _eventRepository = eventRepository;
-        _unitOfWork = unitOfWork;
-    }
-
     public async Task<Result> Handle(DeleteAuctionCommand request, CancellationToken cancellationToken)
     {
         try
         {
-            var auction = await _auctionRepository.GetAsync(request.AuctionId);
+            var auction = await auctionRepository.GetAsync(request.AuctionId);
             if (auction is null)
                 return Result.Fail(new AuctionNotFoundError());
 
             var domainEvent = new AuctionDeletedEvent(request.AuctionId, EventList.Auction.AuctionDeletedEvent);
 
-            await _eventRepository.CreateAsync(domainEvent, cancellationToken);
-            await _auctionRepository.DeleteAsync(request.AuctionId, cancellationToken);
-            await _unitOfWork.SaveAsync();
+            await eventRepository.CreateAsync(domainEvent, cancellationToken);
+            await auctionRepository.DeleteAsync(request.AuctionId, cancellationToken);
+            await unitOfWork.SaveAsync();
 
             return Result.Ok();
         }
         catch (Exception ex)
         {
-            _unitOfWork.CleanOperations();
+            unitOfWork.CleanOperations();
             return Result.Fail(new Error(ex.Message));
         }
     }

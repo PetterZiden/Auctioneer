@@ -13,15 +13,8 @@ using Microsoft.Extensions.Logging;
 
 namespace Auctioneer.Application.Features.Auctions.Commands;
 
-public class UpdateAuctionController : ApiControllerBase
+public class UpdateAuctionController(ILogger<UpdateAuctionController> logger) : ApiControllerBase(logger)
 {
-    private readonly ILogger<UpdateAuctionController> _logger;
-
-    public UpdateAuctionController(ILogger<UpdateAuctionController> logger) : base(logger)
-    {
-        _logger = logger;
-    }
-
     [HttpPut("api/auction")]
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
@@ -29,6 +22,7 @@ public class UpdateAuctionController : ApiControllerBase
     [ProducesResponseType(500)]
     public async Task<ActionResult> Update(UpdateAuctionRequest request, CancellationToken cancellationToken)
     {
+        using var _ = AuctioneerMetrics.MeasureRequestDuration();
         try
         {
             var command = new UpdateAuctionCommand
@@ -55,8 +49,12 @@ public class UpdateAuctionController : ApiControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
+            logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
             return StatusCode(500);
+        }
+        finally
+        {
+            AuctioneerMetrics.IncreaseAuctioneerRequestCount();
         }
     }
 }
@@ -71,45 +69,37 @@ public class UpdateAuctionCommand : IRequest<Result>
 #nullable disable
 }
 
-public class UpdateAuctionCommandHandler : IRequestHandler<UpdateAuctionCommand, Result>
+public class UpdateAuctionCommandHandler(
+    IRepository<Auction> auctionRepository,
+    IRepository<DomainEvent> eventRepository,
+    IUnitOfWork unitOfWork)
+    : IRequestHandler<UpdateAuctionCommand, Result>
 {
-    private readonly IRepository<Auction> _auctionRepository;
-    private readonly IRepository<DomainEvent> _eventRepository;
-    private readonly IUnitOfWork _unitOfWork;
-
-    public UpdateAuctionCommandHandler(IRepository<Auction> auctionRepository, IRepository<DomainEvent> eventRepository,
-        IUnitOfWork unitOfWork)
-    {
-        _auctionRepository = auctionRepository;
-        _eventRepository = eventRepository;
-        _unitOfWork = unitOfWork;
-    }
-
     public async Task<Result> Handle(UpdateAuctionCommand request, CancellationToken cancellationToken)
     {
         try
         {
-            var auction = await _auctionRepository.GetAsync(request.Id);
+            var auction = await auctionRepository.GetAsync(request.Id);
 
             if (auction is null)
                 return Result.Fail(new AuctionNotFoundError());
 
 
-            if (!string.IsNullOrEmpty(request.Title))
+            if (!string.IsNullOrWhiteSpace(request.Title))
             {
                 var result = auction.ChangeTitle(request.Title);
                 if (!result.IsSuccess)
                     return result;
             }
 
-            if (!string.IsNullOrEmpty(request.Description))
+            if (!string.IsNullOrWhiteSpace(request.Description))
             {
                 var result = auction.ChangeDescription(request.Description);
                 if (!result.IsSuccess)
                     return result;
             }
 
-            if (!string.IsNullOrEmpty(request.ImgRoute))
+            if (!string.IsNullOrWhiteSpace(request.ImgRoute))
             {
                 var result = auction.ChangeImageRoute(request.ImgRoute);
                 if (!result.IsSuccess)
@@ -118,15 +108,15 @@ public class UpdateAuctionCommandHandler : IRequestHandler<UpdateAuctionCommand,
 
             var domainEvent = new AuctionUpdatedEvent(auction, EventList.Auction.AuctionUpdatedEvent);
 
-            await _eventRepository.CreateAsync(domainEvent, cancellationToken);
-            await _auctionRepository.UpdateAsync(request.Id, auction, cancellationToken);
-            await _unitOfWork.SaveAsync();
+            await eventRepository.CreateAsync(domainEvent, cancellationToken);
+            await auctionRepository.UpdateAsync(request.Id, auction, cancellationToken);
+            await unitOfWork.SaveAsync();
 
             return Result.Ok();
         }
         catch (Exception ex)
         {
-            _unitOfWork.CleanOperations();
+            unitOfWork.CleanOperations();
             return Result.Fail(new Error(ex.Message));
         }
     }

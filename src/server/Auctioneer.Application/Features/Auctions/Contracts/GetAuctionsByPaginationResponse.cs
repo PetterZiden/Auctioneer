@@ -4,7 +4,7 @@ namespace Auctioneer.Application.Features.Auctions.Contracts;
 
 public class GetAuctionsByPaginationResponse
 {
-    public int TotalPages { get; set; }
-    public int PageNumber { get; set; }
-    public List<AuctionDto> Auctions { get; set; }
+    public int TotalPages { get; init; }
+    public int PageNumber { get; init; }
+    public List<AuctionDto> Auctions { get; init; }
 }

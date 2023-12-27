@@ -11,25 +11,18 @@ using Microsoft.Extensions.Logging;
 
 namespace Auctioneer.Application.Features.Auctions.EventHandlers;
 
-public class AuctionPlaceBidEventHandler : INotificationHandler<DomainEventNotification<AuctionPlaceBidEvent>>
+public class AuctionPlaceBidEventHandler(
+    ILogger<AuctionPlaceBidEventHandler> logger,
+    IServiceScopeFactory serviceScopeFactory)
+    : INotificationHandler<DomainEventNotification<AuctionPlaceBidEvent>>
 {
-    private readonly ILogger<AuctionPlaceBidEventHandler> _logger;
-    private readonly IServiceScopeFactory _serviceScopeFactory;
-
-    public AuctionPlaceBidEventHandler(ILogger<AuctionPlaceBidEventHandler> logger,
-        IServiceScopeFactory serviceScopeFactory)
-    {
-        _logger = logger;
-        _serviceScopeFactory = serviceScopeFactory;
-    }
-
     public Task Handle(DomainEventNotification<AuctionPlaceBidEvent> notification, CancellationToken cancellationToken)
     {
         try
         {
             var domainEvent = notification.DomainEvent;
 
-            using var scope = _serviceScopeFactory.CreateScope();
+            using var scope = serviceScopeFactory.CreateScope();
             var scopedServices = scope.ServiceProvider;
             var messageProducer = scopedServices.GetRequiredService<IMessageProducer>();
             var notificationProducer = scopedServices.GetRequiredService<INotificationProducer>();
@@ -61,13 +54,14 @@ public class AuctionPlaceBidEventHandler : INotificationHandler<DomainEventNotif
                     domainEvent.PlaceBidDto.Bid)
             });
 
-            _logger.LogInformation("Finished Publishing Domain Event: {Name} - {Id}", domainEvent.GetType().Name,
+            logger.LogInformation("Finished Publishing Domain Event: {Name} - {Id}",
+                domainEvent.GetType().Name,
                 domainEvent.DomainEventId);
             return Task.FromResult(true);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error when publishing Rate Member Domain Event with exception: {ExMessage}",
+            logger.LogError(ex, "Error when publishing Rate Member Domain Event with exception: {ExMessage}",
                 ex.Message);
             return Task.FromCanceled(cancellationToken);
         }

@@ -15,15 +15,8 @@ using Microsoft.Extensions.Logging;
 
 namespace Auctioneer.Application.Features.Auctions.Commands;
 
-public class PlaceBidController : ApiControllerBase
+public class PlaceBidController(ILogger<PlaceBidController> logger) : ApiControllerBase(logger)
 {
-    private readonly ILogger<PlaceBidController> _logger;
-
-    public PlaceBidController(ILogger<PlaceBidController> logger) : base(logger)
-    {
-        _logger = logger;
-    }
-
     [HttpPost("api/auction/place-bid")]
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
@@ -31,6 +24,7 @@ public class PlaceBidController : ApiControllerBase
     [ProducesResponseType(500)]
     public async Task<ActionResult> PlaceBid([FromBody] Bid request, CancellationToken cancellationToken)
     {
+        using var _ = AuctioneerMetrics.MeasureRequestDuration();
         try
         {
             var command = new PlaceBidCommand
@@ -56,8 +50,12 @@ public class PlaceBidController : ApiControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
+            logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
             return StatusCode(500);
+        }
+        finally
+        {
+            AuctioneerMetrics.IncreaseAuctioneerRequestCount();
         }
     }
 }
@@ -69,34 +67,25 @@ public class PlaceBidCommand : IRequest<Result>
     public decimal BidPrice { get; init; }
 }
 
-public class PlaceBidCommandHandler : IRequestHandler<PlaceBidCommand, Result>
+public class PlaceBidCommandHandler(
+    IRepository<Auction> auctionRepository,
+    IRepository<Member> memberRepository,
+    IRepository<DomainEvent> eventRepository,
+    IUnitOfWork unitOfWork)
+    : IRequestHandler<PlaceBidCommand, Result>
 {
-    private readonly IRepository<Auction> _auctionRepository;
-    private readonly IRepository<Member> _memberRepository;
-    private readonly IRepository<DomainEvent> _eventRepository;
-    private readonly IUnitOfWork _unitOfWork;
-
-    public PlaceBidCommandHandler(IRepository<Auction> auctionRepository, IRepository<Member> memberRepository,
-        IRepository<DomainEvent> eventRepository, IUnitOfWork unitOfWork)
-    {
-        _auctionRepository = auctionRepository;
-        _memberRepository = memberRepository;
-        _eventRepository = eventRepository;
-        _unitOfWork = unitOfWork;
-    }
-
     public async Task<Result> Handle(PlaceBidCommand request, CancellationToken cancellationToken)
     {
         try
         {
-            var auction = await _auctionRepository.GetAsync(request.AuctionId);
+            var auction = await auctionRepository.GetAsync(request.AuctionId);
 
             if (auction is null)
                 return Result.Fail(new AuctionNotFoundError());
 
-            var bidder = await _memberRepository.GetAsync(request.MemberId);
+            var bidder = await memberRepository.GetAsync(request.MemberId);
 
-            var auctionOwner = await _memberRepository.GetAsync(auction.MemberId);
+            var auctionOwner = await memberRepository.GetAsync(auction.MemberId);
 
             if (bidder is null || auctionOwner is null)
                 return Result.Fail(new MemberNotFoundError());
@@ -126,16 +115,16 @@ public class PlaceBidCommandHandler : IRequestHandler<PlaceBidCommand, Result>
             };
             var domainEvent = new AuctionPlaceBidEvent(placeBidDto, EventList.Auction.AuctionPlaceBidEvent);
 
-            await _auctionRepository.UpdateAsync(auction.Id, auction, cancellationToken);
-            await _memberRepository.UpdateAsync(bidder.Id, bidder, cancellationToken);
-            await _eventRepository.CreateAsync(domainEvent, cancellationToken);
-            await _unitOfWork.SaveAsync();
+            await auctionRepository.UpdateAsync(auction.Id, auction, cancellationToken);
+            await memberRepository.UpdateAsync(bidder.Id, bidder, cancellationToken);
+            await eventRepository.CreateAsync(domainEvent, cancellationToken);
+            await unitOfWork.SaveAsync();
 
             return Result.Ok();
         }
         catch (Exception ex)
         {
-            _unitOfWork.CleanOperations();
+            unitOfWork.CleanOperations();
             return Result.Fail(new Error(ex.Message));
         }
     }

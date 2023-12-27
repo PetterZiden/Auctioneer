@@ -1,3 +1,4 @@
+#nullable enable
 namespace Auctioneer.Application.Features.Members.Contracts;
 
 public record UpdateMemberRequest(

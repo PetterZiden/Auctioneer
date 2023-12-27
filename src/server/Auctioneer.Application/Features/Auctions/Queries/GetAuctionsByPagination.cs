@@ -5,7 +5,6 @@ using Auctioneer.Application.Common.Interfaces;
 using Auctioneer.Application.Common.Validators;
 using Auctioneer.Application.Entities;
 using Auctioneer.Application.Features.Auctions.Contracts;
-using Auctioneer.Application.Features.Auctions.Dto;
 using Auctioneer.Application.Features.Auctions.Errors;
 using Auctioneer.Application.Infrastructure.Persistence;
 using FluentResults;
@@ -15,15 +14,9 @@ using Microsoft.Extensions.Logging;
 
 namespace Auctioneer.Application.Features.Auctions.Queries;
 
-public class GetAuctionsByPaginationController : ApiControllerBase
+public class GetAuctionsByPaginationController(ILogger<GetAuctionsByPaginationController> logger)
+    : ApiControllerBase(logger)
 {
-    private readonly ILogger<GetAuctionsByPaginationController> _logger;
-
-    public GetAuctionsByPaginationController(ILogger<GetAuctionsByPaginationController> logger) : base(logger)
-    {
-        _logger = logger;
-    }
-
     [HttpGet("api/auctions/{pageNumber:int}/{pageSize:int}")]
     [Produces("application/json")]
     [ProducesResponseType(typeof(GetAuctionsByPaginationResponse), 200)]
@@ -32,6 +25,7 @@ public class GetAuctionsByPaginationController : ApiControllerBase
     [ProducesResponseType(500)]
     public async Task<ActionResult> Get([FromQuery] int pageNumber, [FromQuery] int pageSize)
     {
+        using var _ = AuctioneerMetrics.MeasureRequestDuration();
         try
         {
             var paginationParams = new PaginationParams
@@ -61,8 +55,12 @@ public class GetAuctionsByPaginationController : ApiControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
+            logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
             return StatusCode(500);
+        }
+        finally
+        {
+            AuctioneerMetrics.IncreaseAuctioneerRequestCount();
         }
     }
 }
@@ -73,25 +71,18 @@ public class GetAuctionsByPaginationQuery : IRequest<Result<GetAuctionsByPaginat
 }
 
 public class
-    GetAuctionsByPaginationQueryHandler : IRequestHandler<GetAuctionsByPaginationQuery,
-        Result<GetAuctionsByPaginationResponse>>
+    GetAuctionsByPaginationQueryHandler(IRepository<Auction> repository)
+    : IRequestHandler<GetAuctionsByPaginationQuery, Result<GetAuctionsByPaginationResponse>>
 {
-    private readonly IRepository<Auction> _repository;
-
-    public GetAuctionsByPaginationQueryHandler(IRepository<Auction> repository)
-    {
-        _repository = repository;
-    }
-
     public async Task<Result<GetAuctionsByPaginationResponse>> Handle(GetAuctionsByPaginationQuery request,
         CancellationToken cancellationToken)
     {
         try
         {
             var (totalPages, auctions) =
-                await _repository.GetAsync(request.PaginationParams.PageNumber, request.PaginationParams.PageSize);
+                await repository.GetAsync(request.PaginationParams.PageNumber, request.PaginationParams.PageSize);
 
-            if (!auctions?.Any() == true)
+            if (auctions is null || auctions.Count == 0)
                 return Result.Fail(new AuctionNotFoundError());
 
             var response = new GetAuctionsByPaginationResponse

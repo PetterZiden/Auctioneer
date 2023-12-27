@@ -1,3 +1,4 @@
+using Auctioneer.Application.Common.Metrics;
 using FluentResults;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -7,26 +8,24 @@ using Microsoft.Extensions.Logging;
 
 namespace Auctioneer.Application.Common;
 
-//[Authorize]
+[Authorize]
 [ApiController]
-public abstract class ApiControllerBase : ControllerBase
+public abstract class ApiControllerBase(ILogger logger) : ControllerBase
 {
     private ISender? _mediator;
-    private readonly ILogger _logger;
-
-    protected ApiControllerBase(ILogger logger)
-    {
-        _logger = logger;
-    }
+    private AuctioneerMetrics _auctioneerMetrics;
 
     protected ISender Mediator => _mediator ??= HttpContext.RequestServices.GetService<ISender>()!;
+
+    protected AuctioneerMetrics AuctioneerMetrics =>
+        _auctioneerMetrics ??= HttpContext.RequestServices.GetService<AuctioneerMetrics>();
 
     protected ObjectResult ReturnError(Error error)
     {
         var errorMessage = error.Message;
         if (error.Metadata.TryGetValue("HttpStatusCode", out var httpStatusCode))
         {
-            _logger.LogError(errorMessage);
+            logger.LogError(errorMessage);
             return httpStatusCode.ToString() switch
             {
                 "400" => BadRequest(errorMessage),
@@ -35,7 +34,7 @@ public abstract class ApiControllerBase : ControllerBase
             };
         }
 
-        _logger.LogError("Could not find HttpStatusCode in Error-Metadata");
+        logger.LogError("Could not find HttpStatusCode in Error-Metadata");
         return StatusCode(500, errorMessage);
     }
 }

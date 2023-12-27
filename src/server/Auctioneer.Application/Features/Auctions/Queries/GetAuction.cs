@@ -12,15 +12,8 @@ using Microsoft.Extensions.Logging;
 
 namespace Auctioneer.Application.Features.Auctions.Queries;
 
-public class GetAuctionController : ApiControllerBase
+public class GetAuctionController(ILogger<GetAuctionController> logger) : ApiControllerBase(logger)
 {
-    private readonly ILogger<GetAuctionController> _logger;
-
-    public GetAuctionController(ILogger<GetAuctionController> logger) : base(logger)
-    {
-        _logger = logger;
-    }
-
     [HttpGet("api/auction/{id:guid}")]
     [Produces("application/json")]
     [ProducesResponseType(typeof(AuctionDto), 200)]
@@ -29,6 +22,7 @@ public class GetAuctionController : ApiControllerBase
     [ProducesResponseType(500)]
     public async Task<ActionResult> Get(Guid id)
     {
+        using var _ = AuctioneerMetrics.MeasureRequestDuration();
         try
         {
             var query = new GetAuctionQuery { Id = id };
@@ -42,8 +36,12 @@ public class GetAuctionController : ApiControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
+            logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
             return StatusCode(500);
+        }
+        finally
+        {
+            AuctioneerMetrics.IncreaseAuctioneerRequestCount();
         }
     }
 }
@@ -53,20 +51,14 @@ public class GetAuctionQuery : IRequest<Result<AuctionDto>>
     public Guid Id { get; init; }
 }
 
-public class GetAuctionQueryHandler : IRequestHandler<GetAuctionQuery, Result<AuctionDto>>
+public class GetAuctionQueryHandler(IRepository<Auction> repository)
+    : IRequestHandler<GetAuctionQuery, Result<AuctionDto>>
 {
-    private readonly IRepository<Auction> _repository;
-
-    public GetAuctionQueryHandler(IRepository<Auction> repository)
-    {
-        _repository = repository;
-    }
-
     public async Task<Result<AuctionDto>> Handle(GetAuctionQuery request, CancellationToken cancellationToken)
     {
         try
         {
-            var auction = await _repository.GetAsync(request.Id);
+            var auction = await repository.GetAsync(request.Id);
 
             if (auction is null)
                 return Result.Fail(new AuctionNotFoundError());

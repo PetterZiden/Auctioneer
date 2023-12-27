@@ -5,6 +5,7 @@ using Auctioneer.Application.Auth.Services;
 using Auctioneer.Application.Common;
 using Auctioneer.Application.Common.Behaviours;
 using Auctioneer.Application.Common.Interfaces;
+using Auctioneer.Application.Common.Metrics;
 using Auctioneer.Application.Entities;
 using Auctioneer.Application.Features.Auctions;
 using Auctioneer.Application.Features.Members;
@@ -137,5 +138,11 @@ public static class ConfigureServices
     public static void AddBackgroundWorkers(this IServiceCollection services)
     {
         services.AddHostedService<OutboxPublisher>();
+    }
+
+    public static void AddApplicationMetrics(this WebApplicationBuilder builder)
+    {
+        builder.Services.AddMetrics();
+        builder.Services.AddSingleton<AuctioneerMetrics>();
     }
 }

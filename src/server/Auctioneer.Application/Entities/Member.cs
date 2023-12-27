@@ -18,11 +18,11 @@ public class Member : AuditableEntity, IAggregateRoot
     public Email Email { get; private set; }
     public string PhoneNumber { get; private set; }
 
-    private List<Rating> _ratings = new();
-    private List<Bid> _bids = new();
+    private List<Rating> _ratings = [];
+    private List<Bid> _bids = [];
 
-    public int CurrentRating => _ratings.Any() ? _ratings.Select(r => r.Stars).Sum() / _ratings.Count : 0;
-    public int NumberOfRatings => _ratings.Any() ? _ratings.Count : 0;
+    public int CurrentRating => _ratings.Count != 0 ? _ratings.Select(r => r.Stars).Sum() / _ratings.Count : 0;
+    public int NumberOfRatings => _ratings.Count != 0 ? _ratings.Count : 0;
 
     public ReadOnlyCollection<Bid> Bids
     {
@@ -37,19 +37,19 @@ public class Member : AuditableEntity, IAggregateRoot
     }
 
     public string FullName =>
-        $"{(!string.IsNullOrEmpty(FirstName) ? FirstName : "")} {(!string.IsNullOrEmpty(LastName) ? LastName : "")}";
+        $"{(!string.IsNullOrWhiteSpace(FirstName) ? FirstName : "")} {(!string.IsNullOrWhiteSpace(LastName) ? LastName : "")}";
 
     public static Result<Member> Create(string firstname, string lastname, string email, string phoneNumber,
         string street,
         string zipcode, string city)
     {
-        if (string.IsNullOrEmpty(firstname))
+        if (string.IsNullOrWhiteSpace(firstname))
             return Result.Fail(new BadRequestError("First name can not be empty"));
 
-        if (string.IsNullOrEmpty(lastname))
+        if (string.IsNullOrWhiteSpace(lastname))
             return Result.Fail(new BadRequestError("Last name can not be empty"));
 
-        if (string.IsNullOrEmpty(phoneNumber))
+        if (string.IsNullOrWhiteSpace(phoneNumber))
             return Result.Fail(new BadRequestError("Phone number can not be empty"));
 
         try
@@ -75,7 +75,7 @@ public class Member : AuditableEntity, IAggregateRoot
 
     public Result ChangeEmail(Email email)
     {
-        if (string.IsNullOrEmpty(email.Value))
+        if (string.IsNullOrWhiteSpace(email.Value))
             return Result.Fail(new BadRequestError("Email can not be empty"));
 
         if (Email.Equals(email))
@@ -88,7 +88,7 @@ public class Member : AuditableEntity, IAggregateRoot
 
     public Result ChangePhoneNumber(string phoneNumber)
     {
-        if (string.IsNullOrEmpty(phoneNumber))
+        if (string.IsNullOrWhiteSpace(phoneNumber))
             return Result.Fail(new BadRequestError("Phone number can not be empty"));
 
         if (PhoneNumber.Equals(phoneNumber))
@@ -101,7 +101,7 @@ public class Member : AuditableEntity, IAggregateRoot
 
     public Result ChangeFirstName(string firstName)
     {
-        if (string.IsNullOrEmpty(firstName))
+        if (string.IsNullOrWhiteSpace(firstName))
             return Result.Fail(new BadRequestError("First name can not be empty"));
 
         if (FirstName.Equals(firstName))
@@ -114,7 +114,7 @@ public class Member : AuditableEntity, IAggregateRoot
 
     public Result ChangeLastName(string lastName)
     {
-        if (string.IsNullOrEmpty(lastName))
+        if (string.IsNullOrWhiteSpace(lastName))
             return Result.Fail(new BadRequestError("Last name can not be empty"));
 
         if (LastName.Equals(lastName))

@@ -7,22 +7,13 @@ using MediatR;
 namespace Auctioneer.GraphQL.Members;
 
 [ExtendObjectType("Query")]
-public class MemberQueries
+public class MemberQueries(ISender mediator, ILogger<MemberQueries> logger)
 {
-    private readonly IMediator _mediator;
-    private readonly ILogger<MemberQueries> _logger;
-
-    public MemberQueries(IMediator mediator, ILogger<MemberQueries> logger)
-    {
-        _mediator = mediator;
-        _logger = logger;
-    }
-
     public async Task<List<MemberDto>> GetMembers()
     {
         var query = new GetMembersQuery();
 
-        var result = await _mediator.Send(query);
+        var result = await mediator.Send(query);
 
         if (!result.IsSuccess)
         {
@@ -36,7 +27,7 @@ public class MemberQueries
     {
         var query = new GetMemberQuery { Id = memberId };
 
-        var result = await _mediator.Send(query);
+        var result = await mediator.Send(query);
 
         if (!result.IsSuccess)
         {

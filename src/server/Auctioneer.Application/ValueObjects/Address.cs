@@ -10,13 +10,13 @@ public class Address : ValueObject
 
     public Address(string street, string zipcode, string city)
     {
-        if (string.IsNullOrEmpty(street))
+        if (string.IsNullOrWhiteSpace(street))
             throw new ArgumentNullException(nameof(street));
 
-        if (string.IsNullOrEmpty(zipcode))
+        if (string.IsNullOrWhiteSpace(zipcode))
             throw new ArgumentNullException(nameof(zipcode));
 
-        if (string.IsNullOrEmpty(city))
+        if (string.IsNullOrWhiteSpace(city))
             throw new ArgumentNullException(nameof(city));
 
         Street = street;

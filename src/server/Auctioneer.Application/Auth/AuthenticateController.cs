@@ -13,17 +13,9 @@ namespace Auctioneer.Application.Auth;
 
 [AllowAnonymous]
 [Route("api/auth")]
-public class AuthenticateController : ApiControllerBase
+public class AuthenticateController(ILogger<AuthenticateController> logger, IUserService userService)
+    : ApiControllerBase(logger)
 {
-    private readonly ILogger<AuthenticateController> _logger;
-    private readonly IUserService _userService;
-
-    public AuthenticateController(ILogger<AuthenticateController> logger, IUserService userService) : base(logger)
-    {
-        _logger = logger;
-        _userService = userService;
-    }
-
     [HttpPost("token")]
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
@@ -40,7 +32,7 @@ public class AuthenticateController : ApiControllerBase
                 return BadRequest(errorMessages);
             }
 
-            var token = await _userService.GetAuthToken(userToLogin);
+            var token = await userService.GetAuthToken(userToLogin);
 
             if (!token.IsSuccess)
                 return ReturnError(token.Errors.FirstOrDefault() as Error);
@@ -50,7 +42,7 @@ public class AuthenticateController : ApiControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
+            logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
             return StatusCode(500);
         }
     }
@@ -69,7 +61,7 @@ public class AuthenticateController : ApiControllerBase
             return BadRequest(errorMessages);
         }
 
-        var result = await _userService.RegisterUser(userToRegister, false);
+        var result = await userService.RegisterUser(userToRegister, false);
 
         if (!result.IsSuccess)
             return ReturnError(result.Errors.FirstOrDefault() as Error);
@@ -91,7 +83,7 @@ public class AuthenticateController : ApiControllerBase
             return BadRequest(errorMessages);
         }
 
-        var result = await _userService.RegisterUser(userToRegister, true);
+        var result = await userService.RegisterUser(userToRegister, true);
 
         if (!result.IsSuccess)
             return ReturnError(result.Errors.FirstOrDefault() as Error);

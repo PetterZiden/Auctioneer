@@ -17,6 +17,7 @@ builder.Services.AddCors(options => options.AddDefaultPolicy(
 builder.Services.AddApplication();
 builder.Services.AddMediatr();
 builder.Services.AddBackgroundWorkers();
+builder.AddApplicationMetrics();
 builder.AddApplicationAuth();
 builder.AddInfrastructure();
 builder.AddMessaging();

@@ -11,17 +11,8 @@ using MediatR;
 namespace Auctioneer.GraphQL.Auctions;
 
 [ExtendObjectType("Mutation")]
-public class AuctionMutations
+public class AuctionMutations(ISender mediator, ILogger<AuctionMutations> logger)
 {
-    private readonly IMediator _mediator;
-    private readonly ILogger<AuctionMutations> _logger;
-
-    public AuctionMutations(IMediator mediator, ILogger<AuctionMutations> logger)
-    {
-        _mediator = mediator;
-        _logger = logger;
-    }
-
     public async Task<CreateAuctionPayload> CreateAuction(CreateAuctionInput input, CancellationToken cancellationToken)
     {
         try
@@ -43,7 +34,7 @@ public class AuctionMutations
                 throw new QueryException(CustomErrorBuilder.CreateError(validationResult));
             }
 
-            var result = await _mediator.Send(command, cancellationToken);
+            var result = await mediator.Send(command, cancellationToken);
 
             if (!result.IsSuccess)
             {
@@ -54,7 +45,7 @@ public class AuctionMutations
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
+            logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
             throw new QueryException(
                 ErrorBuilder.New()
                     .SetMessage(ex.Message)
@@ -81,7 +72,7 @@ public class AuctionMutations
                 throw new QueryException(CustomErrorBuilder.CreateError(validationResult));
             }
 
-            var result = await _mediator.Send(command, cancellationToken);
+            var result = await mediator.Send(command, cancellationToken);
 
             if (!result.IsSuccess)
             {
@@ -92,7 +83,7 @@ public class AuctionMutations
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
+            logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
             throw new QueryException(
                 ErrorBuilder.New()
                     .SetMessage(ex.Message)
@@ -110,7 +101,7 @@ public class AuctionMutations
                 AuctionId = input.AuctionId
             };
 
-            var result = await _mediator.Send(command, cancellationToken);
+            var result = await mediator.Send(command, cancellationToken);
 
             if (!result.IsSuccess)
             {
@@ -121,7 +112,7 @@ public class AuctionMutations
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
+            logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
             throw new QueryException(
                 ErrorBuilder.New()
                     .SetMessage(ex.Message)
@@ -154,7 +145,7 @@ public class AuctionMutations
                 BidPrice = bid.BidPrice
             };
 
-            var result = await _mediator.Send(command, cancellationToken);
+            var result = await mediator.Send(command, cancellationToken);
 
             if (!result.IsSuccess)
             {
@@ -165,7 +156,7 @@ public class AuctionMutations
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
+            logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
             throw new QueryException(
                 ErrorBuilder.New()
                     .SetMessage(ex.Message)

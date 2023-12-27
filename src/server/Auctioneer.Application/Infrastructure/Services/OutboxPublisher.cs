@@ -5,44 +5,35 @@ using Microsoft.Extensions.Logging;
 
 namespace Auctioneer.Application.Infrastructure.Services;
 
-public class OutboxPublisher : BackgroundService
+public class OutboxPublisher(
+    ILogger<OutboxPublisher> logger,
+    IRepository<DomainEvent> eventRepository,
+    IDomainEventService eventService,
+    IUnitOfWork unitOfWork)
+    : BackgroundService
 {
-    private readonly ILogger<OutboxPublisher> _logger;
-    private readonly IRepository<DomainEvent> _eventRepository;
-    private readonly IDomainEventService _eventService;
-    private readonly IUnitOfWork _unitOfWork;
-
-    public OutboxPublisher(ILogger<OutboxPublisher> logger, IRepository<DomainEvent> eventRepository,
-        IDomainEventService eventService, IUnitOfWork unitOfWork)
-    {
-        _logger = logger;
-        _eventRepository = eventRepository;
-        _eventService = eventService;
-        _unitOfWork = unitOfWork;
-    }
-
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _logger.LogInformation("Outbox publisher background service started...");
+        logger.LogInformation("Outbox publisher background service started...");
         while (!stoppingToken.IsCancellationRequested)
         {
             try
             {
-                var domainEvents = await _eventRepository.GetAsync();
-                if (domainEvents is not null && domainEvents.Any())
+                var domainEvents = await eventRepository.GetAsync();
+                if (domainEvents is not null && domainEvents.Count != 0)
                 {
                     foreach (var @event in domainEvents)
                     {
-                        await _eventService.Publish(@event);
-                        await _eventRepository.DeleteAsync(@event.DomainEventId, stoppingToken);
+                        await eventService.Publish(@event);
+                        await eventRepository.DeleteAsync(@event.DomainEventId, stoppingToken);
                     }
 
-                    await _unitOfWork.SaveAsync();
+                    await unitOfWork.SaveAsync();
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error in publishing events {ExMessage}", ex.Message);
+                logger.LogError(ex, "Error in publishing events {ExMessage}", ex.Message);
             }
             finally
             {
@@ -53,7 +44,7 @@ public class OutboxPublisher : BackgroundService
 
     public override Task StopAsync(CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Outbox publisher background service stopped...");
+        logger.LogInformation("Outbox publisher background service stopped...");
 
         return base.StopAsync(cancellationToken);
     }

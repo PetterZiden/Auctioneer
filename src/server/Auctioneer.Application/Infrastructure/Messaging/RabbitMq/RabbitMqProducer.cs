@@ -7,20 +7,14 @@ using RabbitMQ.Client;
 
 namespace Auctioneer.Application.Infrastructure.Messaging.RabbitMq;
 
-public class RabbitMqProducer : IMessageProducer
+public class RabbitMqProducer(IConfiguration configuration, ILogger<RabbitMqProducer> logger)
+    : IMessageProducer
 {
-    private readonly IConfiguration _configuration;
-    private readonly ILogger<RabbitMqProducer> _logger;
-
-    public RabbitMqProducer(IConfiguration configuration, ILogger<RabbitMqProducer> logger)
-    {
-        _configuration = configuration;
-        _logger = logger;
-    }
+    private readonly IConfiguration _configuration = configuration;
 
     public void PublishMessage<T>(IMessage<T> message)
     {
-        _logger.LogInformation("Publishing message to email-service");
+        logger.LogInformation("Publishing message to email-service");
 
         using var channel = RabbitMqChannelFactory.Instance.GetChannel();
         channel.ExchangeDeclare(exchange: message.Exchange, type: message.ExchangeType);

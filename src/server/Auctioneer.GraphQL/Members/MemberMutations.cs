@@ -9,17 +9,8 @@ using MediatR;
 namespace Auctioneer.GraphQL.Members;
 
 [ExtendObjectType("Mutation")]
-public class MemberMutations
+public class MemberMutations(ISender mediator, ILogger<MemberMutations> logger)
 {
-    private readonly IMediator _mediator;
-    private readonly ILogger<MemberMutations> _logger;
-
-    public MemberMutations(IMediator mediator, ILogger<MemberMutations> logger)
-    {
-        _mediator = mediator;
-        _logger = logger;
-    }
-
     public async Task<CreateMemberPayload> CreateMember(CreateMemberInput input, CancellationToken cancellationToken)
     {
         try
@@ -41,7 +32,7 @@ public class MemberMutations
                 throw new QueryException(CustomErrorBuilder.CreateError(validationResult));
             }
 
-            var result = await _mediator.Send(command, cancellationToken);
+            var result = await mediator.Send(command, cancellationToken);
 
             if (!result.IsSuccess)
             {
@@ -52,7 +43,7 @@ public class MemberMutations
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
+            logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
             throw new QueryException(
                 ErrorBuilder.New()
                     .SetMessage(ex.Message)
@@ -83,7 +74,7 @@ public class MemberMutations
             }
 
 
-            var result = await _mediator.Send(command, cancellationToken);
+            var result = await mediator.Send(command, cancellationToken);
 
             if (!result.IsSuccess)
             {
@@ -94,7 +85,7 @@ public class MemberMutations
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
+            logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
             throw new QueryException(
                 ErrorBuilder.New()
                     .SetMessage(ex.Message)
@@ -112,7 +103,7 @@ public class MemberMutations
                 MemberId = input.MemberId
             };
 
-            var result = await _mediator.Send(command, cancellationToken);
+            var result = await mediator.Send(command, cancellationToken);
 
             if (!result.IsSuccess)
             {
@@ -123,7 +114,7 @@ public class MemberMutations
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
+            logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
             throw new QueryException(
                 ErrorBuilder.New()
                     .SetMessage(ex.Message)
@@ -145,7 +136,7 @@ public class MemberMutations
                 throw new QueryException(CustomErrorBuilder.CreateError(validationResult));
             }
 
-            var result = await _mediator.Send(command, cancellationToken);
+            var result = await mediator.Send(command, cancellationToken);
 
             if (!result.IsSuccess)
             {
@@ -156,7 +147,7 @@ public class MemberMutations
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
+            logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
             throw new QueryException(
                 ErrorBuilder.New()
                     .SetMessage(ex.Message)
@@ -182,7 +173,7 @@ public class MemberMutations
                 throw new QueryException(CustomErrorBuilder.CreateError(validationResult));
             }
 
-            var result = await _mediator.Send(command, cancellationToken);
+            var result = await mediator.Send(command, cancellationToken);
 
             if (!result.IsSuccess)
             {
@@ -193,7 +184,7 @@ public class MemberMutations
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
+            logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
             throw new QueryException(
                 ErrorBuilder.New()
                     .SetMessage(ex.Message)

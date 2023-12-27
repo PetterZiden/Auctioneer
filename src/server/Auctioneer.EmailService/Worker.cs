@@ -4,37 +4,28 @@ using Auctioneer.MessagingContracts.Email;
 
 namespace Auctioneer.EmailService;
 
-public class Worker : BackgroundService
+public class Worker(
+    ILogger<Worker> logger,
+    IRabbitMqService rabbitMqService,
+    IMessageHandlerService messageHandlerService)
+    : BackgroundService
 {
-    private readonly ILogger<Worker> _logger;
-
-    private readonly IRabbitMqService _rabbitMqService;
-    private readonly IMessageHandlerService _messageHandlerService;
-
-    public Worker(ILogger<Worker> logger, IRabbitMqService rabbitMqService,
-        IMessageHandlerService messageHandlerService)
-    {
-        _logger = logger;
-        _rabbitMqService = rabbitMqService;
-        _messageHandlerService = messageHandlerService;
-    }
-
     protected override Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _logger.LogInformation("Background service started...");
+        logger.LogInformation("Background service started...");
         return Task.Run(() =>
         {
-            _rabbitMqService.StartListeningOnQueue("rate-member-email", "member",
+            rabbitMqService.StartListeningOnQueue("rate-member-email", "member",
                 message =>
                 {
-                    _messageHandlerService.RateMemberMessageHandler(
+                    messageHandlerService.RateMemberMessageHandler(
                         JsonSerializer.Deserialize<RateMemberMessage>(message));
                 });
 
-            _rabbitMqService.StartListeningOnQueue("place-bid-email", "bid",
+            rabbitMqService.StartListeningOnQueue("place-bid-email", "bid",
                 message =>
                 {
-                    _messageHandlerService.PlaceBidMessageHandler(JsonSerializer.Deserialize<PlaceBidMessage>(message));
+                    messageHandlerService.PlaceBidMessageHandler(JsonSerializer.Deserialize<PlaceBidMessage>(message));
                 });
 
             stoppingToken.WaitHandle.WaitOne();
@@ -43,9 +34,9 @@ public class Worker : BackgroundService
 
     public override Task StopAsync(CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Background service stopped...");
+        logger.LogInformation("Background service stopped...");
 
-        _rabbitMqService.Stop();
+        rabbitMqService.Stop();
         return base.StopAsync(cancellationToken);
     }
 
@@ -53,7 +44,7 @@ public class Worker : BackgroundService
     {
         Console.WriteLine("Background service stopped...");
 
-        _rabbitMqService.Stop();
+        rabbitMqService.Stop();
         base.Dispose();
     }
 }

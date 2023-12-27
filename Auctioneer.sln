@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Auctioneer.MessagingContrac
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Auctioneer.NotificationService", "src\server\Auctioneer.NotificationService\Auctioneer.NotificationService.csproj", "{C99EF86B-8F4C-448A-A04A-07B37A25F2BA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Auctioneer.Web.Blazor", "src\client\Auctioneer.Web.Blazor\Auctioneer.Web.Blazor.csproj", "{3F89CF40-7A85-4FC6-AAF1-059B6DF97E09}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -65,5 +67,9 @@ Global
 		{C99EF86B-8F4C-448A-A04A-07B37A25F2BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C99EF86B-8F4C-448A-A04A-07B37A25F2BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C99EF86B-8F4C-448A-A04A-07B37A25F2BA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3F89CF40-7A85-4FC6-AAF1-059B6DF97E09}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3F89CF40-7A85-4FC6-AAF1-059B6DF97E09}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3F89CF40-7A85-4FC6-AAF1-059B6DF97E09}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3F89CF40-7A85-4FC6-AAF1-059B6DF97E09}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
