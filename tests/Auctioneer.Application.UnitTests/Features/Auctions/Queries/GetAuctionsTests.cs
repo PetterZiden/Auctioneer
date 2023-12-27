@@ -32,6 +32,7 @@ public class GetAuctionsTests
 
         Assert.True(result.IsSuccess);
         Assert.IsType<List<AuctionDto>>(result.Value);
+        await _auctionRepository.Received(1).GetAsync();
     }
 
     [Fact]
@@ -43,6 +44,7 @@ public class GetAuctionsTests
 
         Assert.True(result.IsFailed);
         Assert.Equal("No auction found", result.Errors[0].Message);
+        await _auctionRepository.Received(1).GetAsync();
     }
 
     [Fact]
@@ -55,5 +57,6 @@ public class GetAuctionsTests
 
         Assert.True(result.IsFailed);
         Assert.Equal("AuctionRepository failed", result.Errors[0].Message);
+        await _auctionRepository.Received(1).GetAsync();
     }
 }

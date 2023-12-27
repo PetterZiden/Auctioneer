@@ -205,7 +205,7 @@ public class PlaceBidTests : BaseIntegrationTest
             DateTimeOffset.Now.AddHours(6),
             DateTimeOffset.Now.AddDays(7),
             100,
-            "../images.test.jpg");
+            "../images.test.jpg").Value;
 
         await AuctionRepository.CreateAsync(auction, new CancellationToken());
         await UnitOfWork.SaveAsync();
@@ -222,7 +222,7 @@ public class PlaceBidTests : BaseIntegrationTest
             "0734443322",
             "testgatan 2",
             "12345",
-            "testholm");
+            "testholm").Value;
 
         await MemberRepository.CreateAsync(member, new CancellationToken());
         await UnitOfWork.SaveAsync();

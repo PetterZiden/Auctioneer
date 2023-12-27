@@ -154,7 +154,6 @@ public class UpdateMemberCommandValidator : AbstractValidator<UpdateMemberComman
 {
     public UpdateMemberCommandValidator()
     {
-        //Todo: fixa all validering
         RuleFor(v => v.Id)
             .NotEmpty()
             .NotNull();

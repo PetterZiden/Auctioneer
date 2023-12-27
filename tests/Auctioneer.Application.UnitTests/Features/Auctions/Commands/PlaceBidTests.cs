@@ -30,6 +30,8 @@ public class PlaceBidTests
         var validAuction = GetValid.Auction();
 
         _memberRepository.GetAsync(Arg.Any<Guid>()).Returns(validMember);
+        _memberRepository.UpdateAsync(Arg.Any<Guid>(), Arg.Any<Member>(), Arg.Any<CancellationToken>())
+            .Returns(Task.CompletedTask);
         _auctionRepository.GetAsync(Arg.Any<Guid>()).Returns(validAuction);
         _auctionRepository.UpdateAsync(Arg.Any<Guid>(), Arg.Any<Auction>(), Arg.Any<CancellationToken>())
             .Returns(Task.CompletedTask);
@@ -40,6 +42,14 @@ public class PlaceBidTests
         var result = await _handler.Handle(GetValidCommand(), new CancellationToken());
 
         Assert.True(result.IsSuccess);
+        await _memberRepository.Received(2).GetAsync(Arg.Any<Guid>());
+        await _memberRepository.Received(1)
+            .UpdateAsync(Arg.Any<Guid>(), Arg.Any<Member>(), Arg.Any<CancellationToken>());
+        await _auctionRepository.Received(1).GetAsync(Arg.Any<Guid>());
+        await _auctionRepository.Received(1)
+            .UpdateAsync(Arg.Any<Guid>(), Arg.Any<Auction>(), Arg.Any<CancellationToken>());
+        await _eventRepository.Received(1).CreateAsync(Arg.Any<DomainEvent>(), Arg.Any<CancellationToken>());
+        await _unitOfWork.Received(1).SaveAsync();
     }
 
     [Fact]
@@ -51,6 +61,14 @@ public class PlaceBidTests
 
         Assert.True(result.IsFailed);
         Assert.Equal("No auction found", result.Errors[0].Message);
+        await _memberRepository.Received(0).GetAsync(Arg.Any<Guid>());
+        await _memberRepository.Received(0)
+            .UpdateAsync(Arg.Any<Guid>(), Arg.Any<Member>(), Arg.Any<CancellationToken>());
+        await _auctionRepository.Received(1).GetAsync(Arg.Any<Guid>());
+        await _auctionRepository.Received(0)
+            .UpdateAsync(Arg.Any<Guid>(), Arg.Any<Auction>(), Arg.Any<CancellationToken>());
+        await _eventRepository.Received(0).CreateAsync(Arg.Any<DomainEvent>(), Arg.Any<CancellationToken>());
+        await _unitOfWork.Received(0).SaveAsync();
     }
 
     [Fact]
@@ -64,6 +82,14 @@ public class PlaceBidTests
 
         Assert.True(result.IsFailed);
         Assert.Equal("No member found", result.Errors[0].Message);
+        await _memberRepository.Received(2).GetAsync(Arg.Any<Guid>());
+        await _memberRepository.Received(0)
+            .UpdateAsync(Arg.Any<Guid>(), Arg.Any<Member>(), Arg.Any<CancellationToken>());
+        await _auctionRepository.Received(1).GetAsync(Arg.Any<Guid>());
+        await _auctionRepository.Received(0)
+            .UpdateAsync(Arg.Any<Guid>(), Arg.Any<Auction>(), Arg.Any<CancellationToken>());
+        await _eventRepository.Received(0).CreateAsync(Arg.Any<DomainEvent>(), Arg.Any<CancellationToken>());
+        await _unitOfWork.Received(0).SaveAsync();
     }
 
     [Fact]
@@ -73,6 +99,8 @@ public class PlaceBidTests
         var validAuction = GetValid.Auction();
 
         _memberRepository.GetAsync(Arg.Any<Guid>()).Returns(validMember);
+        _memberRepository.UpdateAsync(Arg.Any<Guid>(), Arg.Any<Member>(), Arg.Any<CancellationToken>())
+            .Returns(Task.CompletedTask);
         _auctionRepository.GetAsync(Arg.Any<Guid>()).Returns(validAuction);
         _auctionRepository.UpdateAsync(Arg.Any<Guid>(), Arg.Any<Auction>(), Arg.Any<CancellationToken>())
             .Returns(Task.CompletedTask);
@@ -90,6 +118,14 @@ public class PlaceBidTests
 
         Assert.True(result.IsFailed);
         Assert.StartsWith("Bid must be greater than current price: ", result.Errors[0].Message);
+        await _memberRepository.Received(2).GetAsync(Arg.Any<Guid>());
+        await _memberRepository.Received(0)
+            .UpdateAsync(Arg.Any<Guid>(), Arg.Any<Member>(), Arg.Any<CancellationToken>());
+        await _auctionRepository.Received(1).GetAsync(Arg.Any<Guid>());
+        await _auctionRepository.Received(0)
+            .UpdateAsync(Arg.Any<Guid>(), Arg.Any<Auction>(), Arg.Any<CancellationToken>());
+        await _eventRepository.Received(0).CreateAsync(Arg.Any<DomainEvent>(), Arg.Any<CancellationToken>());
+        await _unitOfWork.Received(0).SaveAsync();
     }
 
     [Fact]
@@ -99,6 +135,8 @@ public class PlaceBidTests
         var validAuction = GetValid.Auction();
 
         _memberRepository.GetAsync(Arg.Any<Guid>()).Returns(validMember);
+        _memberRepository.UpdateAsync(Arg.Any<Guid>(), Arg.Any<Member>(), Arg.Any<CancellationToken>())
+            .Returns(Task.CompletedTask);
         _auctionRepository.GetAsync(Arg.Any<Guid>()).Returns(validAuction);
         _auctionRepository.UpdateAsync(Arg.Any<Guid>(), Arg.Any<Auction>(), Arg.Any<CancellationToken>())
             .Returns(Task.CompletedTask);
@@ -125,6 +163,8 @@ public class PlaceBidTests
         var validAuction = GetValid.Auction();
 
         _memberRepository.GetAsync(Arg.Any<Guid>()).Returns(validMember);
+        _memberRepository.UpdateAsync(Arg.Any<Guid>(), Arg.Any<Member>(), Arg.Any<CancellationToken>())
+            .Returns(Task.CompletedTask);
         _auctionRepository.GetAsync(Arg.Any<Guid>()).Returns(validAuction);
         _auctionRepository.UpdateAsync(Arg.Any<Guid>(), Arg.Any<Auction>(), Arg.Any<CancellationToken>())
             .Returns(x => throw new Exception("AuctionRepository failed"));
@@ -136,6 +176,14 @@ public class PlaceBidTests
 
         Assert.True(result.IsFailed);
         Assert.Equal("AuctionRepository failed", result.Errors[0].Message);
+        await _memberRepository.Received(2).GetAsync(Arg.Any<Guid>());
+        await _memberRepository.Received(0)
+            .UpdateAsync(Arg.Any<Guid>(), Arg.Any<Member>(), Arg.Any<CancellationToken>());
+        await _auctionRepository.Received(1).GetAsync(Arg.Any<Guid>());
+        await _auctionRepository.Received(1)
+            .UpdateAsync(Arg.Any<Guid>(), Arg.Any<Auction>(), Arg.Any<CancellationToken>());
+        await _eventRepository.Received(0).CreateAsync(Arg.Any<DomainEvent>(), Arg.Any<CancellationToken>());
+        await _unitOfWork.Received(0).SaveAsync();
     }
 
     [Fact]
@@ -145,6 +193,8 @@ public class PlaceBidTests
 
         _memberRepository.GetAsync(Arg.Any<Guid>())!.Returns(
             Task.FromException<Member>(new Exception("MemberRepository failed")));
+        _memberRepository.UpdateAsync(Arg.Any<Guid>(), Arg.Any<Member>(), Arg.Any<CancellationToken>())
+            .Returns(Task.CompletedTask);
         _auctionRepository.GetAsync(Arg.Any<Guid>()).Returns(validAuction);
         _auctionRepository.UpdateAsync(Arg.Any<Guid>(), Arg.Any<Auction>(), Arg.Any<CancellationToken>())
             .Returns(Task.CompletedTask);
@@ -156,6 +206,14 @@ public class PlaceBidTests
 
         Assert.True(result.IsFailed);
         Assert.Equal("MemberRepository failed", result.Errors[0].Message);
+        await _memberRepository.Received(1).GetAsync(Arg.Any<Guid>());
+        await _memberRepository.Received(0)
+            .UpdateAsync(Arg.Any<Guid>(), Arg.Any<Member>(), Arg.Any<CancellationToken>());
+        await _auctionRepository.Received(1).GetAsync(Arg.Any<Guid>());
+        await _auctionRepository.Received(0)
+            .UpdateAsync(Arg.Any<Guid>(), Arg.Any<Auction>(), Arg.Any<CancellationToken>());
+        await _eventRepository.Received(0).CreateAsync(Arg.Any<DomainEvent>(), Arg.Any<CancellationToken>());
+        await _unitOfWork.Received(0).SaveAsync();
     }
 
     [Fact]
@@ -165,6 +223,8 @@ public class PlaceBidTests
         var validAuction = GetValid.Auction();
 
         _memberRepository.GetAsync(Arg.Any<Guid>()).Returns(validMember);
+        _memberRepository.UpdateAsync(Arg.Any<Guid>(), Arg.Any<Member>(), Arg.Any<CancellationToken>())
+            .Returns(Task.CompletedTask);
         _auctionRepository.GetAsync(Arg.Any<Guid>()).Returns(validAuction);
         _auctionRepository.UpdateAsync(Arg.Any<Guid>(), Arg.Any<Auction>(), Arg.Any<CancellationToken>())
             .Returns(Task.CompletedTask);
@@ -177,6 +237,14 @@ public class PlaceBidTests
 
         Assert.True(result.IsFailed);
         Assert.Equal("EventRepository failed", result.Errors[0].Message);
+        await _memberRepository.Received(2).GetAsync(Arg.Any<Guid>());
+        await _memberRepository.Received(1)
+            .UpdateAsync(Arg.Any<Guid>(), Arg.Any<Member>(), Arg.Any<CancellationToken>());
+        await _auctionRepository.Received(1).GetAsync(Arg.Any<Guid>());
+        await _auctionRepository.Received(1)
+            .UpdateAsync(Arg.Any<Guid>(), Arg.Any<Auction>(), Arg.Any<CancellationToken>());
+        await _eventRepository.Received(1).CreateAsync(Arg.Any<DomainEvent>(), Arg.Any<CancellationToken>());
+        await _unitOfWork.Received(0).SaveAsync();
     }
 
     [Fact]
@@ -186,6 +254,8 @@ public class PlaceBidTests
         var validAuction = GetValid.Auction();
 
         _memberRepository.GetAsync(Arg.Any<Guid>()).Returns(validMember);
+        _memberRepository.UpdateAsync(Arg.Any<Guid>(), Arg.Any<Member>(), Arg.Any<CancellationToken>())
+            .Returns(Task.CompletedTask);
         _auctionRepository.GetAsync(Arg.Any<Guid>()).Returns(validAuction);
         _auctionRepository.UpdateAsync(Arg.Any<Guid>(), Arg.Any<Auction>(), Arg.Any<CancellationToken>())
             .Returns(Task.CompletedTask);
@@ -197,6 +267,14 @@ public class PlaceBidTests
 
         Assert.True(result.IsFailed);
         Assert.Equal("UnitOfWork failed", result.Errors[0].Message);
+        await _memberRepository.Received(2).GetAsync(Arg.Any<Guid>());
+        await _memberRepository.Received(1)
+            .UpdateAsync(Arg.Any<Guid>(), Arg.Any<Member>(), Arg.Any<CancellationToken>());
+        await _auctionRepository.Received(1).GetAsync(Arg.Any<Guid>());
+        await _auctionRepository.Received(1)
+            .UpdateAsync(Arg.Any<Guid>(), Arg.Any<Auction>(), Arg.Any<CancellationToken>());
+        await _eventRepository.Received(1).CreateAsync(Arg.Any<DomainEvent>(), Arg.Any<CancellationToken>());
+        await _unitOfWork.Received(1).SaveAsync();
     }
 
     private static PlaceBidCommand GetValidCommand()

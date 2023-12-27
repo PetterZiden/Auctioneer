@@ -10,7 +10,7 @@ const config = {
     extend: {
       colors: {
         // flowbite-svelte
-        //TODO: välja färger?
+        //TODO: pick colors
         primary: {
           50: "#FFF5F2",
           100: "#FFF1EE",

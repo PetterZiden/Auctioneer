@@ -12,7 +12,7 @@ import type { Guid } from 'guid-typescript';
 let auctions: AuctionModel[] = [];
 const { subscribe, set, update } = writable(auctions);
 
-//TODO: kanske inte behövs store? bara kalla direkt på API? Tror inte denna behövs
+//TODO: Maybe we dont need a store, just call api?
 export const auctionStore = {
 	subscribe,
 	getAuctions: async () => {

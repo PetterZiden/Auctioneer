@@ -111,13 +111,18 @@ public class CreateAuctionCommandHandler : IRequestHandler<CreateAuctionCommand,
                 request.ImgRoute
             );
 
-            var domainEvent = new AuctionCreatedEvent(auction, EventList.Auction.AuctionCreatedEvent);
+            if (auction.IsFailed)
+            {
+                return Result.Fail(auction.Errors);
+            }
+
+            var domainEvent = new AuctionCreatedEvent(auction.Value, EventList.Auction.AuctionCreatedEvent);
 
             await _eventRepository.CreateAsync(domainEvent, cancellationToken);
-            await _auctionRepository.CreateAsync(auction, cancellationToken);
+            await _auctionRepository.CreateAsync(auction.Value, cancellationToken);
             await _unitOfWork.SaveAsync();
 
-            return Result.Ok(auction.Id);
+            return Result.Ok(auction.Value.Id);
         }
         catch (Exception ex)
         {
@@ -131,7 +136,6 @@ public class CreateAuctionCommandValidator : AbstractValidator<CreateAuctionComm
 {
     public CreateAuctionCommandValidator()
     {
-        //Todo: fixa all validering
         RuleFor(v => v.Title)
             .NotNull()
             .NotEmpty();
@@ -142,6 +146,10 @@ public class CreateAuctionCommandValidator : AbstractValidator<CreateAuctionComm
 
         RuleFor(v => v.StartingPrice)
             .GreaterThan(-1);
+
+        RuleFor(v => v.ImgRoute)
+            .NotNull()
+            .NotEmpty();
     }
 }
 

@@ -160,7 +160,7 @@ public class RateMemberTests : BaseIntegrationTest
             "0734443322",
             "testgatan 2",
             "12345",
-            "testholm");
+            "testholm").Value;
 
         var member2 = Application.Entities.Member.Create(
             "Test2",
@@ -169,7 +169,7 @@ public class RateMemberTests : BaseIntegrationTest
             "0734443311",
             "testgatan 22",
             "12341",
-            "testholm");
+            "testholm").Value;
 
         await MemberRepository.CreateAsync(member, new CancellationToken());
         await MemberRepository.CreateAsync(member2, new CancellationToken());

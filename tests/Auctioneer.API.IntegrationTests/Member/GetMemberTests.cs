@@ -61,7 +61,7 @@ public class GetMemberTests : BaseIntegrationTest
             "0734443322",
             "testgatan 2",
             "12345",
-            "testholm");
+            "testholm").Value;
 
         await MemberRepository.CreateAsync(member, new CancellationToken());
         await UnitOfWork.SaveAsync();

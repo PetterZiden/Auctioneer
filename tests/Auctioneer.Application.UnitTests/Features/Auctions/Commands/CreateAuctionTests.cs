@@ -41,6 +41,10 @@ public class CreateAuctionTests
 
         Assert.True(result.IsSuccess);
         Assert.IsType<Guid>(result.Value);
+        await _memberRepository.Received(1).GetAsync(Arg.Any<Guid>());
+        await _auctionRepository.Received(1).CreateAsync(Arg.Any<Auction>(), Arg.Any<CancellationToken>());
+        await _eventRepository.Received(1).CreateAsync(Arg.Any<DomainEvent>(), Arg.Any<CancellationToken>());
+        await _unitOfWork.Received(1).SaveAsync();
     }
 
     [Fact]
@@ -52,6 +56,10 @@ public class CreateAuctionTests
 
         Assert.True(result.IsFailed);
         Assert.Equal("No member found", result.Errors[0].Message);
+        await _memberRepository.Received(1).GetAsync(Arg.Any<Guid>());
+        await _auctionRepository.Received(0).CreateAsync(Arg.Any<Auction>(), Arg.Any<CancellationToken>());
+        await _eventRepository.Received(0).CreateAsync(Arg.Any<DomainEvent>(), Arg.Any<CancellationToken>());
+        await _unitOfWork.Received(0).SaveAsync();
     }
 
     [Fact]
@@ -75,7 +83,11 @@ public class CreateAuctionTests
         var result = await _handler.Handle(request, new CancellationToken());
 
         Assert.True(result.IsFailed);
-        Assert.Equal("Value cannot be null. (Parameter 'title')", result.Errors[0].Message);
+        Assert.Equal("Title can not be empty", result.Errors[0].Message);
+        await _memberRepository.Received(1).GetAsync(Arg.Any<Guid>());
+        await _auctionRepository.Received(0).CreateAsync(Arg.Any<Auction>(), Arg.Any<CancellationToken>());
+        await _eventRepository.Received(0).CreateAsync(Arg.Any<DomainEvent>(), Arg.Any<CancellationToken>());
+        await _unitOfWork.Received(0).SaveAsync();
     }
 
     [Fact]
@@ -99,7 +111,7 @@ public class CreateAuctionTests
         var result = await _handler.Handle(request, new CancellationToken());
 
         Assert.True(result.IsFailed);
-        Assert.Equal("Value cannot be null. (Parameter 'description')", result.Errors[0].Message);
+        Assert.Equal("Description can not be empty", result.Errors[0].Message);
     }
 
     [Fact]
@@ -195,7 +207,7 @@ public class CreateAuctionTests
         var result = await _handler.Handle(request, new CancellationToken());
 
         Assert.True(result.IsFailed);
-        Assert.Equal("Value cannot be null. (Parameter 'imgRoute')", result.Errors[0].Message);
+        Assert.Equal("Image route can not be empty", result.Errors[0].Message);
     }
 
     [Fact]
@@ -214,6 +226,10 @@ public class CreateAuctionTests
 
         Assert.True(result.IsFailed);
         Assert.Equal("AuctionRepository failed", result.Errors[0].Message);
+        await _memberRepository.Received(1).GetAsync(Arg.Any<Guid>());
+        await _auctionRepository.Received(1).CreateAsync(Arg.Any<Auction>(), Arg.Any<CancellationToken>());
+        await _eventRepository.Received(1).CreateAsync(Arg.Any<DomainEvent>(), Arg.Any<CancellationToken>());
+        await _unitOfWork.Received(0).SaveAsync();
     }
 
     [Fact]
@@ -230,6 +246,10 @@ public class CreateAuctionTests
 
         Assert.True(result.IsFailed);
         Assert.Equal("MemberRepository failed", result.Errors[0].Message);
+        await _memberRepository.Received(1).GetAsync(Arg.Any<Guid>());
+        await _auctionRepository.Received(0).CreateAsync(Arg.Any<Auction>(), Arg.Any<CancellationToken>());
+        await _eventRepository.Received(0).CreateAsync(Arg.Any<DomainEvent>(), Arg.Any<CancellationToken>());
+        await _unitOfWork.Received(0).SaveAsync();
     }
 
     [Fact]
@@ -248,6 +268,10 @@ public class CreateAuctionTests
 
         Assert.True(result.IsFailed);
         Assert.Equal("EventRepository failed", result.Errors[0].Message);
+        await _memberRepository.Received(1).GetAsync(Arg.Any<Guid>());
+        await _auctionRepository.Received(0).CreateAsync(Arg.Any<Auction>(), Arg.Any<CancellationToken>());
+        await _eventRepository.Received(1).CreateAsync(Arg.Any<DomainEvent>(), Arg.Any<CancellationToken>());
+        await _unitOfWork.Received(0).SaveAsync();
     }
 
     [Fact]
@@ -265,6 +289,10 @@ public class CreateAuctionTests
 
         Assert.True(result.IsFailed);
         Assert.Equal("UnitOfWork failed", result.Errors[0].Message);
+        await _memberRepository.Received(1).GetAsync(Arg.Any<Guid>());
+        await _auctionRepository.Received(1).CreateAsync(Arg.Any<Auction>(), Arg.Any<CancellationToken>());
+        await _eventRepository.Received(1).CreateAsync(Arg.Any<DomainEvent>(), Arg.Any<CancellationToken>());
+        await _unitOfWork.Received(1).SaveAsync();
     }
 
     [Fact]

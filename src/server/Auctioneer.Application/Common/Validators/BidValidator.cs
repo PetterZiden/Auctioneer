@@ -7,7 +7,6 @@ public class BidValidator : AbstractValidator<Bid>
 {
     public BidValidator()
     {
-        //Todo: fixa all validering
         RuleFor(v => v.AuctionId)
             .NotEmpty()
             .NotNull();

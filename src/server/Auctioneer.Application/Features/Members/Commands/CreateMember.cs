@@ -103,13 +103,18 @@ public class CreateMemberCommandHandler : IRequestHandler<CreateMemberCommand, R
                 request.City
             );
 
-            var domainEvent = new MemberCreatedEvent(member, EventList.Member.MemberCreatedEvent);
+            if (member.IsFailed)
+            {
+                return Result.Fail(member.Errors);
+            }
 
-            await _memberRepository.CreateAsync(member, cancellationToken);
+            var domainEvent = new MemberCreatedEvent(member.Value, EventList.Member.MemberCreatedEvent);
+
+            await _memberRepository.CreateAsync(member.Value, cancellationToken);
             await _eventRepository.CreateAsync(domainEvent, cancellationToken);
             await _unitOfWork.SaveAsync();
 
-            return Result.Ok(member.Id);
+            return Result.Ok(member.Value.Id);
         }
         catch (Exception ex)
         {
@@ -123,7 +128,6 @@ public class CreateMemberCommandValidator : AbstractValidator<CreateMemberComman
 {
     public CreateMemberCommandValidator()
     {
-        //Todo: fixa all validering
         RuleFor(v => v.FirstName)
             .NotNull()
             .NotEmpty();
@@ -134,6 +138,22 @@ public class CreateMemberCommandValidator : AbstractValidator<CreateMemberComman
 
         RuleFor(v => v.Email)
             .EmailAddress()
+            .NotNull()
+            .NotEmpty();
+
+        RuleFor(v => v.PhoneNumber)
+            .NotNull()
+            .NotEmpty();
+
+        RuleFor(v => v.Street)
+            .NotNull()
+            .NotEmpty();
+
+        RuleFor(v => v.ZipCode)
+            .NotNull()
+            .NotEmpty();
+
+        RuleFor(v => v.City)
             .NotNull()
             .NotEmpty();
     }

@@ -37,6 +37,11 @@ public class ChangeEmailMemberTests
         var result = await _handler.Handle(GetValidCommand(validMember.Id), new CancellationToken());
 
         Assert.True(result.IsSuccess);
+        await _memberRepository.Received(1).GetAsync(Arg.Any<Guid>());
+        await _memberRepository.Received(1)
+            .UpdateAsync(Arg.Any<Guid>(), Arg.Any<Member>(), Arg.Any<CancellationToken>());
+        await _eventRepository.Received(1).CreateAsync(Arg.Any<DomainEvent>(), Arg.Any<CancellationToken>());
+        await _unitOfWork.Received(1).SaveAsync();
     }
 
     [Fact]
@@ -53,6 +58,11 @@ public class ChangeEmailMemberTests
 
         Assert.True(result.IsFailed);
         Assert.Equal("Email can not be the same as current email", result.Errors[0].Message);
+        await _memberRepository.Received(1).GetAsync(Arg.Any<Guid>());
+        await _memberRepository.Received(0)
+            .UpdateAsync(Arg.Any<Guid>(), Arg.Any<Member>(), Arg.Any<CancellationToken>());
+        await _eventRepository.Received(0).CreateAsync(Arg.Any<DomainEvent>(), Arg.Any<CancellationToken>());
+        await _unitOfWork.Received(0).SaveAsync();
     }
 
     [Fact]
@@ -80,6 +90,11 @@ public class ChangeEmailMemberTests
 
         Assert.True(result.IsFailed);
         Assert.Equal("No member found", result.Errors[0].Message);
+        await _memberRepository.Received(1).GetAsync(Arg.Any<Guid>());
+        await _memberRepository.Received(0)
+            .UpdateAsync(Arg.Any<Guid>(), Arg.Any<Member>(), Arg.Any<CancellationToken>());
+        await _eventRepository.Received(0).CreateAsync(Arg.Any<DomainEvent>(), Arg.Any<CancellationToken>());
+        await _unitOfWork.Received(0).SaveAsync();
     }
 
     [Fact]
@@ -97,6 +112,11 @@ public class ChangeEmailMemberTests
 
         Assert.True(result.IsFailed);
         Assert.Equal("MemberRepository failed", result.Errors[0].Message);
+        await _memberRepository.Received(1).GetAsync(Arg.Any<Guid>());
+        await _memberRepository.Received(1)
+            .UpdateAsync(Arg.Any<Guid>(), Arg.Any<Member>(), Arg.Any<CancellationToken>());
+        await _eventRepository.Received(0).CreateAsync(Arg.Any<DomainEvent>(), Arg.Any<CancellationToken>());
+        await _unitOfWork.Received(0).SaveAsync();
     }
 
     [Fact]
@@ -115,6 +135,11 @@ public class ChangeEmailMemberTests
 
         Assert.True(result.IsFailed);
         Assert.Equal("EventRepository failed", result.Errors[0].Message);
+        await _memberRepository.Received(1).GetAsync(Arg.Any<Guid>());
+        await _memberRepository.Received(1)
+            .UpdateAsync(Arg.Any<Guid>(), Arg.Any<Member>(), Arg.Any<CancellationToken>());
+        await _eventRepository.Received(1).CreateAsync(Arg.Any<DomainEvent>(), Arg.Any<CancellationToken>());
+        await _unitOfWork.Received(0).SaveAsync();
     }
 
     [Fact]
@@ -132,6 +157,11 @@ public class ChangeEmailMemberTests
 
         Assert.True(result.IsFailed);
         Assert.Equal("UnitOfWork failed", result.Errors[0].Message);
+        await _memberRepository.Received(1).GetAsync(Arg.Any<Guid>());
+        await _memberRepository.Received(1)
+            .UpdateAsync(Arg.Any<Guid>(), Arg.Any<Member>(), Arg.Any<CancellationToken>());
+        await _eventRepository.Received(1).CreateAsync(Arg.Any<DomainEvent>(), Arg.Any<CancellationToken>());
+        await _unitOfWork.Received(1).SaveAsync();
     }
 
     [Fact]

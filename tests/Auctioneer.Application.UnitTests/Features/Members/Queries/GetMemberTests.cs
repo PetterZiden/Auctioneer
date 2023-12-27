@@ -27,6 +27,7 @@ public class GetMemberTests
 
         Assert.True(result.IsSuccess);
         Assert.IsType<MemberDto>(result.Value);
+        await _memberRepository.Received(1).GetAsync(Arg.Any<Guid>());
     }
 
     [Fact]
@@ -38,6 +39,7 @@ public class GetMemberTests
 
         Assert.True(result.IsFailed);
         Assert.Equal("No member found", result.Errors[0].Message);
+        await _memberRepository.Received(1).GetAsync(Arg.Any<Guid>());
     }
 
     [Fact]
@@ -50,6 +52,7 @@ public class GetMemberTests
 
         Assert.True(result.IsFailed);
         Assert.Equal("MemberRepository failed", result.Errors[0].Message);
+        await _memberRepository.Received(1).GetAsync(Arg.Any<Guid>());
     }
 
     private static GetMemberQuery GetValidQuery()

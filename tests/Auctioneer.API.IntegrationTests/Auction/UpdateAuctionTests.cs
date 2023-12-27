@@ -129,7 +129,7 @@ public class UpdateAuctionTests : BaseIntegrationTest
             DateTimeOffset.Now.AddHours(6),
             DateTimeOffset.Now.AddDays(7),
             100,
-            "../images/test.jpg");
+            "../images/test.jpg").Value;
 
         await AuctionRepository.CreateAsync(auction, new CancellationToken());
         await UnitOfWork.SaveAsync();

@@ -27,26 +27,26 @@ public class Auction : AuditableEntity, IAggregateRoot
         set => _bids = value.ToList();
     }
 
-    public static Auction Create(Guid memberId, string title, string description, DateTimeOffset startTime,
+    public static Result<Auction> Create(Guid memberId, string title, string description, DateTimeOffset startTime,
         DateTimeOffset endTime, decimal startingPrice, string imgRoute)
     {
         if (string.IsNullOrEmpty(title))
-            throw new ArgumentNullException(nameof(title));
+            return Result.Fail(new BadRequestError("Title can not be empty"));
 
         if (string.IsNullOrEmpty(description))
-            throw new ArgumentNullException(nameof(description));
+            return Result.Fail(new BadRequestError("Description can not be empty"));
 
         if (startTime < DateTimeOffset.Now)
-            throw new ArgumentException("Start time can not be earlier than current day and time");
+            return Result.Fail(new BadRequestError("Start time can not be earlier than current day and time"));
 
         if (endTime < DateTimeOffset.Now.AddDays(1))
-            throw new ArgumentException("End time can not be earlier than at least one day in the future");
+            return Result.Fail(new BadRequestError("End time can not be earlier than at least one day in the future"));
 
         if (startingPrice <= 0)
-            throw new ArgumentException("Starting price must be greater than 0");
+            return Result.Fail(new BadRequestError("Starting price must be greater than 0"));
 
         if (string.IsNullOrEmpty(imgRoute))
-            throw new ArgumentNullException(nameof(imgRoute));
+            return Result.Fail(new BadRequestError("Image route can not be empty"));
 
         var auction = new Auction
         {
@@ -63,7 +63,7 @@ public class Auction : AuditableEntity, IAggregateRoot
             LastModified = null
         };
 
-        return auction;
+        return Result.Ok(auction);
     }
 
     public Result<Bid> PlaceBid(Guid memberId, decimal bidPrice)
@@ -93,7 +93,7 @@ public class Auction : AuditableEntity, IAggregateRoot
     public Result ChangeDescription(string description)
     {
         if (string.IsNullOrEmpty(description))
-            throw new ArgumentNullException(nameof(description));
+            return Result.Fail(new BadRequestError("Description can not be empty"));
 
         if (description.Equals(Description))
             return Result.Fail(new BadRequestError("Description can not be the same as current description"));
@@ -107,7 +107,7 @@ public class Auction : AuditableEntity, IAggregateRoot
     public Result ChangeTitle(string title)
     {
         if (string.IsNullOrEmpty(title))
-            throw new ArgumentNullException(nameof(title));
+            return Result.Fail(new BadRequestError("Title can not be empty"));
 
         if (title.Equals(Title))
             return Result.Fail(new BadRequestError("Title can not be the same as current title"));
