@@ -4,14 +4,14 @@ namespace Auctioneer.Application.Features.Auctions.Dto;
 
 public class AuctionDto
 {
-    public Guid? Id { get; set; }
-    public Guid MemberId { get; set; }
-    public string Title { get; set; }
-    public string Description { get; set; }
-    public DateTimeOffset StartTime { get; set; }
-    public DateTimeOffset EndTime { get; set; }
-    public decimal StartingPrice { get; set; }
-    public decimal CurrentPrice { get; set; }
-    public string ImgRoute { get; set; }
-    public List<Bid> Bids { get; set; }
+    public Guid? Id { get; init; }
+    public Guid MemberId { get; init; }
+    public string Title { get; init; }
+    public string Description { get; init; }
+    public DateTimeOffset StartTime { get; init; }
+    public DateTimeOffset EndTime { get; init; }
+    public decimal StartingPrice { get; init; }
+    public decimal CurrentPrice { get; init; }
+    public string ImgRoute { get; init; }
+    public List<Bid> Bids { get; init; }
 }

@@ -8,5 +8,5 @@ public class AuctioneerUser : IdentityUser
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public Guid MemberId { get; set; }
+    public Guid MemberId { get; init; }
 }

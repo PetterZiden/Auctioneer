@@ -14,15 +14,8 @@ using Microsoft.Extensions.Logging;
 
 namespace Auctioneer.Application.Features.Members.Commands;
 
-public class RateMemberController : ApiControllerBase
+public class RateMemberController(ILogger<RateMemberController> logger) : ApiControllerBase(logger)
 {
-    private readonly ILogger<RateMemberController> _logger;
-
-    public RateMemberController(ILogger<RateMemberController> logger) : base(logger)
-    {
-        _logger = logger;
-    }
-
     [HttpPost("api/member/rate")]
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
@@ -30,6 +23,7 @@ public class RateMemberController : ApiControllerBase
     [ProducesResponseType(500)]
     public async Task<ActionResult> Rate(Rating request, CancellationToken cancellationToken)
     {
+        using var _ = AuctioneerMetrics.MeasureRequestDuration();
         try
         {
             var command = new RateMemberCommand
@@ -55,8 +49,12 @@ public class RateMemberController : ApiControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
+            logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
             return StatusCode(500);
+        }
+        finally
+        {
+            AuctioneerMetrics.IncreaseAuctioneerRequestCount();
         }
     }
 }
@@ -68,26 +66,18 @@ public class RateMemberCommand : IRequest<Result>
     public int Stars { get; init; }
 }
 
-public class RateMemberCommandHandler : IRequestHandler<RateMemberCommand, Result>
+public class RateMemberCommandHandler(
+    IRepository<Member> memberRepository,
+    IRepository<DomainEvent> eventRepository,
+    IUnitOfWork unitOfWork)
+    : IRequestHandler<RateMemberCommand, Result>
 {
-    private readonly IRepository<Member> _memberRepository;
-    private readonly IRepository<DomainEvent> _eventRepository;
-    private readonly IUnitOfWork _unitOfWork;
-
-    public RateMemberCommandHandler(IRepository<Member> memberRepository, IRepository<DomainEvent> eventRepository,
-        IUnitOfWork unitOfWork)
-    {
-        _memberRepository = memberRepository;
-        _eventRepository = eventRepository;
-        _unitOfWork = unitOfWork;
-    }
-
     public async Task<Result> Handle(RateMemberCommand request, CancellationToken cancellationToken)
     {
         try
         {
-            var ratedMember = await _memberRepository.GetAsync(request.RatingForMemberId);
-            var ratedByMember = await _memberRepository.GetAsync(request.RatingFromMemberId);
+            var ratedMember = await memberRepository.GetAsync(request.RatingForMemberId);
+            var ratedByMember = await memberRepository.GetAsync(request.RatingFromMemberId);
 
             if (ratedMember is null || ratedByMember is null)
                 return Result.Fail(new MemberNotFoundError());
@@ -107,15 +97,15 @@ public class RateMemberCommandHandler : IRequestHandler<RateMemberCommand, Resul
             };
             var domainEvent = new RateMemberEvent(rateMemberDto, EventList.Member.RateMemberEvent);
 
-            await _memberRepository.UpdateAsync(ratedMember.Id, ratedMember, cancellationToken);
-            await _eventRepository.CreateAsync(domainEvent, cancellationToken);
-            await _unitOfWork.SaveAsync();
+            await memberRepository.UpdateAsync(ratedMember.Id, ratedMember, cancellationToken);
+            await eventRepository.CreateAsync(domainEvent, cancellationToken);
+            await unitOfWork.SaveAsync();
 
             return Result.Ok();
         }
         catch (Exception ex)
         {
-            _unitOfWork.CleanOperations();
+            unitOfWork.CleanOperations();
             return Result.Fail(new Error(ex.Message));
         }
     }

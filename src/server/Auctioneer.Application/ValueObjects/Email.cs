@@ -9,7 +9,7 @@ public class Email : ValueObject
 
     public Email(string email)
     {
-        if (string.IsNullOrEmpty(email))
+        if (string.IsNullOrWhiteSpace(email))
             throw new ArgumentNullException(nameof(email));
 
         if (!IsValidEmail(email))
@@ -27,7 +27,7 @@ public class Email : ValueObject
     {
         var trimmedEmail = email.Trim();
 
-        if (trimmedEmail.EndsWith("."))
+        if (trimmedEmail.EndsWith('.'))
         {
             return false;
         }

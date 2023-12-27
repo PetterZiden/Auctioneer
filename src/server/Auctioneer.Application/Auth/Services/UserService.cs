@@ -13,31 +13,24 @@ using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegiste
 
 namespace Auctioneer.Application.Auth.Services;
 
-public class UserService : IUserService
+public class UserService(
+    UserManager<AuctioneerUser> userManager,
+    RoleManager<IdentityRole> roleManager,
+    IConfiguration configuration,
+    ILogger<UserService> logger)
+    : IUserService
 {
-    private readonly UserManager<AuctioneerUser> _userManager;
-    private readonly RoleManager<IdentityRole> _roleManager;
-    private readonly IConfiguration _configuration;
-    private readonly ILogger<UserService> _logger;
-
-    public UserService(UserManager<AuctioneerUser> userManager, RoleManager<IdentityRole> roleManager,
-        IConfiguration configuration, ILogger<UserService> logger)
-    {
-        _userManager = userManager;
-        _roleManager = roleManager;
-        _configuration = configuration;
-        _logger = logger;
-    }
+    private readonly ILogger<UserService> _logger = logger;
 
     public async Task<Result<JwtSecurityToken>> GetAuthToken(LoginUser userToLogin)
     {
         try
         {
-            var user = await _userManager.FindByNameAsync(userToLogin.Username);
-            if (user is null || !await _userManager.CheckPasswordAsync(user, userToLogin.Password))
+            var user = await userManager.FindByNameAsync(userToLogin.Username);
+            if (user is null || !await userManager.CheckPasswordAsync(user, userToLogin.Password))
                 return Result.Fail(new NotAuthorizedError());
 
-            var userRoles = await _userManager.GetRolesAsync(user);
+            var userRoles = await userManager.GetRolesAsync(user);
             var claims = new List<Claim>
             {
                 new(ClaimTypes.NameIdentifier, user.UserName!),
@@ -60,7 +53,7 @@ public class UserService : IUserService
     {
         try
         {
-            var userExist = await _userManager.FindByNameAsync(userToRegister.Username);
+            var userExist = await userManager.FindByNameAsync(userToRegister.Username);
             if (userExist is not null)
                 return Result.Fail(new BadRequestError("User already exists."));
 
@@ -72,31 +65,31 @@ public class UserService : IUserService
                 UserName = userToRegister.Username
             };
 
-            var result = await _userManager.CreateAsync(user, userToRegister.Password);
+            var result = await userManager.CreateAsync(user, userToRegister.Password);
             if (!result.Succeeded)
                 return Result.Fail(new Error("User creation failed! Please check user details and try again."));
 
             if (isAdmin)
             {
-                if (!await _roleManager.RoleExistsAsync(UserRoles.Admin))
+                if (!await roleManager.RoleExistsAsync(UserRoles.Admin))
                 {
-                    await _roleManager.CreateAsync(new IdentityRole(UserRoles.Admin));
-                    await _userManager.AddToRoleAsync(user, UserRoles.Admin);
+                    await roleManager.CreateAsync(new IdentityRole(UserRoles.Admin));
+                    await userManager.AddToRoleAsync(user, UserRoles.Admin);
                 }
                 else
                 {
-                    await _userManager.AddToRoleAsync(user, UserRoles.Admin);
+                    await userManager.AddToRoleAsync(user, UserRoles.Admin);
                 }
             }
 
-            if (!await _roleManager.RoleExistsAsync(UserRoles.User))
+            if (!await roleManager.RoleExistsAsync(UserRoles.User))
             {
-                await _roleManager.CreateAsync(new IdentityRole(UserRoles.User));
-                await _userManager.AddToRoleAsync(user, UserRoles.User);
+                await roleManager.CreateAsync(new IdentityRole(UserRoles.User));
+                await userManager.AddToRoleAsync(user, UserRoles.User);
             }
             else
             {
-                await _userManager.AddToRoleAsync(user, UserRoles.User);
+                await userManager.AddToRoleAsync(user, UserRoles.User);
             }
 
             return Result.Ok();
@@ -109,11 +102,11 @@ public class UserService : IUserService
 
     private JwtSecurityToken GetToken(IEnumerable<Claim> claims)
     {
-        var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]!));
+        var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Secret"]!));
 
         var token = new JwtSecurityToken(
-            issuer: _configuration["JWT:ValidIssuer"],
-            audience: _configuration["JWT:ValidAudience"],
+            issuer: configuration["JWT:ValidIssuer"],
+            audience: configuration["JWT:ValidAudience"],
             expires: DateTime.Now.AddHours(3),
             claims: claims,
             signingCredentials: new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256)

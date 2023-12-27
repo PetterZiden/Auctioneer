@@ -12,15 +12,8 @@ using Microsoft.Extensions.Logging;
 
 namespace Auctioneer.Application.Features.Members.Commands;
 
-public class CreateMemberController : ApiControllerBase
+public class CreateMemberController(ILogger<CreateMemberController> logger) : ApiControllerBase(logger)
 {
-    private readonly ILogger<CreateMemberController> _logger;
-
-    public CreateMemberController(ILogger<CreateMemberController> logger) : base(logger)
-    {
-        _logger = logger;
-    }
-
     [HttpPost("api/member")]
     [Produces("application/json")]
     [ProducesResponseType(typeof(Guid), 200)]
@@ -29,6 +22,7 @@ public class CreateMemberController : ApiControllerBase
     [ProducesResponseType(500)]
     public async Task<ActionResult<Guid>> Create(CreateMemberRequest request, CancellationToken cancellationToken)
     {
+        using var _ = AuctioneerMetrics.MeasureRequestDuration();
         try
         {
             var command = new CreateMemberCommand
@@ -58,8 +52,12 @@ public class CreateMemberController : ApiControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
+            logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
             return StatusCode(500);
+        }
+        finally
+        {
+            AuctioneerMetrics.IncreaseAuctioneerRequestCount();
         }
     }
 }
@@ -75,20 +73,12 @@ public class CreateMemberCommand : IRequest<Result<Guid>>
     public string PhoneNumber { get; init; }
 }
 
-public class CreateMemberCommandHandler : IRequestHandler<CreateMemberCommand, Result<Guid>>
+public class CreateMemberCommandHandler(
+    IRepository<Member> memberRepository,
+    IRepository<DomainEvent> eventRepository,
+    IUnitOfWork unitOfWork)
+    : IRequestHandler<CreateMemberCommand, Result<Guid>>
 {
-    private readonly IRepository<Member> _memberRepository;
-    private readonly IRepository<DomainEvent> _eventRepository;
-    private readonly IUnitOfWork _unitOfWork;
-
-    public CreateMemberCommandHandler(IRepository<Member> memberRepository, IRepository<DomainEvent> eventRepository,
-        IUnitOfWork unitOfWork)
-    {
-        _memberRepository = memberRepository;
-        _eventRepository = eventRepository;
-        _unitOfWork = unitOfWork;
-    }
-
     public async Task<Result<Guid>> Handle(CreateMemberCommand request, CancellationToken cancellationToken)
     {
         try
@@ -110,15 +100,15 @@ public class CreateMemberCommandHandler : IRequestHandler<CreateMemberCommand, R
 
             var domainEvent = new MemberCreatedEvent(member.Value, EventList.Member.MemberCreatedEvent);
 
-            await _memberRepository.CreateAsync(member.Value, cancellationToken);
-            await _eventRepository.CreateAsync(domainEvent, cancellationToken);
-            await _unitOfWork.SaveAsync();
+            await memberRepository.CreateAsync(member.Value, cancellationToken);
+            await eventRepository.CreateAsync(domainEvent, cancellationToken);
+            await unitOfWork.SaveAsync();
 
             return Result.Ok(member.Value.Id);
         }
         catch (Exception ex)
         {
-            _unitOfWork.CleanOperations();
+            unitOfWork.CleanOperations();
             return Result.Fail(new Error(ex.Message));
         }
     }

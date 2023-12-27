@@ -19,7 +19,7 @@ public class Auction : AuditableEntity, IAggregateRoot
     public decimal CurrentPrice { get; private set; }
     public string ImgRoute { get; private set; }
 
-    private List<Bid> _bids = new();
+    private List<Bid> _bids = [];
 
     public ReadOnlyCollection<Bid> Bids
     {
@@ -30,10 +30,10 @@ public class Auction : AuditableEntity, IAggregateRoot
     public static Result<Auction> Create(Guid memberId, string title, string description, DateTimeOffset startTime,
         DateTimeOffset endTime, decimal startingPrice, string imgRoute)
     {
-        if (string.IsNullOrEmpty(title))
+        if (string.IsNullOrWhiteSpace(title))
             return Result.Fail(new BadRequestError("Title can not be empty"));
 
-        if (string.IsNullOrEmpty(description))
+        if (string.IsNullOrWhiteSpace(description))
             return Result.Fail(new BadRequestError("Description can not be empty"));
 
         if (startTime < DateTimeOffset.Now)
@@ -45,7 +45,7 @@ public class Auction : AuditableEntity, IAggregateRoot
         if (startingPrice <= 0)
             return Result.Fail(new BadRequestError("Starting price must be greater than 0"));
 
-        if (string.IsNullOrEmpty(imgRoute))
+        if (string.IsNullOrWhiteSpace(imgRoute))
             return Result.Fail(new BadRequestError("Image route can not be empty"));
 
         var auction = new Auction
@@ -92,7 +92,7 @@ public class Auction : AuditableEntity, IAggregateRoot
 
     public Result ChangeDescription(string description)
     {
-        if (string.IsNullOrEmpty(description))
+        if (string.IsNullOrWhiteSpace(description))
             return Result.Fail(new BadRequestError("Description can not be empty"));
 
         if (description.Equals(Description))
@@ -106,7 +106,7 @@ public class Auction : AuditableEntity, IAggregateRoot
 
     public Result ChangeTitle(string title)
     {
-        if (string.IsNullOrEmpty(title))
+        if (string.IsNullOrWhiteSpace(title))
             return Result.Fail(new BadRequestError("Title can not be empty"));
 
         if (title.Equals(Title))
@@ -120,7 +120,7 @@ public class Auction : AuditableEntity, IAggregateRoot
 
     public Result ChangeImageRoute(string imgRoute)
     {
-        if (string.IsNullOrEmpty(imgRoute))
+        if (string.IsNullOrWhiteSpace(imgRoute))
             throw new ArgumentNullException(nameof(imgRoute));
 
         if (imgRoute.Equals(ImgRoute))

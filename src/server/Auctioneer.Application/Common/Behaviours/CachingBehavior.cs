@@ -7,19 +7,16 @@ using Microsoft.Extensions.Options;
 
 namespace Auctioneer.Application.Common.Behaviours;
 
-public class CachingBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+public class CachingBehavior<TRequest, TResponse>(
+    IMemoryCache cache,
+    ILogger<TRequest> logger,
+    IOptions<CacheSettings> settings)
+    : IPipelineBehavior<TRequest, TResponse>
     where TRequest : ICacheableMediatrQuery
 {
-    private readonly IMemoryCache _cache;
-    private readonly ILogger<TRequest> _logger;
-    private readonly CacheSettings _settings;
-
-    public CachingBehavior(IMemoryCache cache, ILogger<TRequest> logger, IOptions<CacheSettings> settings)
-    {
-        _cache = cache ?? throw new ArgumentNullException(nameof(cache));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        _settings = settings.Value;
-    }
+    private readonly IMemoryCache _cache = cache ?? throw new ArgumentNullException(nameof(cache));
+    private readonly ILogger<TRequest> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+    private readonly CacheSettings _settings = settings.Value;
 
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next,
         CancellationToken cancellationToken)

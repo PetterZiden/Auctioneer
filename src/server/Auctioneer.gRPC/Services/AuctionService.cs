@@ -12,17 +12,8 @@ using Microsoft.AspNetCore.Authorization;
 namespace Auctioneer.gRPC.Services;
 
 [Authorize]
-public class AuctionService : Auction.AuctionBase
+public class AuctionService(ILogger<AuctionService> logger, ISender mediator) : Auction.AuctionBase
 {
-    private readonly ILogger<AuctionService> _logger;
-    private readonly IMediator _mediator;
-
-    public AuctionService(ILogger<AuctionService> logger, IMediator mediator)
-    {
-        _logger = logger;
-        _mediator = mediator;
-    }
-
     public override async Task GetAuctions(GetAuctionsRequest request, IServerStreamWriter<AuctionModel> responseStream,
         ServerCallContext context)
     {
@@ -30,7 +21,7 @@ public class AuctionService : Auction.AuctionBase
         {
             var query = new GetAuctionsQuery();
 
-            var result = await _mediator.Send(query);
+            var result = await mediator.Send(query);
             if (!result.IsSuccess)
             {
                 throw new RpcException(CustomErrorBuilder.CreateError(result.Errors[0]));
@@ -45,7 +36,7 @@ public class AuctionService : Auction.AuctionBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
+            logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
             throw new RpcException(new Status(StatusCode.Internal, ex.Message));
         }
     }
@@ -59,7 +50,7 @@ public class AuctionService : Auction.AuctionBase
 
             var query = new GetAuctionQuery { Id = auctionId };
 
-            var result = await _mediator.Send(query);
+            var result = await mediator.Send(query);
             if (!result.IsSuccess)
             {
                 throw new RpcException(CustomErrorBuilder.CreateError(result.Errors[0]));
@@ -69,7 +60,7 @@ public class AuctionService : Auction.AuctionBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
+            logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
             throw new RpcException(new Status(StatusCode.Internal, ex.Message));
         }
     }
@@ -98,7 +89,7 @@ public class AuctionService : Auction.AuctionBase
                 throw new RpcException(CustomErrorBuilder.CreateError(validationResult));
             }
 
-            var result = await _mediator.Send(command);
+            var result = await mediator.Send(command);
             if (!result.IsSuccess)
             {
                 throw new RpcException(CustomErrorBuilder.CreateError(result.Errors[0]));
@@ -111,7 +102,7 @@ public class AuctionService : Auction.AuctionBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
+            logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
             throw new RpcException(new Status(StatusCode.Internal, ex.Message));
         }
     }
@@ -129,7 +120,7 @@ public class AuctionService : Auction.AuctionBase
                 AuctionId = auctionId
             };
 
-            var result = await _mediator.Send(command);
+            var result = await mediator.Send(command);
             if (!result.IsSuccess)
             {
                 throw new RpcException(CustomErrorBuilder.CreateError(result.Errors[0]));
@@ -142,7 +133,7 @@ public class AuctionService : Auction.AuctionBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
+            logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
             throw new RpcException(new Status(StatusCode.Internal, ex.Message));
         }
     }
@@ -168,7 +159,7 @@ public class AuctionService : Auction.AuctionBase
                 throw new RpcException(CustomErrorBuilder.CreateError(validationResult));
             }
 
-            var result = await _mediator.Send(command);
+            var result = await mediator.Send(command);
             if (!result.IsSuccess)
             {
                 throw new RpcException(CustomErrorBuilder.CreateError(result.Errors[0]));
@@ -181,7 +172,7 @@ public class AuctionService : Auction.AuctionBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
+            logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
             throw new RpcException(new Status(StatusCode.Internal, ex.Message));
         }
     }
@@ -216,7 +207,7 @@ public class AuctionService : Auction.AuctionBase
                 BidPrice = bid.BidPrice
             };
 
-            var result = await _mediator.Send(command);
+            var result = await mediator.Send(command);
             if (!result.IsSuccess)
             {
                 throw new RpcException(CustomErrorBuilder.CreateError(result.Errors[0]));
@@ -229,7 +220,7 @@ public class AuctionService : Auction.AuctionBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
+            logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
             throw new RpcException(new Status(StatusCode.Internal, ex.Message));
         }
     }

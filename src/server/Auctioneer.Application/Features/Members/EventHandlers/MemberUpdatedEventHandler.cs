@@ -5,20 +5,15 @@ using Microsoft.Extensions.Logging;
 
 namespace Auctioneer.Application.Features.Members.EventHandlers;
 
-public class MemberUpdatedEventHandler : INotificationHandler<DomainEventNotification<MemberUpdatedEvent>>
+public class MemberUpdatedEventHandler(ILogger<MemberUpdatedEventHandler> logger)
+    : INotificationHandler<DomainEventNotification<MemberUpdatedEvent>>
 {
-    private readonly ILogger<MemberUpdatedEventHandler> _logger;
-
-    public MemberUpdatedEventHandler(ILogger<MemberUpdatedEventHandler> logger)
-    {
-        _logger = logger;
-    }
-
     public Task Handle(DomainEventNotification<MemberUpdatedEvent> notification, CancellationToken cancellationToken)
     {
         var domainEvent = notification.DomainEvent;
 
-        _logger.LogInformation("Finished Publishing Domain Event: {Name} - {Id}", domainEvent.GetType().Name,
+        logger.LogInformation("Finished Publishing Domain Event: {Name} - {Id}",
+            domainEvent.GetType().Name,
             domainEvent.DomainEventId);
 
         return Task.CompletedTask;

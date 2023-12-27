@@ -1,3 +1,4 @@
+#nullable enable
 namespace Auctioneer.Application.Common.Interfaces;
 
 public interface IRepository<TEntity> where TEntity : class

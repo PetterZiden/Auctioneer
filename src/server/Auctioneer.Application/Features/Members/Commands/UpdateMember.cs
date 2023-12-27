@@ -15,15 +15,8 @@ using Microsoft.Extensions.Logging;
 
 namespace Auctioneer.Application.Features.Members.Commands;
 
-public class UpdateMemberController : ApiControllerBase
+public class UpdateMemberController(ILogger<UpdateMemberController> logger) : ApiControllerBase(logger)
 {
-    private readonly ILogger<UpdateMemberController> _logger;
-
-    public UpdateMemberController(ILogger<UpdateMemberController> logger) : base(logger)
-    {
-        _logger = logger;
-    }
-
     [HttpPut("api/member")]
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
@@ -31,6 +24,7 @@ public class UpdateMemberController : ApiControllerBase
     [ProducesResponseType(500)]
     public async Task<ActionResult> Update(UpdateMemberRequest request, CancellationToken cancellationToken)
     {
+        using var _ = AuctioneerMetrics.MeasureRequestDuration();
         try
         {
             var command = new UpdateMemberCommand
@@ -60,8 +54,12 @@ public class UpdateMemberController : ApiControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
+            logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
             return StatusCode(500);
+        }
+        finally
+        {
+            AuctioneerMetrics.IncreaseAuctioneerRequestCount();
         }
     }
 }
@@ -79,52 +77,44 @@ public class UpdateMemberCommand : IRequest<Result>
 #nullable disable
 }
 
-public class UpdateMemberCommandHandler : IRequestHandler<UpdateMemberCommand, Result>
+public class UpdateMemberCommandHandler(
+    IRepository<Member> memberRepository,
+    IRepository<DomainEvent> eventRepository,
+    IUnitOfWork unitOfWork)
+    : IRequestHandler<UpdateMemberCommand, Result>
 {
-    private readonly IRepository<Member> _memberRepository;
-    private readonly IRepository<DomainEvent> _eventRepository;
-    private readonly IUnitOfWork _unitOfWork;
-
-    public UpdateMemberCommandHandler(IRepository<Member> memberRepository, IRepository<DomainEvent> eventRepository,
-        IUnitOfWork unitOfWork)
-    {
-        _memberRepository = memberRepository;
-        _eventRepository = eventRepository;
-        _unitOfWork = unitOfWork;
-    }
-
     public async Task<Result> Handle(UpdateMemberCommand request, CancellationToken cancellationToken)
     {
         try
         {
-            var member = await _memberRepository.GetAsync(request.Id);
+            var member = await memberRepository.GetAsync(request.Id);
 
             if (member is null)
                 return Result.Fail(new MemberNotFoundError());
 
-            if (!string.IsNullOrEmpty(request.FirstName))
+            if (!string.IsNullOrWhiteSpace(request.FirstName))
             {
                 var result = member.ChangeFirstName(request.FirstName);
                 if (!result.IsSuccess)
                     return result;
             }
 
-            if (!string.IsNullOrEmpty(request.LastName))
+            if (!string.IsNullOrWhiteSpace(request.LastName))
             {
                 var result = member.ChangeLastName(request.LastName);
                 if (!result.IsSuccess)
                     return result;
             }
 
-            if (!string.IsNullOrEmpty(request.PhoneNumber))
+            if (!string.IsNullOrWhiteSpace(request.PhoneNumber))
             {
                 var result = member.ChangePhoneNumber(request.PhoneNumber);
                 if (!result.IsSuccess)
                     return result;
             }
 
-            if (!string.IsNullOrEmpty(request.Street) || !string.IsNullOrEmpty(request.Zipcode) ||
-                !string.IsNullOrEmpty(request.City))
+            if (!string.IsNullOrWhiteSpace(request.Street) || !string.IsNullOrWhiteSpace(request.Zipcode) ||
+                !string.IsNullOrWhiteSpace(request.City))
             {
                 var addressToUpdate = new Address(request.Street ?? member.Address.Street,
                     request.Zipcode ?? member.Address.Zipcode, request.City ?? member.Address.City);
@@ -136,15 +126,15 @@ public class UpdateMemberCommandHandler : IRequestHandler<UpdateMemberCommand, R
 
             var domainEvent = new MemberUpdatedEvent(member, EventList.Member.MemberUpdatedEvent);
 
-            await _eventRepository.CreateAsync(domainEvent, cancellationToken);
-            await _memberRepository.UpdateAsync(request.Id, member, cancellationToken);
-            await _unitOfWork.SaveAsync();
+            await eventRepository.CreateAsync(domainEvent, cancellationToken);
+            await memberRepository.UpdateAsync(request.Id, member, cancellationToken);
+            await unitOfWork.SaveAsync();
 
             return Result.Ok();
         }
         catch (Exception ex)
         {
-            _unitOfWork.CleanOperations();
+            unitOfWork.CleanOperations();
             return Result.Fail(new Error(ex.Message));
         }
     }

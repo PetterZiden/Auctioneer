@@ -6,21 +6,12 @@ using Microsoft.Extensions.Logging;
 
 namespace Auctioneer.Application.Infrastructure.Services;
 
-public class DomainEventService : IDomainEventService
+public class DomainEventService(ILogger<DomainEventService> logger, IPublisher publisher) : IDomainEventService
 {
-    private readonly ILogger<DomainEventService> _logger;
-    private readonly IPublisher _publisher;
-
-    public DomainEventService(ILogger<DomainEventService> logger, IPublisher publisher)
-    {
-        _logger = logger;
-        _publisher = publisher;
-    }
-
     public Task Publish(DomainEvent domainEvent)
     {
-        _logger.LogInformation("Publishing Domain Event: Event - {Name}", domainEvent.GetType().Name);
-        return _publisher.Publish(GetNotificationFromDomainEvent(domainEvent));
+        logger.LogInformation("Publishing Domain Event: Event - {Name}", domainEvent.GetType().Name);
+        return publisher.Publish(GetNotificationFromDomainEvent(domainEvent));
     }
 
     private static INotification GetNotificationFromDomainEvent(DomainEvent domainEvent) =>

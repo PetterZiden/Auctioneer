@@ -11,15 +11,8 @@ using Microsoft.Extensions.Logging;
 
 namespace Auctioneer.Application.Features.Members.Commands;
 
-public class DeleteMemberController : ApiControllerBase
+public class DeleteMemberController(ILogger<DeleteMemberController> logger) : ApiControllerBase(logger)
 {
-    private readonly ILogger<DeleteMemberController> _logger;
-
-    public DeleteMemberController(ILogger<DeleteMemberController> logger) : base(logger)
-    {
-        _logger = logger;
-    }
-
     [HttpDelete("api/member/{id:guid}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
@@ -27,6 +20,7 @@ public class DeleteMemberController : ApiControllerBase
     [ProducesResponseType(500)]
     public async Task<ActionResult> Delete(Guid id, CancellationToken cancellationToken)
     {
+        using var _ = AuctioneerMetrics.MeasureRequestDuration();
         try
         {
             var command = new DeleteMemberCommand { MemberId = id };
@@ -40,8 +34,12 @@ public class DeleteMemberController : ApiControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
+            logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
             return StatusCode(500);
+        }
+        finally
+        {
+            AuctioneerMetrics.IncreaseAuctioneerRequestCount();
         }
     }
 }
@@ -51,40 +49,32 @@ public class DeleteMemberCommand : IRequest<Result>
     public Guid MemberId { get; init; }
 }
 
-public class DeleteMemberCommandHandler : IRequestHandler<DeleteMemberCommand, Result>
+public class DeleteMemberCommandHandler(
+    IRepository<Member> memberRepository,
+    IRepository<DomainEvent> eventRepository,
+    IUnitOfWork unitOfWork)
+    : IRequestHandler<DeleteMemberCommand, Result>
 {
-    private readonly IRepository<Member> _memberRepository;
-    private readonly IRepository<DomainEvent> _eventRepository;
-    private readonly IUnitOfWork _unitOfWork;
-
-    public DeleteMemberCommandHandler(IRepository<Member> memberRepository, IRepository<DomainEvent> eventRepository,
-        IUnitOfWork unitOfWork)
-    {
-        _memberRepository = memberRepository;
-        _eventRepository = eventRepository;
-        _unitOfWork = unitOfWork;
-    }
-
     public async Task<Result> Handle(DeleteMemberCommand request, CancellationToken cancellationToken)
     {
         try
         {
-            var member = await _memberRepository.GetAsync(request.MemberId);
+            var member = await memberRepository.GetAsync(request.MemberId);
 
             if (member is null)
                 return Result.Fail(new MemberNotFoundError());
 
             var domainEvent = new MemberDeletedEvent(request.MemberId, EventList.Member.MemberDeletedEvent);
 
-            await _memberRepository.DeleteAsync(request.MemberId, cancellationToken);
-            await _eventRepository.CreateAsync(domainEvent, cancellationToken);
-            await _unitOfWork.SaveAsync();
+            await memberRepository.DeleteAsync(request.MemberId, cancellationToken);
+            await eventRepository.CreateAsync(domainEvent, cancellationToken);
+            await unitOfWork.SaveAsync();
 
             return Result.Ok();
         }
         catch (Exception ex)
         {
-            _unitOfWork.CleanOperations();
+            unitOfWork.CleanOperations();
             return Result.Fail(new Error(ex.Message));
         }
     }

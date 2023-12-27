@@ -10,17 +10,8 @@ using Microsoft.AspNetCore.Authorization;
 namespace Auctioneer.gRPC.Services;
 
 [Authorize]
-public class MemberService : Member.MemberBase
+public class MemberService(ILogger<MemberService> logger, ISender mediator) : Member.MemberBase
 {
-    private readonly ILogger<MemberService> _logger;
-    private readonly IMediator _mediator;
-
-    public MemberService(ILogger<MemberService> logger, IMediator mediator)
-    {
-        _logger = logger;
-        _mediator = mediator;
-    }
-
     public override async Task<MemberModel> GetMember(GetMemberRequest request, ServerCallContext context)
     {
         try
@@ -30,7 +21,7 @@ public class MemberService : Member.MemberBase
 
             var query = new GetMemberQuery { Id = memberId };
 
-            var result = await _mediator.Send(query);
+            var result = await mediator.Send(query);
 
             if (!result.IsSuccess)
             {
@@ -41,7 +32,7 @@ public class MemberService : Member.MemberBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
+            logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
             throw new RpcException(new Status(StatusCode.Internal, ex.Message));
         }
     }
@@ -53,7 +44,7 @@ public class MemberService : Member.MemberBase
         {
             var query = new GetMembersQuery();
 
-            var result = await _mediator.Send(query);
+            var result = await mediator.Send(query);
 
             if (!result.IsSuccess)
             {
@@ -70,7 +61,7 @@ public class MemberService : Member.MemberBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
+            logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
             throw new RpcException(new Status(StatusCode.Internal, ex.Message));
         }
     }
@@ -96,7 +87,7 @@ public class MemberService : Member.MemberBase
                 throw new RpcException(CustomErrorBuilder.CreateError(validationResult));
             }
 
-            var result = await _mediator.Send(command);
+            var result = await mediator.Send(command);
 
             if (!result.IsSuccess)
             {
@@ -110,7 +101,7 @@ public class MemberService : Member.MemberBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
+            logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
             throw new RpcException(new Status(StatusCode.Internal, ex.Message));
         }
     }
@@ -128,7 +119,7 @@ public class MemberService : Member.MemberBase
                 MemberId = memberId
             };
 
-            var result = await _mediator.Send(command);
+            var result = await mediator.Send(command);
 
             if (!result.IsSuccess)
             {
@@ -142,7 +133,7 @@ public class MemberService : Member.MemberBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
+            logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
             throw new RpcException(new Status(StatusCode.Internal, ex.Message));
         }
     }
@@ -171,7 +162,7 @@ public class MemberService : Member.MemberBase
                 throw new RpcException(CustomErrorBuilder.CreateError(validationResult));
             }
 
-            var result = await _mediator.Send(command);
+            var result = await mediator.Send(command);
 
             if (!result.IsSuccess)
             {
@@ -185,7 +176,7 @@ public class MemberService : Member.MemberBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
+            logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
             throw new RpcException(new Status(StatusCode.Internal, ex.Message));
         }
     }
@@ -212,7 +203,7 @@ public class MemberService : Member.MemberBase
                 throw new RpcException(CustomErrorBuilder.CreateError(validationResult));
             }
 
-            var result = await _mediator.Send(command);
+            var result = await mediator.Send(command);
 
             if (!result.IsSuccess)
             {
@@ -226,7 +217,7 @@ public class MemberService : Member.MemberBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
+            logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
             throw new RpcException(new Status(StatusCode.Internal, ex.Message));
         }
     }

@@ -1,5 +1,3 @@
-using Auctioneer.Application.ValueObjects;
-
 namespace Auctioneer.Application.Features.Auctions.Dto;
 
 public class PlaceBidDto

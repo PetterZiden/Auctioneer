@@ -8,9 +8,9 @@ public static class MockData
 {
     public static List<MemberDto> GetMemberDtoData()
     {
-        return new List<MemberDto>
-        {
-            new()
+        return
+        [
+            new MemberDto
             {
                 Id = Guid.NewGuid(),
                 FirstName = "Mock",
@@ -22,9 +22,10 @@ public static class MockData
                 PhoneNumber = "0732223344",
                 CurrentRating = 0,
                 NumberOfRatings = 0,
-                Bids = new List<Bid>()
+                Bids = []
             },
-            new()
+
+            new MemberDto
             {
                 Id = Guid.NewGuid(),
                 FirstName = "Test",
@@ -36,16 +37,16 @@ public static class MockData
                 PhoneNumber = "0733332244",
                 CurrentRating = 0,
                 NumberOfRatings = 0,
-                Bids = new List<Bid>()
+                Bids = []
             }
-        };
+        ];
     }
 
     public static List<AuctionDto> GetAuctionDtoData()
     {
-        return new List<AuctionDto>
-        {
-            new()
+        return
+        [
+            new AuctionDto
             {
                 Id = Guid.NewGuid(),
                 MemberId = Guid.NewGuid(),
@@ -56,9 +57,10 @@ public static class MockData
                 StartingPrice = 100,
                 CurrentPrice = 0,
                 ImgRoute = null,
-                Bids = new List<Bid>()
+                Bids = []
             },
-            new()
+
+            new AuctionDto
             {
                 Id = Guid.NewGuid(),
                 MemberId = Guid.NewGuid(),
@@ -69,8 +71,8 @@ public static class MockData
                 StartingPrice = 300,
                 CurrentPrice = 0,
                 ImgRoute = null,
-                Bids = new List<Bid>()
+                Bids = []
             }
-        };
+        ];
     }
 }

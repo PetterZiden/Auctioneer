@@ -14,15 +14,8 @@ using Microsoft.Extensions.Logging;
 
 namespace Auctioneer.Application.Features.Members.Commands;
 
-public class ChangeEmailMemberController : ApiControllerBase
+public class ChangeEmailMemberController(ILogger<ChangeEmailMemberController> logger) : ApiControllerBase(logger)
 {
-    private readonly ILogger<ChangeEmailMemberController> _logger;
-
-    public ChangeEmailMemberController(ILogger<ChangeEmailMemberController> logger) : base(logger)
-    {
-        _logger = logger;
-    }
-
     [HttpPut("api/member/change-email")]
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
@@ -30,6 +23,7 @@ public class ChangeEmailMemberController : ApiControllerBase
     [ProducesResponseType(500)]
     public async Task<ActionResult> ChangeEmail(ChangeMemberEmailRequest request, CancellationToken cancellationToken)
     {
+        using var _ = AuctioneerMetrics.MeasureRequestDuration();
         try
         {
             var command = new ChangeEmailMemberCommand { MemberId = request.MemberId, Email = request.Email };
@@ -51,8 +45,12 @@ public class ChangeEmailMemberController : ApiControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
+            logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
             return StatusCode(500);
+        }
+        finally
+        {
+            AuctioneerMetrics.IncreaseAuctioneerRequestCount();
         }
     }
 }
@@ -63,25 +61,17 @@ public class ChangeEmailMemberCommand : IRequest<Result>
     public string Email { get; init; }
 }
 
-public class ChangeEmailMemberCommandHandler : IRequestHandler<ChangeEmailMemberCommand, Result>
+public class ChangeEmailMemberCommandHandler(
+    IRepository<Member> memberRepository,
+    IRepository<DomainEvent> eventRepository,
+    IUnitOfWork unitOfWork)
+    : IRequestHandler<ChangeEmailMemberCommand, Result>
 {
-    private readonly IRepository<Member> _memberRepository;
-    private readonly IRepository<DomainEvent> _eventRepository;
-    private readonly IUnitOfWork _unitOfWork;
-
-    public ChangeEmailMemberCommandHandler(IRepository<Member> memberRepository,
-        IRepository<DomainEvent> eventRepository, IUnitOfWork unitOfWork)
-    {
-        _memberRepository = memberRepository;
-        _eventRepository = eventRepository;
-        _unitOfWork = unitOfWork;
-    }
-
     public async Task<Result> Handle(ChangeEmailMemberCommand request, CancellationToken cancellationToken)
     {
         try
         {
-            var member = await _memberRepository.GetAsync(request.MemberId);
+            var member = await memberRepository.GetAsync(request.MemberId);
 
             if (member is null)
                 return Result.Fail(new MemberNotFoundError());
@@ -94,15 +84,15 @@ public class ChangeEmailMemberCommandHandler : IRequestHandler<ChangeEmailMember
             var domainEvent =
                 new MemberChangedEmailEvent(member.Id, request.Email, EventList.Member.MemberChangedEmailEvent);
 
-            await _memberRepository.UpdateAsync(member.Id, member, cancellationToken);
-            await _eventRepository.CreateAsync(domainEvent, cancellationToken);
-            await _unitOfWork.SaveAsync();
+            await memberRepository.UpdateAsync(member.Id, member, cancellationToken);
+            await eventRepository.CreateAsync(domainEvent, cancellationToken);
+            await unitOfWork.SaveAsync();
 
             return Result.Ok();
         }
         catch (Exception ex)
         {
-            _unitOfWork.CleanOperations();
+            unitOfWork.CleanOperations();
             return Result.Fail(new Error(ex.Message));
         }
     }

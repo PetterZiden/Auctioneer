@@ -13,15 +13,8 @@ using Microsoft.Extensions.Logging;
 
 namespace Auctioneer.Application.Features.Auctions.Commands;
 
-public class CreateAuctionController : ApiControllerBase
+public class CreateAuctionController(ILogger<CreateAuctionController> logger) : ApiControllerBase(logger)
 {
-    private readonly ILogger<CreateAuctionController> _logger;
-
-    public CreateAuctionController(ILogger<CreateAuctionController> logger) : base(logger)
-    {
-        _logger = logger;
-    }
-
     [HttpPost("api/auction")]
     [Produces("application/json")]
     [ProducesResponseType(typeof(Guid), 200)]
@@ -30,6 +23,7 @@ public class CreateAuctionController : ApiControllerBase
     [ProducesResponseType(500)]
     public async Task<ActionResult<Guid>> Create(CreateAuctionRequest request, CancellationToken cancellationToken)
     {
+        using var _ = AuctioneerMetrics.MeasureRequestDuration();
         try
         {
             var command = new CreateAuctionCommand
@@ -59,8 +53,12 @@ public class CreateAuctionController : ApiControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
+            logger.LogError(ex, "{Name} threw exception", MethodBase.GetCurrentMethod()?.Name);
             return StatusCode(500);
+        }
+        finally
+        {
+            AuctioneerMetrics.IncreaseAuctioneerRequestCount();
         }
     }
 }
@@ -76,27 +74,18 @@ public class CreateAuctionCommand : IRequest<Result<Guid>>
     public string ImgRoute { get; init; }
 }
 
-public class CreateAuctionCommandHandler : IRequestHandler<CreateAuctionCommand, Result<Guid>>
+public class CreateAuctionCommandHandler(
+    IRepository<Auction> auctionRepository,
+    IRepository<Member> memberRepository,
+    IRepository<DomainEvent> eventRepository,
+    IUnitOfWork unitOfWork)
+    : IRequestHandler<CreateAuctionCommand, Result<Guid>>
 {
-    private readonly IRepository<Auction> _auctionRepository;
-    private readonly IRepository<Member> _memberRepository;
-    private readonly IRepository<DomainEvent> _eventRepository;
-    private readonly IUnitOfWork _unitOfWork;
-
-    public CreateAuctionCommandHandler(IRepository<Auction> auctionRepository, IRepository<Member> memberRepository,
-        IRepository<DomainEvent> eventRepository, IUnitOfWork unitOfWork)
-    {
-        _auctionRepository = auctionRepository;
-        _memberRepository = memberRepository;
-        _eventRepository = eventRepository;
-        _unitOfWork = unitOfWork;
-    }
-
     public async Task<Result<Guid>> Handle(CreateAuctionCommand request, CancellationToken cancellationToken)
     {
         try
         {
-            var member = await _memberRepository.GetAsync(request.MemberId);
+            var member = await memberRepository.GetAsync(request.MemberId);
 
             if (member is null)
                 return Result.Fail(new MemberNotFoundError());
@@ -118,15 +107,15 @@ public class CreateAuctionCommandHandler : IRequestHandler<CreateAuctionCommand,
 
             var domainEvent = new AuctionCreatedEvent(auction.Value, EventList.Auction.AuctionCreatedEvent);
 
-            await _eventRepository.CreateAsync(domainEvent, cancellationToken);
-            await _auctionRepository.CreateAsync(auction.Value, cancellationToken);
-            await _unitOfWork.SaveAsync();
+            await eventRepository.CreateAsync(domainEvent, cancellationToken);
+            await auctionRepository.CreateAsync(auction.Value, cancellationToken);
+            await unitOfWork.SaveAsync();
 
             return Result.Ok(auction.Value.Id);
         }
         catch (Exception ex)
         {
-            _unitOfWork.CleanOperations();
+            unitOfWork.CleanOperations();
             return Result.Fail(new Error(ex.Message));
         }
     }

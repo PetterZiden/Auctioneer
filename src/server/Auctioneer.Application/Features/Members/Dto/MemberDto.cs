@@ -4,7 +4,7 @@ namespace Auctioneer.Application.Features.Members.Dto;
 
 public class MemberDto
 {
-    public Guid? Id { get; set; }
+    public Guid? Id { get; init; }
     public string FirstName { get; init; }
     public string LastName { get; init; }
     public string Street { get; init; }
