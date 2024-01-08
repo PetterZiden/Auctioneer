@@ -36,7 +36,6 @@ public class CreateAuctionTests
         _eventRepository.CreateAsync(Arg.Any<DomainEvent>(), Arg.Any<CancellationToken>()).Returns(Task.CompletedTask);
         _unitOfWork.SaveAsync().Returns(Task.CompletedTask);
 
-
         var result = await _handler.Handle(GetValidCommand(), new CancellationToken());
 
         Assert.True(result.IsSuccess);

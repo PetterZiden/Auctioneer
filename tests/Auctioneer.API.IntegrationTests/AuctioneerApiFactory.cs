@@ -19,6 +19,7 @@ public class AuctioneerApiFactory : WebApplicationFactory<IApiMarker>, IAsyncLif
 
     public new async Task DisposeAsync()
     {
+        _runner.Dispose();
     }
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)

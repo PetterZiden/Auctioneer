@@ -1,31 +1,22 @@
 using System.Net;
-using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
+using Auctioneer.API.IntegrationTests.Extensions;
 using Auctioneer.Application.Features.Auctions.Contracts;
 
 namespace Auctioneer.API.IntegrationTests.Auction;
 
 [Collection("BaseIntegrationTest")]
-public class UpdateAuctionTests : BaseIntegrationTest
+public class UpdateAuctionTests(AuctioneerApiFactory factory) : BaseIntegrationTest(factory)
 {
-    private readonly AuctioneerApiFactory _factory;
-
-    public UpdateAuctionTests(AuctioneerApiFactory factory) : base(factory)
-    {
-        _factory = factory;
-    }
-
     [Fact]
     public async Task UpdateAuctionsEndPoint_Should_Update_Auctions_If_Request_Is_Valid()
     {
         var auctionId = await SetupAuction();
 
         var request = new UpdateAuctionRequest(auctionId, "TestAuction2", "TestDescription2", "../images/test2.jpg");
-        var client = _factory.CreateClient();
-        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-        var response = await client.PutAsync("https://localhost:7298/api/auction",
+        var response = await Client.PutAsync("https://localhost:7298/api/auction",
             new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json"));
 
         var auction = await AuctionRepository.GetAsync(auctionId);
@@ -41,17 +32,15 @@ public class UpdateAuctionTests : BaseIntegrationTest
     {
         var request =
             new UpdateAuctionRequest(Guid.NewGuid(), "TestAuction2", "TestDescription2", "../images/test2.jpg");
-        var client = _factory.CreateClient();
-        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-        var response = await client.PutAsync("https://localhost:7298/api/auction",
-            new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json"));
-        var errorMsg = JsonSerializer.Deserialize<string>(await response.Content.ReadAsStringAsync());
+        var response = await Client.PutAsync("https://localhost:7298/api/auction",
+                new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json"))
+            .DeserializeResponseAsync<string>();
 
-        Assert.False(response.IsSuccessStatusCode);
-        Assert.True(response.StatusCode == HttpStatusCode.NotFound);
-        Assert.NotNull(errorMsg);
-        Assert.Equal("No auction found", errorMsg);
+        Assert.False(response.IsSuccess);
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        Assert.NotNull(response.Value);
+        Assert.Equal("No auction found", response.Value);
     }
 
     [Fact]
@@ -60,19 +49,17 @@ public class UpdateAuctionTests : BaseIntegrationTest
         var auctionId = await SetupAuction();
 
         var request = new UpdateAuctionRequest(auctionId, "TestAuction", "TestDescription2", "../images/test2.jpg");
-        var client = _factory.CreateClient();
-        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-        var response = await client.PutAsync("https://localhost:7298/api/auction",
-            new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json"));
-        var errorMsg = JsonSerializer.Deserialize<string>(await response.Content.ReadAsStringAsync());
+        var response = await Client.PutAsync("https://localhost:7298/api/auction",
+                new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json"))
+            .DeserializeResponseAsync<string>();
 
         var auction = await AuctionRepository.GetAsync(auctionId);
 
-        Assert.False(response.IsSuccessStatusCode);
-        Assert.True(response.StatusCode == HttpStatusCode.BadRequest);
-        Assert.NotNull(errorMsg);
-        Assert.Equal("Title can not be the same as current title", errorMsg);
+        Assert.False(response.IsSuccess);
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.NotNull(response.Value);
+        Assert.Equal("Title can not be the same as current title", response.Value);
         Assert.Equal("TestAuction", auction?.Title);
     }
 
@@ -82,19 +69,17 @@ public class UpdateAuctionTests : BaseIntegrationTest
         var auctionId = await SetupAuction();
 
         var request = new UpdateAuctionRequest(auctionId, "TestAuction2", "TestDescription", "../images/test2.jpg");
-        var client = _factory.CreateClient();
-        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-        var response = await client.PutAsync("https://localhost:7298/api/auction",
-            new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json"));
-        var errorMsg = JsonSerializer.Deserialize<string>(await response.Content.ReadAsStringAsync());
+        var response = await Client.PutAsync("https://localhost:7298/api/auction",
+                new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json"))
+            .DeserializeResponseAsync<string>();
 
         var auction = await AuctionRepository.GetAsync(auctionId);
 
-        Assert.False(response.IsSuccessStatusCode);
-        Assert.True(response.StatusCode == HttpStatusCode.BadRequest);
-        Assert.NotNull(errorMsg);
-        Assert.Equal("Description can not be the same as current description", errorMsg);
+        Assert.False(response.IsSuccess);
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.NotNull(response.Value);
+        Assert.Equal("Description can not be the same as current description", response.Value);
         Assert.Equal("TestDescription", auction?.Description);
     }
 
@@ -104,19 +89,17 @@ public class UpdateAuctionTests : BaseIntegrationTest
         var auctionId = await SetupAuction();
 
         var request = new UpdateAuctionRequest(auctionId, "TestAuction2", "TestDescription2", "../images/test.jpg");
-        var client = _factory.CreateClient();
-        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-        var response = await client.PutAsync("https://localhost:7298/api/auction",
-            new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json"));
-        var errorMsg = JsonSerializer.Deserialize<string>(await response.Content.ReadAsStringAsync());
+        var response = await Client.PutAsync("https://localhost:7298/api/auction",
+                new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json"))
+            .DeserializeResponseAsync<string>();
 
         var auction = await AuctionRepository.GetAsync(auctionId);
 
-        Assert.False(response.IsSuccessStatusCode);
-        Assert.True(response.StatusCode == HttpStatusCode.BadRequest);
-        Assert.NotNull(errorMsg);
-        Assert.Equal("Image route can not be the same as current image route", errorMsg);
+        Assert.False(response.IsSuccess);
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.NotNull(response.Value);
+        Assert.Equal("Image route can not be the same as current image route", response.Value);
         Assert.Equal("../images/test.jpg", auction?.ImgRoute);
     }
 

@@ -1,46 +1,34 @@
 using System.Net;
-using System.Text.Json;
+using Auctioneer.API.IntegrationTests.Extensions;
 using Auctioneer.Application.Features.Members.Dto;
 
 namespace Auctioneer.API.IntegrationTests.Member;
 
 [Collection("BaseIntegrationTest")]
-public class GetMembersTests : BaseIntegrationTest
+public class GetMembersTests(AuctioneerApiFactory factory) : BaseIntegrationTest(factory)
 {
-    private readonly AuctioneerApiFactory _factory;
-
-    public GetMembersTests(AuctioneerApiFactory factory) : base(factory)
-    {
-        _factory = factory;
-    }
-
     [Fact]
     public async Task GetMembersEndPoint_Should_Fetch_Members_If_Members_Exist()
     {
         await SetupMember();
-        var client = _factory.CreateClient();
 
-        var response = await client.GetAsync("https://localhost:7298/api/members");
-        var content = await response.Content.ReadAsStringAsync();
-        var members = JsonSerializer.Deserialize<List<MemberDto>>(content);
+        var response = await Client.GetAsync("https://localhost:7298/api/members")
+            .DeserializeResponseAsync<List<MemberDto>>();
 
-        Assert.True(response.IsSuccessStatusCode);
-        Assert.NotNull(members);
-        Assert.Equal(2, members.Count);
-        Assert.IsType<MemberDto>(members.FirstOrDefault());
+        Assert.True(response.IsSuccess);
+        Assert.NotNull(response.Value);
+        Assert.Equal(2, response.Value.Count);
+        Assert.IsType<MemberDto>(response.Value.FirstOrDefault());
     }
 
     [Fact]
     public async Task GetMembersEndPoint_Should_Return_Not_Found_If_Members_Does_Not_Exist()
     {
-        var client = _factory.CreateClient();
+        var response = await Client.GetAsync("https://localhost:7298/api/members").DeserializeResponseAsync<string>();
 
-        var response = await client.GetAsync("https://localhost:7298/api/members");
-        var content = JsonSerializer.Deserialize<string>(await response.Content.ReadAsStringAsync());
-
-        Assert.False(response.IsSuccessStatusCode);
-        Assert.True(response.StatusCode == HttpStatusCode.NotFound);
-        Assert.Equal("No member found", content);
+        Assert.False(response.IsSuccess);
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        Assert.Equal("No member found", response.Value);
     }
 
     private async Task SetupMember()
