@@ -1,3 +1,4 @@
+using System.Net.Http.Headers;
 using Auctioneer.Application.Common.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -8,6 +9,7 @@ public abstract class BaseIntegrationTest : IClassFixture<AuctioneerApiFactory>
     protected readonly IRepository<Application.Entities.Member> MemberRepository;
     protected readonly IRepository<Application.Entities.Auction> AuctionRepository;
     protected readonly IUnitOfWork UnitOfWork;
+    protected HttpClient Client { get; }
 
     protected BaseIntegrationTest(AuctioneerApiFactory factory)
     {
@@ -15,5 +17,7 @@ public abstract class BaseIntegrationTest : IClassFixture<AuctioneerApiFactory>
         MemberRepository = scope.ServiceProvider.GetRequiredService<IRepository<Application.Entities.Member>>();
         AuctionRepository = scope.ServiceProvider.GetRequiredService<IRepository<Application.Entities.Auction>>();
         UnitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
+        Client = factory.CreateClient();
+        Client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
     }
 }

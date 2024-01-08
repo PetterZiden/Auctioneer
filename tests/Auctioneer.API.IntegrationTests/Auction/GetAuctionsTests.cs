@@ -1,45 +1,34 @@
 using System.Net;
-using System.Text.Json;
+using Auctioneer.API.IntegrationTests.Extensions;
 using Auctioneer.Application.Features.Auctions.Dto;
 
 namespace Auctioneer.API.IntegrationTests.Auction;
 
 [Collection("BaseIntegrationTest")]
-public class GetAuctionsTests : BaseIntegrationTest
+public class GetAuctionsTests(AuctioneerApiFactory factory) : BaseIntegrationTest(factory)
 {
-    private readonly AuctioneerApiFactory _factory;
-
-    public GetAuctionsTests(AuctioneerApiFactory factory) : base(factory)
-    {
-        _factory = factory;
-    }
-
     [Fact]
     public async Task GetAuctionsEndPoint_Should_Fetch_Auctions_If_Auctions_Exist()
     {
         await SetupAuction();
-        var client = _factory.CreateClient();
 
-        var response = await client.GetAsync("https://localhost:7298/api/auctions");
-        var auctions = JsonSerializer.Deserialize<List<AuctionDto>>(await response.Content.ReadAsStringAsync());
+        var response = await Client.GetAsync("https://localhost:7298/api/auctions")
+            .DeserializeResponseAsync<List<AuctionDto>>();
 
-        Assert.True(response.IsSuccessStatusCode);
-        Assert.NotNull(auctions);
-        Assert.Equal(2, auctions.Count);
-        Assert.IsType<AuctionDto>(auctions.FirstOrDefault());
+        Assert.True(response.IsSuccess);
+        Assert.NotNull(response.Value);
+        Assert.Equal(2, response.Value.Count);
+        Assert.IsType<AuctionDto>(response.Value.FirstOrDefault());
     }
 
     [Fact]
     public async Task GetAuctionsEndPoint_Should_Return_Not_Found_If_Auctions_Does_Not_Exist()
     {
-        var client = _factory.CreateClient();
+        var response = await Client.GetAsync("https://localhost:7298/api/auctions").DeserializeResponseAsync<string>();
 
-        var response = await client.GetAsync("https://localhost:7298/api/auctions");
-        var errorMsg = JsonSerializer.Deserialize<string>(await response.Content.ReadAsStringAsync());
-
-        Assert.False(response.IsSuccessStatusCode);
-        Assert.True(response.StatusCode == HttpStatusCode.NotFound);
-        Assert.Equal("No auction found", errorMsg);
+        Assert.False(response.IsSuccess);
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        Assert.Equal("No auction found", response.Value);
     }
 
     private async Task SetupAuction()

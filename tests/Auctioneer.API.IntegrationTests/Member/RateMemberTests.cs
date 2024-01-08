@@ -1,22 +1,14 @@
 using System.Net;
-using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
+using Auctioneer.API.IntegrationTests.Extensions;
 using Auctioneer.Application.Common.Models;
 
 namespace Auctioneer.API.IntegrationTests.Member;
 
 [Collection("BaseIntegrationTest")]
-public class RateMemberTests : BaseIntegrationTest
+public class RateMemberTests(AuctioneerApiFactory factory) : BaseIntegrationTest(factory)
 {
-    private readonly AuctioneerApiFactory _factory;
-
-    public RateMemberTests(AuctioneerApiFactory factory) : base(factory)
-    {
-        _factory = factory;
-    }
-
-
     [Fact]
     public async Task RateMemberEndPoint_Should_Add_Rating_To_Member_If_Request_Is_Valid()
     {
@@ -28,17 +20,15 @@ public class RateMemberTests : BaseIntegrationTest
             RatingFromMemberId = member2Id,
             Stars = 3
         };
-        var client = _factory.CreateClient();
-        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-        var response = await client.PostAsync("https://localhost:7298/api/member/rate",
+        var response = await Client.PostAsync("https://localhost:7298/api/member/rate",
             new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json"));
 
         var member = await MemberRepository.GetAsync(memberId);
 
         Assert.True(response.IsSuccessStatusCode);
-        Assert.True(member?.Ratings.Count == 1);
-        Assert.True(member.NumberOfRatings == 1);
+        Assert.Equal(1, member?.Ratings.Count);
+        Assert.Equal(1, member?.NumberOfRatings);
     }
 
     [Fact]
@@ -50,17 +40,15 @@ public class RateMemberTests : BaseIntegrationTest
             RatingFromMemberId = Guid.NewGuid(),
             Stars = 3
         };
-        var client = _factory.CreateClient();
-        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-        var response = await client.PostAsync("https://localhost:7298/api/member/rate",
-            new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json"));
-        var errorMsg = JsonSerializer.Deserialize<string>(await response.Content.ReadAsStringAsync());
+        var response = await Client.PostAsync("https://localhost:7298/api/member/rate",
+                new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json"))
+            .DeserializeResponseAsync<string>();
 
-        Assert.False(response.IsSuccessStatusCode);
-        Assert.True(response.StatusCode == HttpStatusCode.NotFound);
-        Assert.NotNull(errorMsg);
-        Assert.Equal("No member found", errorMsg);
+        Assert.False(response.IsSuccess);
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        Assert.NotNull(response.Value);
+        Assert.Equal("No member found", response.Value);
     }
 
     [Fact]
@@ -72,17 +60,15 @@ public class RateMemberTests : BaseIntegrationTest
             RatingFromMemberId = Guid.Empty,
             Stars = 3
         };
-        var client = _factory.CreateClient();
-        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-        var response = await client.PostAsync("https://localhost:7298/api/member/rate",
-            new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json"));
-        var errorMsg = JsonSerializer.Deserialize<List<string>>(await response.Content.ReadAsStringAsync());
+        var response = await Client.PostAsync("https://localhost:7298/api/member/rate",
+                new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json"))
+            .DeserializeResponseAsync<List<string>>();
 
-        Assert.False(response.IsSuccessStatusCode);
-        Assert.True(response.StatusCode == HttpStatusCode.BadRequest);
-        Assert.NotNull(errorMsg);
-        Assert.Equal("'Rating From Member Id' must not be empty.", errorMsg.FirstOrDefault());
+        Assert.False(response.IsSuccess);
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.NotNull(response.Value);
+        Assert.Equal("'Rating From Member Id' must not be empty.", response.Value.FirstOrDefault());
     }
 
     [Fact]
@@ -94,17 +80,15 @@ public class RateMemberTests : BaseIntegrationTest
             RatingFromMemberId = Guid.NewGuid(),
             Stars = 3
         };
-        var client = _factory.CreateClient();
-        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-        var response = await client.PostAsync("https://localhost:7298/api/member/rate",
-            new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json"));
-        var errorMsg = JsonSerializer.Deserialize<List<string>>(await response.Content.ReadAsStringAsync());
+        var response = await Client.PostAsync("https://localhost:7298/api/member/rate",
+                new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json"))
+            .DeserializeResponseAsync<List<string>>();
 
-        Assert.False(response.IsSuccessStatusCode);
-        Assert.True(response.StatusCode == HttpStatusCode.BadRequest);
-        Assert.NotNull(errorMsg);
-        Assert.Equal("'Rating For Member Id' must not be empty.", errorMsg.FirstOrDefault());
+        Assert.False(response.IsSuccess);
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.NotNull(response.Value);
+        Assert.Equal("'Rating For Member Id' must not be empty.", response.Value.FirstOrDefault());
     }
 
     [Fact]
@@ -116,17 +100,15 @@ public class RateMemberTests : BaseIntegrationTest
             RatingFromMemberId = Guid.NewGuid(),
             Stars = 0
         };
-        var client = _factory.CreateClient();
-        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-        var response = await client.PostAsync("https://localhost:7298/api/member/rate",
-            new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json"));
-        var errorMsg = JsonSerializer.Deserialize<List<string>>(await response.Content.ReadAsStringAsync());
+        var response = await Client.PostAsync("https://localhost:7298/api/member/rate",
+                new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json"))
+            .DeserializeResponseAsync<List<string>>();
 
-        Assert.False(response.IsSuccessStatusCode);
-        Assert.True(response.StatusCode == HttpStatusCode.BadRequest);
-        Assert.NotNull(errorMsg);
-        Assert.Equal("'Stars' must be greater than '0'.", errorMsg.FirstOrDefault());
+        Assert.False(response.IsSuccess);
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.NotNull(response.Value);
+        Assert.Equal("'Stars' must be greater than '0'.", response.Value.FirstOrDefault());
     }
 
     [Fact]
@@ -138,17 +120,15 @@ public class RateMemberTests : BaseIntegrationTest
             RatingFromMemberId = Guid.NewGuid(),
             Stars = 6
         };
-        var client = _factory.CreateClient();
-        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-        var response = await client.PostAsync("https://localhost:7298/api/member/rate",
-            new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json"));
-        var errorMsg = JsonSerializer.Deserialize<List<string>>(await response.Content.ReadAsStringAsync());
+        var response = await Client.PostAsync("https://localhost:7298/api/member/rate",
+                new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json"))
+            .DeserializeResponseAsync<List<string>>();
 
-        Assert.False(response.IsSuccessStatusCode);
-        Assert.True(response.StatusCode == HttpStatusCode.BadRequest);
-        Assert.NotNull(errorMsg);
-        Assert.Equal("'Stars' must be less than '6'.", errorMsg.FirstOrDefault());
+        Assert.False(response.IsSuccess);
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.NotNull(response.Value);
+        Assert.Equal("'Stars' must be less than '6'.", response.Value.FirstOrDefault());
     }
 
     private async Task<(Guid, Guid)> SetupMembers()

@@ -1,55 +1,43 @@
 using System.Net;
-using System.Text.Json;
+using Auctioneer.API.IntegrationTests.Extensions;
 using Auctioneer.Application.Features.Auctions.Dto;
 
 namespace Auctioneer.API.IntegrationTests.Auction;
 
 [Collection("BaseIntegrationTest")]
-public class GetAuctionTests : BaseIntegrationTest
+public class GetAuctionTests(AuctioneerApiFactory factory) : BaseIntegrationTest(factory)
 {
-    private readonly AuctioneerApiFactory _factory;
-
-    public GetAuctionTests(AuctioneerApiFactory factory) : base(factory)
-    {
-        _factory = factory;
-    }
-
     [Fact]
     public async Task GetAuctionEndPoint_Should_Fetch_Auction_If_Auction_Exist()
     {
         var auction = await SetupAuction();
-        var client = _factory.CreateClient();
 
-        var response = await client.GetAsync($"https://localhost:7298/api/auction/{auction.Id}");
-        var auctions = JsonSerializer.Deserialize<AuctionDto>(await response.Content.ReadAsStringAsync());
+        var response = await Client.GetAsync($"https://localhost:7298/api/auction/{auction.Id}")
+            .DeserializeResponseAsync<AuctionDto>();
 
-        Assert.True(response.IsSuccessStatusCode);
-        Assert.NotNull(auctions);
-        Assert.IsType<AuctionDto>(auctions);
+        Assert.True(response.IsSuccess);
+        Assert.NotNull(response.Value);
+        Assert.IsType<AuctionDto>(response.Value);
     }
 
     [Fact]
     public async Task GetAuctionEndPoint_Should_Return_Not_Found_If_Auction_Does_Not_Exist()
     {
-        var client = _factory.CreateClient();
+        var response = await Client.GetAsync($"https://localhost:7298/api/auction/{Guid.NewGuid()}")
+            .DeserializeResponseAsync<string>();
 
-        var response = await client.GetAsync($"https://localhost:7298/api/auction/{Guid.NewGuid()}");
-        var errorMsg = JsonSerializer.Deserialize<string>(await response.Content.ReadAsStringAsync());
-
-        Assert.False(response.IsSuccessStatusCode);
-        Assert.True(response.StatusCode == HttpStatusCode.NotFound);
-        Assert.Equal("No auction found", errorMsg);
+        Assert.False(response.IsSuccess);
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        Assert.Equal("No auction found", response.Value);
     }
 
     [Fact]
     public async Task GetAuctionEndPoint_Should_Return_Not_Found_When_Not_Passing_Guid_As_QueryParameter()
     {
-        var client = _factory.CreateClient();
-
-        var response = await client.GetAsync("https://localhost:7298/api/auction/id234");
+        var response = await Client.GetAsync("https://localhost:7298/api/auction/id234");
 
         Assert.False(response.IsSuccessStatusCode);
-        Assert.True(response.StatusCode == HttpStatusCode.NotFound);
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
 
     private async Task<Application.Entities.Auction> SetupAuction()

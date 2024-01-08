@@ -1,21 +1,14 @@
 using System.Net;
-using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
+using Auctioneer.API.IntegrationTests.Extensions;
 using Auctioneer.Application.Common.Models;
 
 namespace Auctioneer.API.IntegrationTests.Auction;
 
 [Collection("BaseIntegrationTest")]
-public class PlaceBidTests : BaseIntegrationTest
+public class PlaceBidTests(AuctioneerApiFactory factory) : BaseIntegrationTest(factory)
 {
-    private readonly AuctioneerApiFactory _factory;
-
-    public PlaceBidTests(AuctioneerApiFactory factory) : base(factory)
-    {
-        _factory = factory;
-    }
-
     [Fact]
     public async Task PlaceBidEndPoint_Should_Place_Bid_On_Auction_If_Request_Is_Valid()
     {
@@ -29,18 +22,15 @@ public class PlaceBidTests : BaseIntegrationTest
             TimeStamp = null
         };
 
-        var client = _factory.CreateClient();
-        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-        var response = await client.PostAsync("https://localhost:7298/api/auction/place-bid",
+        var response = await Client.PostAsync("https://localhost:7298/api/auction/place-bid",
             new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json"));
 
         var auction = await AuctionRepository.GetAsync(auctionId);
         var member = await MemberRepository.GetAsync(memberId);
 
         Assert.True(response.IsSuccessStatusCode);
-        Assert.True(auction?.Bids.Count == 1);
-        Assert.True(member?.Bids.Count == 1);
+        Assert.Equal(1, auction?.Bids.Count);
+        Assert.Equal(1, member?.Bids.Count);
     }
 
     [Fact]
@@ -54,18 +44,14 @@ public class PlaceBidTests : BaseIntegrationTest
             TimeStamp = null
         };
 
-        var client = _factory.CreateClient();
-        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        var response = await Client.PostAsync("https://localhost:7298/api/auction/place-bid",
+                new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json"))
+            .DeserializeResponseAsync<string>();
 
-        var response = await client.PostAsync("https://localhost:7298/api/auction/place-bid",
-            new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json"));
-
-        var errorMsg = JsonSerializer.Deserialize<string>(await response.Content.ReadAsStringAsync());
-
-        Assert.False(response.IsSuccessStatusCode);
-        Assert.True(response.StatusCode == HttpStatusCode.NotFound);
-        Assert.NotNull(errorMsg);
-        Assert.Equal("No auction found", errorMsg);
+        Assert.False(response.IsSuccess);
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        Assert.NotNull(response.Value);
+        Assert.Equal("No auction found", response.Value);
     }
 
     [Fact]
@@ -80,18 +66,14 @@ public class PlaceBidTests : BaseIntegrationTest
             TimeStamp = null
         };
 
-        var client = _factory.CreateClient();
-        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        var response = await Client.PostAsync("https://localhost:7298/api/auction/place-bid",
+                new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json"))
+            .DeserializeResponseAsync<string>();
 
-        var response = await client.PostAsync("https://localhost:7298/api/auction/place-bid",
-            new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json"));
-
-        var errorMsg = JsonSerializer.Deserialize<string>(await response.Content.ReadAsStringAsync());
-
-        Assert.False(response.IsSuccessStatusCode);
-        Assert.True(response.StatusCode == HttpStatusCode.NotFound);
-        Assert.NotNull(errorMsg);
-        Assert.Equal("No member found", errorMsg);
+        Assert.False(response.IsSuccess);
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        Assert.NotNull(response.Value);
+        Assert.Equal("No member found", response.Value);
     }
 
     [Fact]
@@ -107,18 +89,14 @@ public class PlaceBidTests : BaseIntegrationTest
             TimeStamp = null
         };
 
-        var client = _factory.CreateClient();
-        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        var response = await Client.PostAsync("https://localhost:7298/api/auction/place-bid",
+                new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json"))
+            .DeserializeResponseAsync<string>();
 
-        var response = await client.PostAsync("https://localhost:7298/api/auction/place-bid",
-            new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json"));
-
-        var errorMsg = JsonSerializer.Deserialize<string>(await response.Content.ReadAsStringAsync());
-
-        Assert.False(response.IsSuccessStatusCode);
-        Assert.True(response.StatusCode == HttpStatusCode.BadRequest);
-        Assert.NotNull(errorMsg);
-        Assert.StartsWith("Bid must be greater than current price:", errorMsg);
+        Assert.False(response.IsSuccess);
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.NotNull(response.Value);
+        Assert.StartsWith("Bid must be greater than current price:", response.Value);
     }
 
     [Fact]
@@ -132,18 +110,14 @@ public class PlaceBidTests : BaseIntegrationTest
             TimeStamp = null
         };
 
-        var client = _factory.CreateClient();
-        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        var response = await Client.PostAsync("https://localhost:7298/api/auction/place-bid",
+                new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json"))
+            .DeserializeResponseAsync<List<string>>();
 
-        var response = await client.PostAsync("https://localhost:7298/api/auction/place-bid",
-            new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json"));
-
-        var errorMsg = JsonSerializer.Deserialize<List<string>>(await response.Content.ReadAsStringAsync());
-
-        Assert.False(response.IsSuccessStatusCode);
-        Assert.True(response.StatusCode == HttpStatusCode.BadRequest);
-        Assert.NotNull(errorMsg);
-        Assert.Equal("'Auction Id' must not be empty.", errorMsg.FirstOrDefault());
+        Assert.False(response.IsSuccess);
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.NotNull(response.Value);
+        Assert.Equal("'Auction Id' must not be empty.", response.Value.FirstOrDefault());
     }
 
     [Fact]
@@ -157,18 +131,14 @@ public class PlaceBidTests : BaseIntegrationTest
             TimeStamp = null
         };
 
-        var client = _factory.CreateClient();
-        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        var response = await Client.PostAsync("https://localhost:7298/api/auction/place-bid",
+                new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json"))
+            .DeserializeResponseAsync<List<string>>();
 
-        var response = await client.PostAsync("https://localhost:7298/api/auction/place-bid",
-            new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json"));
-
-        var errorMsg = JsonSerializer.Deserialize<List<string>>(await response.Content.ReadAsStringAsync());
-
-        Assert.False(response.IsSuccessStatusCode);
-        Assert.True(response.StatusCode == HttpStatusCode.BadRequest);
-        Assert.NotNull(errorMsg);
-        Assert.Equal("'Member Id' must not be empty.", errorMsg.FirstOrDefault());
+        Assert.False(response.IsSuccess);
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.NotNull(response.Value);
+        Assert.Equal("'Member Id' must not be empty.", response.Value.FirstOrDefault());
     }
 
     [Fact]
@@ -182,18 +152,14 @@ public class PlaceBidTests : BaseIntegrationTest
             TimeStamp = null
         };
 
-        var client = _factory.CreateClient();
-        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        var response = await Client.PostAsync("https://localhost:7298/api/auction/place-bid",
+                new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json"))
+            .DeserializeResponseAsync<List<string>>();
 
-        var response = await client.PostAsync("https://localhost:7298/api/auction/place-bid",
-            new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json"));
-
-        var errorMsg = JsonSerializer.Deserialize<List<string>>(await response.Content.ReadAsStringAsync());
-
-        Assert.False(response.IsSuccessStatusCode);
-        Assert.True(response.StatusCode == HttpStatusCode.BadRequest);
-        Assert.NotNull(errorMsg);
-        Assert.Equal("'Bid Price' must be greater than '0'.", errorMsg.FirstOrDefault());
+        Assert.False(response.IsSuccess);
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.NotNull(response.Value);
+        Assert.Equal("'Bid Price' must be greater than '0'.", response.Value.FirstOrDefault());
     }
 
     private async Task<Guid> SetupAuction(Guid memberId)

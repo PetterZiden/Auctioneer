@@ -1,25 +1,17 @@
 using System.Net;
+using Auctioneer.API.IntegrationTests.Extensions;
 
 namespace Auctioneer.API.IntegrationTests.Auction;
 
 [Collection("BaseIntegrationTest")]
-public class DeleteAuctionTests : BaseIntegrationTest
+public class DeleteAuctionTests(AuctioneerApiFactory factory) : BaseIntegrationTest(factory)
 {
-    private readonly AuctioneerApiFactory _factory;
-
-    public DeleteAuctionTests(AuctioneerApiFactory factory) : base(factory)
-    {
-        _factory = factory;
-    }
-
     [Fact]
     public async Task DeleteAuctionEndPoint_Should_Delete_Auctions_If_Auction_Exist()
     {
         var auctionId = await SetupAuction();
 
-        var client = _factory.CreateClient();
-
-        var response = await client.DeleteAsync($"https://localhost:7298/api/auction/{auctionId}");
+        var response = await Client.DeleteAsync($"https://localhost:7298/api/auction/{auctionId}");
 
         var auction = await AuctionRepository.GetAsync(auctionId);
 
@@ -30,15 +22,13 @@ public class DeleteAuctionTests : BaseIntegrationTest
     [Fact]
     public async Task DeleteAuctionEndPoint_Should_Not_Delete_Auctions_If_Auction_Not_Found()
     {
-        var client = _factory.CreateClient();
+        var response = await Client.DeleteAsync($"https://localhost:7298/api/auction/{Guid.NewGuid()}")
+            .DeserializeResponseAsync<string>();
 
-        var response = await client.DeleteAsync($"https://localhost:7298/api/auction/{Guid.NewGuid()}");
-        var errorMsg = await response.Content.ReadAsStringAsync();
-
-        Assert.False(response.IsSuccessStatusCode);
-        Assert.True(response.StatusCode == HttpStatusCode.NotFound);
-        Assert.NotNull(errorMsg);
-        Assert.Equal("No auction found", errorMsg);
+        Assert.False(response.IsSuccess);
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        Assert.NotNull(response.Value);
+        Assert.Equal("No auction found", response.Value);
     }
 
     private async Task<Guid> SetupAuction()

@@ -1,21 +1,14 @@
 using System.Net;
-using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
+using Auctioneer.API.IntegrationTests.Extensions;
 using Auctioneer.Application.Features.Members.Contracts;
 
 namespace Auctioneer.API.IntegrationTests.Member;
 
 [Collection("BaseIntegrationTest")]
-public class UpdateMemberTests : BaseIntegrationTest
+public class UpdateMemberTests(AuctioneerApiFactory factory) : BaseIntegrationTest(factory)
 {
-    private readonly AuctioneerApiFactory _factory;
-
-    public UpdateMemberTests(AuctioneerApiFactory factory) : base(factory)
-    {
-        _factory = factory;
-    }
-
     [Fact]
     public async Task UpdateMembersEndPoint_Should_Update_Members_If_Request_Is_Valid()
     {
@@ -23,10 +16,8 @@ public class UpdateMemberTests : BaseIntegrationTest
 
         var request = new UpdateMemberRequest(memberId, "Test2", "Testsson2", "Testgatan 22", "54321", "Testborg",
             "0735554422");
-        var client = _factory.CreateClient();
-        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-        var response = await client.PutAsync("https://localhost:7298/api/member",
+        var response = await Client.PutAsync("https://localhost:7298/api/member",
             new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json"));
 
         var member = await MemberRepository.GetAsync(memberId);
@@ -46,10 +37,8 @@ public class UpdateMemberTests : BaseIntegrationTest
         var memberId = await SetupMember();
 
         var request = new UpdateMemberRequest(memberId, null, null, "Testgatan 22", "54321", "Testborg", null);
-        var client = _factory.CreateClient();
-        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-        var response = await client.PutAsync("https://localhost:7298/api/member",
+        var response = await Client.PutAsync("https://localhost:7298/api/member",
             new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json"));
 
         var member = await MemberRepository.GetAsync(memberId);
@@ -65,17 +54,15 @@ public class UpdateMemberTests : BaseIntegrationTest
     {
         var request = new UpdateMemberRequest(Guid.NewGuid(), "Test2", "Testsson2", "Testgatan 22", "54321", "Testborg",
             "0735554422");
-        var client = _factory.CreateClient();
-        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-        var response = await client.PutAsync("https://localhost:7298/api/member",
-            new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json"));
-        var errorMsg = JsonSerializer.Deserialize<string>(await response.Content.ReadAsStringAsync());
+        var response = await Client.PutAsync("https://localhost:7298/api/member",
+                new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json"))
+            .DeserializeResponseAsync<string>();
 
-        Assert.False(response.IsSuccessStatusCode);
-        Assert.True(response.StatusCode == HttpStatusCode.NotFound);
-        Assert.NotNull(errorMsg);
-        Assert.Equal("No member found", errorMsg);
+        Assert.False(response.IsSuccess);
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        Assert.NotNull(response.Value);
+        Assert.Equal("No member found", response.Value);
     }
 
     [Fact]
@@ -85,19 +72,17 @@ public class UpdateMemberTests : BaseIntegrationTest
 
         var request = new UpdateMemberRequest(memberId, "Test2", "Testsson2", "Testgatan 22", "54321", "Testborg",
             "0734443322");
-        var client = _factory.CreateClient();
-        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-        var response = await client.PutAsync("https://localhost:7298/api/member",
-            new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json"));
-        var errorMsg = JsonSerializer.Deserialize<string>(await response.Content.ReadAsStringAsync());
+        var response = await Client.PutAsync("https://localhost:7298/api/member",
+                new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json"))
+            .DeserializeResponseAsync<string>();
 
         var member = await MemberRepository.GetAsync(memberId);
 
-        Assert.False(response.IsSuccessStatusCode);
-        Assert.True(response.StatusCode == HttpStatusCode.BadRequest);
-        Assert.NotNull(errorMsg);
-        Assert.Equal("Phone number can not be the same as current phone number", errorMsg);
+        Assert.False(response.IsSuccess);
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.NotNull(response.Value);
+        Assert.Equal("Phone number can not be the same as current phone number", response.Value);
         Assert.Equal("0734443322", member?.PhoneNumber);
     }
 
@@ -108,19 +93,17 @@ public class UpdateMemberTests : BaseIntegrationTest
 
         var request = new UpdateMemberRequest(memberId, "Test2", "Testsson", "Testgatan 22", "54321", "Testborg",
             "0734443377");
-        var client = _factory.CreateClient();
-        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-        var response = await client.PutAsync("https://localhost:7298/api/member",
-            new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json"));
-        var errorMsg = JsonSerializer.Deserialize<string>(await response.Content.ReadAsStringAsync());
+        var response = await Client.PutAsync("https://localhost:7298/api/member",
+                new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json"))
+            .DeserializeResponseAsync<string>();
 
         var member = await MemberRepository.GetAsync(memberId);
 
-        Assert.False(response.IsSuccessStatusCode);
-        Assert.True(response.StatusCode == HttpStatusCode.BadRequest);
-        Assert.NotNull(errorMsg);
-        Assert.Equal("Last name can not be the same as current last name", errorMsg);
+        Assert.False(response.IsSuccess);
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.NotNull(response.Value);
+        Assert.Equal("Last name can not be the same as current last name", response.Value);
         Assert.Equal("Testsson", member?.LastName);
     }
 
@@ -131,19 +114,17 @@ public class UpdateMemberTests : BaseIntegrationTest
 
         var request = new UpdateMemberRequest(memberId, "Test", "Testsson2", "Testgatan 22", "54321", "Testborg",
             "0734443377");
-        var client = _factory.CreateClient();
-        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-        var response = await client.PutAsync("https://localhost:7298/api/member",
-            new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json"));
-        var errorMsg = JsonSerializer.Deserialize<string>(await response.Content.ReadAsStringAsync());
+        var response = await Client.PutAsync("https://localhost:7298/api/member",
+                new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json"))
+            .DeserializeResponseAsync<string>();
 
         var member = await MemberRepository.GetAsync(memberId);
 
-        Assert.False(response.IsSuccessStatusCode);
-        Assert.True(response.StatusCode == HttpStatusCode.BadRequest);
-        Assert.NotNull(errorMsg);
-        Assert.Equal("First name can not be the same as current first name", errorMsg);
+        Assert.False(response.IsSuccess);
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.NotNull(response.Value);
+        Assert.Equal("First name can not be the same as current first name", response.Value);
         Assert.Equal("Test", member?.FirstName);
     }
 
