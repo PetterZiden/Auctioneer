@@ -15,6 +15,20 @@ public class Worker(
         logger.LogInformation("Background service started...");
         return Task.Run(() =>
         {
+            rabbitMqService.StartListeningOnQueue("create-member-email", "member",
+                message =>
+                {
+                    messageHandlerService.CreateMemberMessageHandler(
+                        JsonSerializer.Deserialize<CreateMemberMessage>(message));
+                });
+
+            rabbitMqService.StartListeningOnQueue("create-auction-email", "member",
+                message =>
+                {
+                    messageHandlerService.CreateAuctionMessageHandler(
+                        JsonSerializer.Deserialize<CreateAuctionMessage>(message));
+                });
+
             rabbitMqService.StartListeningOnQueue("rate-member-email", "member",
                 message =>
                 {
