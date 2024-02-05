@@ -66,6 +66,7 @@ public class CreateAuctionController(ILogger<CreateAuctionController> logger) : 
 public class CreateAuctionCommand : IRequest<Result<Guid>>
 {
     public Guid MemberId { get; init; }
+    public string MemberName { get; set; }
     public string Title { get; init; }
     public string Description { get; init; }
     public DateTimeOffset StartTime { get; init; }
@@ -105,7 +106,7 @@ public class CreateAuctionCommandHandler(
                 return Result.Fail(auction.Errors);
             }
 
-            var domainEvent = new AuctionCreatedEvent(auction.Value, EventList.Auction.AuctionCreatedEvent);
+            var domainEvent = new AuctionCreatedEvent(auction.Value, member, EventList.Auction.AuctionCreatedEvent);
 
             await eventRepository.CreateAsync(domainEvent, cancellationToken);
             await auctionRepository.CreateAsync(auction.Value, cancellationToken);
@@ -144,11 +145,13 @@ public class CreateAuctionCommandValidator : AbstractValidator<CreateAuctionComm
 
 public class AuctionCreatedEvent : DomainEvent, INotification
 {
-    public AuctionCreatedEvent(Auction auction, string @event)
+    public AuctionCreatedEvent(Auction auction, Member member, string @event)
     {
         Auction = auction;
+        Member = member;
         Event = @event;
     }
 
     public Auction Auction { get; set; }
+    public Member Member { get; set; }
 }

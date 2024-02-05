@@ -13,7 +13,8 @@ namespace Auctioneer.Application.Features.Auctions.EventHandlers;
 
 public class AuctionPlaceBidEventHandler(
     ILogger<AuctionPlaceBidEventHandler> logger,
-    IServiceScopeFactory serviceScopeFactory)
+    IMessageProducer messageProducer,
+    INotificationProducer notificationProducer)
     : INotificationHandler<DomainEventNotification<AuctionPlaceBidEvent>>
 {
     public Task Handle(DomainEventNotification<AuctionPlaceBidEvent> notification, CancellationToken cancellationToken)
@@ -21,11 +22,6 @@ public class AuctionPlaceBidEventHandler(
         try
         {
             var domainEvent = notification.DomainEvent;
-
-            using var scope = serviceScopeFactory.CreateScope();
-            var scopedServices = scope.ServiceProvider;
-            var messageProducer = scopedServices.GetRequiredService<IMessageProducer>();
-            var notificationProducer = scopedServices.GetRequiredService<INotificationProducer>();
 
             messageProducer.PublishMessage(new Message<PlaceBidMessage>
             {
@@ -57,11 +53,12 @@ public class AuctionPlaceBidEventHandler(
             logger.LogInformation("Finished Publishing Domain Event: {Name} - {Id}",
                 domainEvent.GetType().Name,
                 domainEvent.DomainEventId);
-            return Task.FromResult(true);
+
+            return Task.CompletedTask;
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Error when publishing Rate Member Domain Event with exception: {ExMessage}",
+            logger.LogError(ex, "Error when publishing Place Bid Domain Event with exception: {ExMessage}",
                 ex.Message);
             return Task.FromCanceled(cancellationToken);
         }

@@ -4,6 +4,8 @@ namespace Auctioneer.EmailService.Interfaces;
 
 public interface IMessageHandlerService
 {
-    void RateMemberMessageHandler(RateMemberMessage message);
-    void PlaceBidMessageHandler(PlaceBidMessage message);
+    Task CreateMemberMessageHandler(CreateMemberMessage message);
+    Task CreateAuctionMessageHandler(CreateAuctionMessage message);
+    Task RateMemberMessageHandler(RateMemberMessage message);
+    Task PlaceBidMessageHandler(PlaceBidMessage message);
 }

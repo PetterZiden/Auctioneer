@@ -48,7 +48,8 @@ public class RateMemberEventHandler(ILogger<RateMemberEventHandler> logger, ISer
             logger.LogInformation("Finished Publishing Domain Event: {Name} - {Id}",
                 domainEvent.GetType().Name,
                 domainEvent.DomainEventId);
-            return Task.FromResult(true);
+
+            return Task.CompletedTask;
         }
         catch (Exception ex)
         {

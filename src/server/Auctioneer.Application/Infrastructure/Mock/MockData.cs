@@ -1,4 +1,3 @@
-using Auctioneer.Application.Common.Models;
 using Auctioneer.Application.Features.Auctions.Dto;
 using Auctioneer.Application.Features.Members.Dto;
 
