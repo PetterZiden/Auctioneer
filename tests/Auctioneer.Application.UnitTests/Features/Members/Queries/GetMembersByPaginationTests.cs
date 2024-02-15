@@ -4,7 +4,6 @@ using Auctioneer.Application.Features.Members.Contracts;
 using Auctioneer.Application.Features.Members.Dto;
 using Auctioneer.Application.Features.Members.Queries;
 using Auctioneer.Application.Infrastructure.Persistence;
-using NSubstitute;
 
 namespace Auctioneer.Application.UnitTests.Features.Members.Queries;
 
@@ -39,11 +38,11 @@ public class GetMembersByPaginationTests
             }
         }, new CancellationToken());
 
-        Assert.True(result.IsSuccess);
-        Assert.Equal(1, result.Value.TotalPages);
-        Assert.Equal(1, result.Value.PageNumber);
-        Assert.IsType<List<MemberDto>>(result.Value.Members);
-        Assert.IsType<GetMembersByPaginationResponse>(result.Value);
+        result.IsSuccess.Should().BeTrue();
+        result.Value.TotalPages.Should().Be(1);
+        result.Value.PageNumber.Should().Be(1);
+        result.Value.Members.Should().AllBeOfType<MemberDto>();
+        result.Value.Should().BeOfType<GetMembersByPaginationResponse>();
         await _memberRepository.Received(1).GetAsync(Arg.Any<int>(), Arg.Any<int>());
     }
 
@@ -61,8 +60,8 @@ public class GetMembersByPaginationTests
             }
         }, new CancellationToken());
 
-        Assert.True(result.IsFailed);
-        Assert.Equal("No member found", result.Errors[0].Message);
+        result.IsFailed.Should().BeTrue();
+        result.Errors.FirstOrDefault()?.Message.Should().Be("No member found");
         await _memberRepository.Received(1).GetAsync(Arg.Any<int>(), Arg.Any<int>());
     }
 
@@ -81,8 +80,8 @@ public class GetMembersByPaginationTests
             }
         }, new CancellationToken());
 
-        Assert.True(result.IsFailed);
-        Assert.Equal("MemberRepository failed", result.Errors[0].Message);
+        result.IsFailed.Should().BeTrue();
+        result.Errors.FirstOrDefault()?.Message.Should().Be("MemberRepository failed");
         await _memberRepository.Received(1).GetAsync(Arg.Any<int>(), Arg.Any<int>());
     }
 }

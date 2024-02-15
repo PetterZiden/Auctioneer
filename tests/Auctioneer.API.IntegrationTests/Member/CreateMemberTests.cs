@@ -1,7 +1,3 @@
-using System.Net;
-using System.Text;
-using System.Text.Json;
-using Auctioneer.API.IntegrationTests.Extensions;
 using Auctioneer.Application.Features.Members.Contracts;
 
 namespace Auctioneer.API.IntegrationTests.Member;
@@ -19,8 +15,8 @@ public class CreateMemberTests(AuctioneerApiFactory factory) : BaseIntegrationTe
                 new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json"))
             .DeserializeResponseAsync<Guid>();
 
-        Assert.True(response.IsSuccess);
-        Assert.IsType<Guid>(response.Value);
+        response.IsSuccess.Should().BeTrue();
+        response.Value.Should().NotBeEmpty();
     }
 
     [Fact]
@@ -33,10 +29,10 @@ public class CreateMemberTests(AuctioneerApiFactory factory) : BaseIntegrationTe
                 new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json"))
             .DeserializeResponseAsync<List<string>>();
 
-        Assert.False(response.IsSuccess);
-        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-        Assert.NotNull(response.Value);
-        Assert.Equal("'First Name' must not be empty.", response.Value.FirstOrDefault());
+        response.IsSuccess.Should().BeFalse();
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        response.Value.Should().NotBeNull();
+        response.Value!.FirstOrDefault().Should().Be("'First Name' must not be empty.");
     }
 
     [Fact]
@@ -49,10 +45,10 @@ public class CreateMemberTests(AuctioneerApiFactory factory) : BaseIntegrationTe
                 new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json"))
             .DeserializeResponseAsync<List<string>>();
 
-        Assert.False(response.IsSuccess);
-        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-        Assert.NotNull(response.Value);
-        Assert.Equal("'Last Name' must not be empty.", response.Value.FirstOrDefault());
+        response.IsSuccess.Should().BeFalse();
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        response.Value.Should().NotBeNull();
+        response.Value!.FirstOrDefault().Should().Be("'Last Name' must not be empty.");
     }
 
     [Fact]
@@ -65,9 +61,9 @@ public class CreateMemberTests(AuctioneerApiFactory factory) : BaseIntegrationTe
                 new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json"))
             .DeserializeResponseAsync<List<string>>();
 
-        Assert.False(response.IsSuccess);
-        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-        Assert.NotNull(response.Value);
-        Assert.Equal("'Email' is not a valid email address.", response.Value.FirstOrDefault());
+        response.IsSuccess.Should().BeFalse();
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        response.Value.Should().NotBeNull();
+        response.Value!.FirstOrDefault().Should().Be("'Email' is not a valid email address.");
     }
 }

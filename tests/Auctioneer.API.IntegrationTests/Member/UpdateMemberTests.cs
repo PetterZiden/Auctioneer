@@ -1,7 +1,3 @@
-using System.Net;
-using System.Text;
-using System.Text.Json;
-using Auctioneer.API.IntegrationTests.Extensions;
 using Auctioneer.Application.Features.Members.Contracts;
 
 namespace Auctioneer.API.IntegrationTests.Member;
@@ -22,13 +18,14 @@ public class UpdateMemberTests(AuctioneerApiFactory factory) : BaseIntegrationTe
 
         var member = await MemberRepository.GetAsync(memberId);
 
-        Assert.True(response.IsSuccessStatusCode);
-        Assert.Equal(request.FirstName, member?.FirstName);
-        Assert.Equal(request.LastName, member?.LastName);
-        Assert.Equal(request.Street, member?.Address.Street);
-        Assert.Equal(request.ZipCode, member?.Address.Zipcode);
-        Assert.Equal(request.City, member?.Address.City);
-        Assert.Equal(request.PhoneNumber, member?.PhoneNumber);
+        response.IsSuccessStatusCode.Should().BeTrue();
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        member?.FirstName.Should().Be(request.FirstName);
+        member?.LastName.Should().Be(request.LastName);
+        member?.Address.Street.Should().Be(request.Street);
+        member?.Address.Zipcode.Should().Be(request.ZipCode);
+        member?.Address.City.Should().Be(request.City);
+        member?.PhoneNumber.Should().Be(request.PhoneNumber);
     }
 
     [Fact]
@@ -43,10 +40,11 @@ public class UpdateMemberTests(AuctioneerApiFactory factory) : BaseIntegrationTe
 
         var member = await MemberRepository.GetAsync(memberId);
 
-        Assert.True(response.IsSuccessStatusCode);
-        Assert.Equal(request.Street, member?.Address.Street);
-        Assert.Equal(request.ZipCode, member?.Address.Zipcode);
-        Assert.Equal(request.City, member?.Address.City);
+        response.IsSuccessStatusCode.Should().BeTrue();
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        member?.Address.Street.Should().Be(request.Street);
+        member?.Address.Zipcode.Should().Be(request.ZipCode);
+        member?.Address.City.Should().Be(request.City);
     }
 
     [Fact]
@@ -59,10 +57,10 @@ public class UpdateMemberTests(AuctioneerApiFactory factory) : BaseIntegrationTe
                 new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json"))
             .DeserializeResponseAsync<string>();
 
-        Assert.False(response.IsSuccess);
-        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
-        Assert.NotNull(response.Value);
-        Assert.Equal("No member found", response.Value);
+        response.IsSuccess.Should().BeFalse();
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        response.Value.Should().NotBeNull();
+        response.Value.Should().Be("No member found");
     }
 
     [Fact]
@@ -79,11 +77,11 @@ public class UpdateMemberTests(AuctioneerApiFactory factory) : BaseIntegrationTe
 
         var member = await MemberRepository.GetAsync(memberId);
 
-        Assert.False(response.IsSuccess);
-        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-        Assert.NotNull(response.Value);
-        Assert.Equal("Phone number can not be the same as current phone number", response.Value);
-        Assert.Equal("0734443322", member?.PhoneNumber);
+        response.IsSuccess.Should().BeFalse();
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        response.Value.Should().NotBeNull();
+        response.Value.Should().Be("Phone number can not be the same as current phone number");
+        member?.PhoneNumber.Should().Be("0734443322");
     }
 
     [Fact]
@@ -100,11 +98,11 @@ public class UpdateMemberTests(AuctioneerApiFactory factory) : BaseIntegrationTe
 
         var member = await MemberRepository.GetAsync(memberId);
 
-        Assert.False(response.IsSuccess);
-        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-        Assert.NotNull(response.Value);
-        Assert.Equal("Last name can not be the same as current last name", response.Value);
-        Assert.Equal("Testsson", member?.LastName);
+        response.IsSuccess.Should().BeFalse();
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        response.Value.Should().NotBeNull();
+        response.Value.Should().Be("Last name can not be the same as current last name");
+        member?.LastName.Should().Be("Testsson");
     }
 
     [Fact]
@@ -121,11 +119,11 @@ public class UpdateMemberTests(AuctioneerApiFactory factory) : BaseIntegrationTe
 
         var member = await MemberRepository.GetAsync(memberId);
 
-        Assert.False(response.IsSuccess);
-        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-        Assert.NotNull(response.Value);
-        Assert.Equal("First name can not be the same as current first name", response.Value);
-        Assert.Equal("Test", member?.FirstName);
+        response.IsSuccess.Should().BeFalse();
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        response.Value.Should().NotBeNull();
+        response.Value.Should().Be("First name can not be the same as current first name");
+        member?.FirstName.Should().Be("Test");
     }
 
     private async Task<Guid> SetupMember()

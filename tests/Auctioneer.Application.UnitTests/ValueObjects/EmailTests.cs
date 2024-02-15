@@ -11,11 +11,11 @@ public class EmailTests
         var email1 = new Email("test@test.se");
         var email2 = new Email("test@test.se");
 
-        Assert.Equal(email1, email2);
-        Assert.True(EqualityComparer<Email>.Default.Equals(email1, email2));
-        Assert.True(Equals(email1, email2));
-        Assert.True(email1.Equals(email2));
-        Assert.True(email1 == email2);
+        email2.Should().Be(email1);
+        EqualityComparer<Email>.Default.Equals(email1, email2).Should().BeTrue();
+        Equals(email1, email2).Should().BeTrue();
+        email1.Equals(email2).Should().BeTrue();
+        (email1 == email2).Should().BeTrue();
     }
 
     [Fact]
@@ -24,24 +24,24 @@ public class EmailTests
         var email1 = new Email("test@test.se");
         var email2 = new Email("test1@test.se");
 
-        Assert.NotEqual(email1, email2);
-        Assert.False(EqualityComparer<Email>.Default.Equals(email1, email2));
-        Assert.False(Equals(email1, email2));
-        Assert.False(email1.Equals(email2));
-        Assert.False(email1 == email2);
+        email2.Should().NotBe(email1);
+        EqualityComparer<Email>.Default.Equals(email1, email2).Should().BeFalse();
+        Equals(email1, email2).Should().BeFalse();
+        email1.Equals(email2).Should().BeFalse();
+        (email1 == email2).Should().BeFalse();
     }
 
     [Fact]
     public void Email_Should_Throw_ValidationException_If_Email_Is_Not_Valid_Format()
     {
         Action a = () => new Email("test.se");
-        Assert.Throws<ValidationException>(a);
+        a.Should().Throw<ValidationException>();
     }
 
     [Fact]
     public void Email_Should_Throw_ArgumentNullException_If_Email_Is_Null()
     {
         Action a = () => new Email(null);
-        Assert.Throws<ArgumentNullException>(a);
+        a.Should().Throw<ArgumentNullException>();
     }
 }

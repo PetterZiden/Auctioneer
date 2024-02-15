@@ -1,7 +1,3 @@
-using System.Net;
-using System.Text;
-using System.Text.Json;
-using Auctioneer.API.IntegrationTests.Extensions;
 using Auctioneer.Application.Features.Auctions.Contracts;
 
 namespace Auctioneer.API.IntegrationTests.Auction;
@@ -26,8 +22,9 @@ public class CreateAuctionTests(AuctioneerApiFactory factory) : BaseIntegrationT
                 new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json"))
             .DeserializeResponseAsync<Guid>();
 
-        Assert.True(response.IsSuccess);
-        Assert.IsType<Guid>(response.Value);
+        response.IsSuccess.Should().BeTrue();
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        response.Value.Should().NotBeEmpty();
     }
 
     [Fact]
@@ -46,9 +43,9 @@ public class CreateAuctionTests(AuctioneerApiFactory factory) : BaseIntegrationT
                 new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json"))
             .DeserializeResponseAsync<string>();
 
-        Assert.False(response.IsSuccess);
-        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
-        Assert.Equal("No member found", response.Value);
+        response.IsSuccess.Should().BeFalse();
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        response.Value.Should().Be("No member found");
     }
 
     [Fact]
@@ -67,10 +64,10 @@ public class CreateAuctionTests(AuctioneerApiFactory factory) : BaseIntegrationT
                 new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json"))
             .DeserializeResponseAsync<List<string>>();
 
-        Assert.False(response.IsSuccess);
-        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-        Assert.NotNull(response.Value);
-        Assert.Equal("'Title' must not be empty.", response.Value.FirstOrDefault());
+        response.IsSuccess.Should().BeFalse();
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        response.Value.Should().NotBeNull();
+        response.Value!.FirstOrDefault().Should().Be("'Title' must not be empty.");
     }
 
     [Fact]
@@ -89,10 +86,10 @@ public class CreateAuctionTests(AuctioneerApiFactory factory) : BaseIntegrationT
                 new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json"))
             .DeserializeResponseAsync<List<string>>();
 
-        Assert.False(response.IsSuccess);
-        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-        Assert.NotNull(response.Value);
-        Assert.Equal("'Description' must not be empty.", response.Value.FirstOrDefault());
+        response.IsSuccess.Should().BeFalse();
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        response.Value.Should().NotBeNull();
+        response.Value!.FirstOrDefault().Should().Be("'Description' must not be empty.");
     }
 
     [Fact]
@@ -111,10 +108,10 @@ public class CreateAuctionTests(AuctioneerApiFactory factory) : BaseIntegrationT
                 new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json"))
             .DeserializeResponseAsync<List<string>>();
 
-        Assert.False(response.IsSuccess);
-        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-        Assert.NotNull(response.Value);
-        Assert.Equal("'Starting Price' must be greater than '-1'.", response.Value.FirstOrDefault());
+        response.IsSuccess.Should().BeFalse();
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        response.Value.Should().NotBeNull();
+        response.Value!.FirstOrDefault().Should().Be("'Starting Price' must be greater than '-1'.");
     }
 
     private async Task<Guid> SetupMember()

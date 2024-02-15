@@ -1,7 +1,3 @@
-using System.Net;
-using System.Text;
-using System.Text.Json;
-using Auctioneer.API.IntegrationTests.Extensions;
 using Auctioneer.Application.Common.Models;
 
 namespace Auctioneer.API.IntegrationTests.Auction;
@@ -28,9 +24,10 @@ public class PlaceBidTests(AuctioneerApiFactory factory) : BaseIntegrationTest(f
         var auction = await AuctionRepository.GetAsync(auctionId);
         var member = await MemberRepository.GetAsync(memberId);
 
-        Assert.True(response.IsSuccessStatusCode);
-        Assert.Equal(1, auction?.Bids.Count);
-        Assert.Equal(1, member?.Bids.Count);
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        response.IsSuccessStatusCode.Should().BeTrue();
+        auction?.Bids.Should().HaveCount(1);
+        member?.Bids.Should().HaveCount(1);
     }
 
     [Fact]
@@ -48,10 +45,9 @@ public class PlaceBidTests(AuctioneerApiFactory factory) : BaseIntegrationTest(f
                 new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json"))
             .DeserializeResponseAsync<string>();
 
-        Assert.False(response.IsSuccess);
-        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
-        Assert.NotNull(response.Value);
-        Assert.Equal("No auction found", response.Value);
+        response.IsSuccess.Should().BeFalse();
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        response.Value.Should().Be("No auction found");
     }
 
     [Fact]
@@ -70,10 +66,9 @@ public class PlaceBidTests(AuctioneerApiFactory factory) : BaseIntegrationTest(f
                 new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json"))
             .DeserializeResponseAsync<string>();
 
-        Assert.False(response.IsSuccess);
-        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
-        Assert.NotNull(response.Value);
-        Assert.Equal("No member found", response.Value);
+        response.IsSuccess.Should().BeFalse();
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        response.Value.Should().Be("No member found");
     }
 
     [Fact]
@@ -93,10 +88,10 @@ public class PlaceBidTests(AuctioneerApiFactory factory) : BaseIntegrationTest(f
                 new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json"))
             .DeserializeResponseAsync<string>();
 
-        Assert.False(response.IsSuccess);
-        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-        Assert.NotNull(response.Value);
-        Assert.StartsWith("Bid must be greater than current price:", response.Value);
+        response.IsSuccess.Should().BeFalse();
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        response.Value.Should().NotBeNull();
+        response.Value.Should().StartWith("Bid must be greater than current price:");
     }
 
     [Fact]
@@ -114,10 +109,10 @@ public class PlaceBidTests(AuctioneerApiFactory factory) : BaseIntegrationTest(f
                 new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json"))
             .DeserializeResponseAsync<List<string>>();
 
-        Assert.False(response.IsSuccess);
-        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-        Assert.NotNull(response.Value);
-        Assert.Equal("'Auction Id' must not be empty.", response.Value.FirstOrDefault());
+        response.IsSuccess.Should().BeFalse();
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        response.Value.Should().NotBeNull();
+        response.Value!.FirstOrDefault().Should().Be("'Auction Id' must not be empty.");
     }
 
     [Fact]
@@ -135,10 +130,10 @@ public class PlaceBidTests(AuctioneerApiFactory factory) : BaseIntegrationTest(f
                 new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json"))
             .DeserializeResponseAsync<List<string>>();
 
-        Assert.False(response.IsSuccess);
-        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-        Assert.NotNull(response.Value);
-        Assert.Equal("'Member Id' must not be empty.", response.Value.FirstOrDefault());
+        response.IsSuccess.Should().BeFalse();
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        response.Value.Should().NotBeNull();
+        response.Value!.FirstOrDefault().Should().Be("'Member Id' must not be empty.");
     }
 
     [Fact]
@@ -156,10 +151,10 @@ public class PlaceBidTests(AuctioneerApiFactory factory) : BaseIntegrationTest(f
                 new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json"))
             .DeserializeResponseAsync<List<string>>();
 
-        Assert.False(response.IsSuccess);
-        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-        Assert.NotNull(response.Value);
-        Assert.Equal("'Bid Price' must be greater than '0'.", response.Value.FirstOrDefault());
+        response.IsSuccess.Should().BeFalse();
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        response.Value.Should().NotBeNull();
+        response.Value!.FirstOrDefault().Should().Be("'Bid Price' must be greater than '0'.");
     }
 
     private async Task<Guid> SetupAuction(Guid memberId)

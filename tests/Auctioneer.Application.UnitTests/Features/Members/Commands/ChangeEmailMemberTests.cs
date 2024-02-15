@@ -2,8 +2,6 @@ using Auctioneer.Application.Common;
 using Auctioneer.Application.Common.Interfaces;
 using Auctioneer.Application.Entities;
 using Auctioneer.Application.Features.Members.Commands;
-using FluentValidation.TestHelper;
-using NSubstitute;
 
 namespace Auctioneer.Application.UnitTests.Features.Members.Commands;
 
@@ -36,7 +34,7 @@ public class ChangeEmailMemberTests
 
         var result = await _handler.Handle(GetValidCommand(validMember.Id), new CancellationToken());
 
-        Assert.True(result.IsSuccess);
+        result.IsSuccess.Should().BeTrue();
         await _memberRepository.Received(1).GetAsync(Arg.Any<Guid>());
         await _memberRepository.Received(1)
             .UpdateAsync(Arg.Any<Guid>(), Arg.Any<Member>(), Arg.Any<CancellationToken>());
@@ -56,8 +54,8 @@ public class ChangeEmailMemberTests
             Email = "test@test.se"
         }, new CancellationToken());
 
-        Assert.True(result.IsFailed);
-        Assert.Equal("Email can not be the same as current email", result.Errors[0].Message);
+        result.IsFailed.Should().BeTrue();
+        result.Errors.FirstOrDefault()?.Message.Should().Be("Email can not be the same as current email");
         await _memberRepository.Received(1).GetAsync(Arg.Any<Guid>());
         await _memberRepository.Received(0)
             .UpdateAsync(Arg.Any<Guid>(), Arg.Any<Member>(), Arg.Any<CancellationToken>());
@@ -77,8 +75,9 @@ public class ChangeEmailMemberTests
             Email = null
         }, new CancellationToken());
 
-        Assert.True(result.IsFailed);
-        Assert.Equal("Value cannot be null. (Parameter 'email')", result.Errors[0].Message);
+
+        result.IsFailed.Should().BeTrue();
+        result.Errors.FirstOrDefault()?.Message.Should().Be("Value cannot be null. (Parameter 'email')");
     }
 
     [Fact]
@@ -88,8 +87,8 @@ public class ChangeEmailMemberTests
 
         var result = await _handler.Handle(GetValidCommand(Guid.NewGuid()), new CancellationToken());
 
-        Assert.True(result.IsFailed);
-        Assert.Equal("No member found", result.Errors[0].Message);
+        result.IsFailed.Should().BeTrue();
+        result.Errors.FirstOrDefault()?.Message.Should().Be("No member found");
         await _memberRepository.Received(1).GetAsync(Arg.Any<Guid>());
         await _memberRepository.Received(0)
             .UpdateAsync(Arg.Any<Guid>(), Arg.Any<Member>(), Arg.Any<CancellationToken>());
@@ -110,8 +109,8 @@ public class ChangeEmailMemberTests
 
         var result = await _handler.Handle(GetValidCommand(validMember.Id), new CancellationToken());
 
-        Assert.True(result.IsFailed);
-        Assert.Equal("MemberRepository failed", result.Errors[0].Message);
+        result.IsFailed.Should().BeTrue();
+        result.Errors.FirstOrDefault()?.Message.Should().Be("MemberRepository failed");
         await _memberRepository.Received(1).GetAsync(Arg.Any<Guid>());
         await _memberRepository.Received(1)
             .UpdateAsync(Arg.Any<Guid>(), Arg.Any<Member>(), Arg.Any<CancellationToken>());
@@ -133,8 +132,8 @@ public class ChangeEmailMemberTests
 
         var result = await _handler.Handle(GetValidCommand(validMember.Id), new CancellationToken());
 
-        Assert.True(result.IsFailed);
-        Assert.Equal("EventRepository failed", result.Errors[0].Message);
+        result.IsFailed.Should().BeTrue();
+        result.Errors.FirstOrDefault()?.Message.Should().Be("EventRepository failed");
         await _memberRepository.Received(1).GetAsync(Arg.Any<Guid>());
         await _memberRepository.Received(1)
             .UpdateAsync(Arg.Any<Guid>(), Arg.Any<Member>(), Arg.Any<CancellationToken>());
@@ -155,8 +154,8 @@ public class ChangeEmailMemberTests
 
         var result = await _handler.Handle(GetValidCommand(validMember.Id), new CancellationToken());
 
-        Assert.True(result.IsFailed);
-        Assert.Equal("UnitOfWork failed", result.Errors[0].Message);
+        result.IsFailed.Should().BeTrue();
+        result.Errors.FirstOrDefault()?.Message.Should().Be("UnitOfWork failed");
         await _memberRepository.Received(1).GetAsync(Arg.Any<Guid>());
         await _memberRepository.Received(1)
             .UpdateAsync(Arg.Any<Guid>(), Arg.Any<Member>(), Arg.Any<CancellationToken>());

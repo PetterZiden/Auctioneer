@@ -2,8 +2,6 @@ using Auctioneer.Application.Common;
 using Auctioneer.Application.Common.Interfaces;
 using Auctioneer.Application.Entities;
 using Auctioneer.Application.Features.Auctions.Commands;
-using FluentValidation.TestHelper;
-using NSubstitute;
 
 namespace Auctioneer.Application.UnitTests.Features.Auctions.Commands;
 
@@ -36,7 +34,7 @@ public class UpdateAuctionTests
 
         var result = await _handler.Handle(GetValidCommand(), new CancellationToken());
 
-        Assert.True(result.IsSuccess);
+        result.IsSuccess.Should().BeTrue();
         await _auctionRepository.Received(1).GetAsync(Arg.Any<Guid>());
         await _auctionRepository.Received(1)
             .UpdateAsync(Arg.Any<Guid>(), Arg.Any<Auction>(), Arg.Any<CancellationToken>());
@@ -51,8 +49,8 @@ public class UpdateAuctionTests
 
         var result = await _handler.Handle(GetValidCommand(), new CancellationToken());
 
-        Assert.True(result.IsFailed);
-        Assert.Equal("No auction found", result.Errors[0].Message);
+        result.IsFailed.Should().BeTrue();
+        result.Errors.FirstOrDefault()?.Message.Should().Be("No auction found");
         await _auctionRepository.Received(1).GetAsync(Arg.Any<Guid>());
         await _auctionRepository.Received(0)
             .UpdateAsync(Arg.Any<Guid>(), Arg.Any<Auction>(), Arg.Any<CancellationToken>());
@@ -73,8 +71,8 @@ public class UpdateAuctionTests
 
         var result = await _handler.Handle(GetValidCommand(), new CancellationToken());
 
-        Assert.True(result.IsFailed);
-        Assert.Equal("AuctionRepository failed", result.Errors[0].Message);
+        result.IsFailed.Should().BeTrue();
+        result.Errors.FirstOrDefault()?.Message.Should().Be("AuctionRepository failed");
         await _auctionRepository.Received(1).GetAsync(Arg.Any<Guid>());
         await _auctionRepository.Received(1)
             .UpdateAsync(Arg.Any<Guid>(), Arg.Any<Auction>(), Arg.Any<CancellationToken>());
@@ -96,8 +94,8 @@ public class UpdateAuctionTests
 
         var result = await _handler.Handle(GetValidCommand(), new CancellationToken());
 
-        Assert.True(result.IsFailed);
-        Assert.Equal("EventRepository failed", result.Errors[0].Message);
+        result.IsFailed.Should().BeTrue();
+        result.Errors.FirstOrDefault()?.Message.Should().Be("EventRepository failed");
         await _auctionRepository.Received(1).GetAsync(Arg.Any<Guid>());
         await _auctionRepository.Received(0)
             .UpdateAsync(Arg.Any<Guid>(), Arg.Any<Auction>(), Arg.Any<CancellationToken>());
@@ -118,8 +116,8 @@ public class UpdateAuctionTests
 
         var result = await _handler.Handle(GetValidCommand(), new CancellationToken());
 
-        Assert.True(result.IsFailed);
-        Assert.Equal("UnitOfWork failed", result.Errors[0].Message);
+        result.IsFailed.Should().BeTrue();
+        result.Errors.FirstOrDefault()?.Message.Should().Be("UnitOfWork failed");
         await _auctionRepository.Received(1).GetAsync(Arg.Any<Guid>());
         await _auctionRepository.Received(1)
             .UpdateAsync(Arg.Any<Guid>(), Arg.Any<Auction>(), Arg.Any<CancellationToken>());

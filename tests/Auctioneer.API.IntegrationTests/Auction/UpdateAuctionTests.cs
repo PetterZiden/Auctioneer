@@ -1,7 +1,3 @@
-using System.Net;
-using System.Text;
-using System.Text.Json;
-using Auctioneer.API.IntegrationTests.Extensions;
 using Auctioneer.Application.Features.Auctions.Contracts;
 
 namespace Auctioneer.API.IntegrationTests.Auction;
@@ -21,10 +17,11 @@ public class UpdateAuctionTests(AuctioneerApiFactory factory) : BaseIntegrationT
 
         var auction = await AuctionRepository.GetAsync(auctionId);
 
-        Assert.True(response.IsSuccessStatusCode);
-        Assert.Equal(request.Title, auction?.Title);
-        Assert.Equal(request.Description, auction?.Description);
-        Assert.Equal(request.ImgRoute, auction?.ImgRoute);
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        response.IsSuccessStatusCode.Should().BeTrue();
+        auction?.Title.Should().Be(request.Title);
+        auction?.Description.Should().Be(request.Description);
+        auction?.ImgRoute.Should().Be(request.ImgRoute);
     }
 
     [Fact]
@@ -37,10 +34,9 @@ public class UpdateAuctionTests(AuctioneerApiFactory factory) : BaseIntegrationT
                 new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json"))
             .DeserializeResponseAsync<string>();
 
-        Assert.False(response.IsSuccess);
-        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
-        Assert.NotNull(response.Value);
-        Assert.Equal("No auction found", response.Value);
+        response.IsSuccess.Should().BeFalse();
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        response.Value.Should().Be("No auction found");
     }
 
     [Fact]
@@ -56,11 +52,11 @@ public class UpdateAuctionTests(AuctioneerApiFactory factory) : BaseIntegrationT
 
         var auction = await AuctionRepository.GetAsync(auctionId);
 
-        Assert.False(response.IsSuccess);
-        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-        Assert.NotNull(response.Value);
-        Assert.Equal("Title can not be the same as current title", response.Value);
-        Assert.Equal("TestAuction", auction?.Title);
+        response.IsSuccess.Should().BeFalse();
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        response.Value.Should().NotBeNull();
+        response.Value.Should().Be("Title can not be the same as current title");
+        auction?.Title.Should().Be("TestAuction");
     }
 
     [Fact]
@@ -76,11 +72,11 @@ public class UpdateAuctionTests(AuctioneerApiFactory factory) : BaseIntegrationT
 
         var auction = await AuctionRepository.GetAsync(auctionId);
 
-        Assert.False(response.IsSuccess);
-        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-        Assert.NotNull(response.Value);
-        Assert.Equal("Description can not be the same as current description", response.Value);
-        Assert.Equal("TestDescription", auction?.Description);
+        response.IsSuccess.Should().BeFalse();
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        response.Value.Should().NotBeNull();
+        response.Value.Should().Be("Description can not be the same as current description");
+        auction?.Description.Should().Be("TestDescription");
     }
 
     [Fact]
@@ -96,11 +92,11 @@ public class UpdateAuctionTests(AuctioneerApiFactory factory) : BaseIntegrationT
 
         var auction = await AuctionRepository.GetAsync(auctionId);
 
-        Assert.False(response.IsSuccess);
-        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-        Assert.NotNull(response.Value);
-        Assert.Equal("Image route can not be the same as current image route", response.Value);
-        Assert.Equal("../images/test.jpg", auction?.ImgRoute);
+        response.IsSuccess.Should().BeFalse();
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        response.Value.Should().NotBeNull();
+        response.Value.Should().Be("Image route can not be the same as current image route");
+        auction?.ImgRoute.Should().Be("../images/test.jpg");
     }
 
     private async Task<Guid> SetupAuction()

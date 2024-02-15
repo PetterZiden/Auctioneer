@@ -2,8 +2,6 @@ using Auctioneer.Application.Common;
 using Auctioneer.Application.Common.Interfaces;
 using Auctioneer.Application.Entities;
 using Auctioneer.Application.Features.Members.Commands;
-using FluentValidation.TestHelper;
-using NSubstitute;
 
 namespace Auctioneer.Application.UnitTests.Features.Members.Commands;
 
@@ -33,8 +31,8 @@ public class CreateMemberTests
 
         var result = await _handler.Handle(GetValidCommand(), new CancellationToken());
 
-        Assert.True(result.IsSuccess);
-        Assert.IsType<Guid>(result.Value);
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().NotBeEmpty();
         await _memberRepository.Received(1).CreateAsync(Arg.Any<Member>(), Arg.Any<CancellationToken>());
         await _eventRepository.Received(1).CreateAsync(Arg.Any<DomainEvent>(), Arg.Any<CancellationToken>());
         await _unitOfWork.Received(1).SaveAsync();
@@ -56,8 +54,8 @@ public class CreateMemberTests
 
         var result = await _handler.Handle(request, new CancellationToken());
 
-        Assert.True(result.IsFailed);
-        Assert.Equal("First name can not be empty", result.Errors[0].Message);
+        result.IsFailed.Should().BeTrue();
+        result.Errors.FirstOrDefault()?.Message.Should().Be("First name can not be empty");
         await _memberRepository.Received(0).CreateAsync(Arg.Any<Member>(), Arg.Any<CancellationToken>());
         await _eventRepository.Received(0).CreateAsync(Arg.Any<DomainEvent>(), Arg.Any<CancellationToken>());
         await _unitOfWork.Received(0).SaveAsync();
@@ -79,8 +77,8 @@ public class CreateMemberTests
 
         var result = await _handler.Handle(request, new CancellationToken());
 
-        Assert.True(result.IsFailed);
-        Assert.Equal("Last name can not be empty", result.Errors[0].Message);
+        result.IsFailed.Should().BeTrue();
+        result.Errors.FirstOrDefault()?.Message.Should().Be("Last name can not be empty");
     }
 
     [Fact]
@@ -99,8 +97,8 @@ public class CreateMemberTests
 
         var result = await _handler.Handle(request, new CancellationToken());
 
-        Assert.True(result.IsFailed);
-        Assert.Equal("Value cannot be null. (Parameter 'email')", result.Errors[0].Message);
+        result.IsFailed.Should().BeTrue();
+        result.Errors.FirstOrDefault()?.Message.Should().Be("Value cannot be null. (Parameter 'email')");
     }
 
     [Fact]
@@ -119,8 +117,8 @@ public class CreateMemberTests
 
         var result = await _handler.Handle(request, new CancellationToken());
 
-        Assert.True(result.IsFailed);
-        Assert.Equal("Phone number can not be empty", result.Errors[0].Message);
+        result.IsFailed.Should().BeTrue();
+        result.Errors.FirstOrDefault()?.Message.Should().Be("Phone number can not be empty");
     }
 
     [Fact]
@@ -139,8 +137,8 @@ public class CreateMemberTests
 
         var result = await _handler.Handle(request, new CancellationToken());
 
-        Assert.True(result.IsFailed);
-        Assert.Equal("Value cannot be null. (Parameter 'street')", result.Errors[0].Message);
+        result.IsFailed.Should().BeTrue();
+        result.Errors.FirstOrDefault()?.Message.Should().Be("Value cannot be null. (Parameter 'street')");
     }
 
     [Fact]
@@ -159,8 +157,8 @@ public class CreateMemberTests
 
         var result = await _handler.Handle(request, new CancellationToken());
 
-        Assert.True(result.IsFailed);
-        Assert.Equal("Value cannot be null. (Parameter 'zipcode')", result.Errors[0].Message);
+        result.IsFailed.Should().BeTrue();
+        result.Errors.FirstOrDefault()?.Message.Should().Be("Value cannot be null. (Parameter 'zipcode')");
     }
 
     [Fact]
@@ -179,8 +177,8 @@ public class CreateMemberTests
 
         var result = await _handler.Handle(request, new CancellationToken());
 
-        Assert.True(result.IsFailed);
-        Assert.Equal("Value cannot be null. (Parameter 'city')", result.Errors[0].Message);
+        result.IsFailed.Should().BeTrue();
+        result.Errors.FirstOrDefault()?.Message.Should().Be("Value cannot be null. (Parameter 'city')");
     }
 
     [Fact]
@@ -194,8 +192,8 @@ public class CreateMemberTests
 
         var result = await _handler.Handle(GetValidCommand(), new CancellationToken());
 
-        Assert.True(result.IsFailed);
-        Assert.Equal("MemberRepository failed", result.Errors[0].Message);
+        result.IsFailed.Should().BeTrue();
+        result.Errors.FirstOrDefault()?.Message.Should().Be("MemberRepository failed");
         await _memberRepository.Received(1).CreateAsync(Arg.Any<Member>(), Arg.Any<CancellationToken>());
         await _eventRepository.Received(0).CreateAsync(Arg.Any<DomainEvent>(), Arg.Any<CancellationToken>());
         await _unitOfWork.Received(0).SaveAsync();
@@ -212,8 +210,8 @@ public class CreateMemberTests
 
         var result = await _handler.Handle(GetValidCommand(), new CancellationToken());
 
-        Assert.True(result.IsFailed);
-        Assert.Equal("EventRepository failed", result.Errors[0].Message);
+        result.IsFailed.Should().BeTrue();
+        result.Errors.FirstOrDefault()?.Message.Should().Be("EventRepository failed");
         await _memberRepository.Received(1).CreateAsync(Arg.Any<Member>(), Arg.Any<CancellationToken>());
         await _eventRepository.Received(1).CreateAsync(Arg.Any<DomainEvent>(), Arg.Any<CancellationToken>());
         await _unitOfWork.Received(0).SaveAsync();
@@ -229,8 +227,8 @@ public class CreateMemberTests
 
         var result = await _handler.Handle(GetValidCommand(), new CancellationToken());
 
-        Assert.True(result.IsFailed);
-        Assert.Equal("UnitOfWork failed", result.Errors[0].Message);
+        result.IsFailed.Should().BeTrue();
+        result.Errors.FirstOrDefault()?.Message.Should().Be("UnitOfWork failed");
         await _memberRepository.Received(1).CreateAsync(Arg.Any<Member>(), Arg.Any<CancellationToken>());
         await _eventRepository.Received(1).CreateAsync(Arg.Any<DomainEvent>(), Arg.Any<CancellationToken>());
         await _unitOfWork.Received(1).SaveAsync();

@@ -1,5 +1,3 @@
-using System.Net;
-using Auctioneer.API.IntegrationTests.Extensions;
 using Auctioneer.Application.Features.Members.Dto;
 
 namespace Auctioneer.API.IntegrationTests.Member;
@@ -15,9 +13,10 @@ public class GetMemberTests(AuctioneerApiFactory factory) : BaseIntegrationTest(
         var response = await Client.GetAsync($"https://localhost:7298/api/member/{member.Id}")
             .DeserializeResponseAsync<MemberDto>();
 
-        Assert.True(response.IsSuccess);
-        Assert.NotNull(response.Value);
-        Assert.IsType<MemberDto>(response.Value);
+        response.IsSuccess.Should().BeTrue();
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        response.Value.Should().NotBeNull();
+        response.Value.Should().BeOfType<MemberDto>();
     }
 
     [Fact]
@@ -26,9 +25,10 @@ public class GetMemberTests(AuctioneerApiFactory factory) : BaseIntegrationTest(
         var response = await Client.GetAsync($"https://localhost:7298/api/member/{Guid.NewGuid()}")
             .DeserializeResponseAsync<string>();
 
-        Assert.False(response.IsSuccess);
-        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
-        Assert.Equal("No member found", response.Value);
+        response.IsSuccess.Should().BeFalse();
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        response.Value.Should().NotBeNull();
+        response.Value.Should().Be("No member found");
     }
 
     [Fact]
@@ -36,8 +36,8 @@ public class GetMemberTests(AuctioneerApiFactory factory) : BaseIntegrationTest(
     {
         var response = await Client.GetAsync("https://localhost:7298/api/member/id234");
 
-        Assert.False(response.IsSuccessStatusCode);
-        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        response.IsSuccessStatusCode.Should().BeFalse();
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
     private async Task<Application.Entities.Member> SetupMember()

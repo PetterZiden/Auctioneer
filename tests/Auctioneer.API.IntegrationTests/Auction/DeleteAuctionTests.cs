@@ -1,6 +1,3 @@
-using System.Net;
-using Auctioneer.API.IntegrationTests.Extensions;
-
 namespace Auctioneer.API.IntegrationTests.Auction;
 
 [Collection("BaseIntegrationTest")]
@@ -15,8 +12,9 @@ public class DeleteAuctionTests(AuctioneerApiFactory factory) : BaseIntegrationT
 
         var auction = await AuctionRepository.GetAsync(auctionId);
 
-        Assert.True(response.IsSuccessStatusCode);
-        Assert.Null(auction);
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        response.IsSuccessStatusCode.Should().BeTrue();
+        auction.Should().BeNull();
     }
 
     [Fact]
@@ -25,10 +23,9 @@ public class DeleteAuctionTests(AuctioneerApiFactory factory) : BaseIntegrationT
         var response = await Client.DeleteAsync($"https://localhost:7298/api/auction/{Guid.NewGuid()}")
             .DeserializeResponseAsync<string>();
 
-        Assert.False(response.IsSuccess);
-        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
-        Assert.NotNull(response.Value);
-        Assert.Equal("No auction found", response.Value);
+        response.IsSuccess.Should().BeFalse();
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        response.Value.Should().Be("No auction found");
     }
 
     private async Task<Guid> SetupAuction()

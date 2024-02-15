@@ -73,7 +73,7 @@
     &lt;TestId&gt;xUnit::7A5268AD-31B0-4272-8624-F5021EA448A0::net7.0::Auctioneer.API.IntegrationTests.Auction.CreateAuctionTests.CreateAuctionsEndPoint_Should_Create_Auctions_And_Return_AuctionId_If_Request_Is_Valid&lt;/TestId&gt;
   &lt;/TestAncestor&gt;
 &lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=856fadb9_002D78d1_002D4cdb_002Dad51_002Db2919f3bccae/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="PlaceBidEndPoint_Should__Not_Place_Bid_On_Auction_If_Auction_Is_Not_Found #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=856fadb9_002D78d1_002D4cdb_002Dad51_002Db2919f3bccae/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="PlaceBidEndPoint_Should__Not_Place_Bid_On_Auction_If_Auction_Is_Not_Found #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
   &lt;TestAncestor&gt;
     &lt;TestId&gt;xUnit::7A5268AD-31B0-4272-8624-F5021EA448A0::net8.0::Auctioneer.API.IntegrationTests.Auction.PlaceBidTests.PlaceBidEndPoint_Should__Not_Place_Bid_On_Auction_If_Auction_Is_Not_Found&lt;/TestId&gt;
     &lt;TestId&gt;xUnit::7A5268AD-31B0-4272-8624-F5021EA448A0::net8.0::Auctioneer.API.IntegrationTests.Auction.UpdateAuctionTests.UpdateAuctionsEndPoint_Should_Update_Auctions_If_Request_Is_Valid&lt;/TestId&gt;
@@ -155,13 +155,16 @@
     &lt;Project Location="/Users/petterziden/Projects/Auctioneer/tests/Auctioneer.Application.UnitTests" Presentation="&amp;lt;Auctioneer.Application.UnitTests&amp;gt;" /&gt;
   &lt;/Or&gt;
 &lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=e45cf82a_002D1985_002D409f_002D82b1_002D75e1d70c23fe/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="PlaceBidEndPoint_Should__Not_Place_Bid_On_Auction_If_AuctionId_Is_Empty" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
-  &lt;TestAncestor&gt;
-    &lt;TestId&gt;xUnit::7A5268AD-31B0-4272-8624-F5021EA448A0::net8.0::Auctioneer.API.IntegrationTests.Auction.PlaceBidTests.PlaceBidEndPoint_Should__Not_Place_Bid_On_Auction_If_AuctionId_Is_Empty&lt;/TestId&gt;
-    &lt;TestId&gt;xUnit::7A5268AD-31B0-4272-8624-F5021EA448A0::net8.0::Auctioneer.API.IntegrationTests.Auction.PlaceBidTests.PlaceBidEndPoint_Should__Not_Place_Bid_On_Auction_If_MemberId_Is_Empty&lt;/TestId&gt;
-    &lt;TestId&gt;xUnit::7A5268AD-31B0-4272-8624-F5021EA448A0::net8.0::Auctioneer.API.IntegrationTests.Auction.PlaceBidTests.PlaceBidEndPoint_Should__Not_Place_Bid_On_Auction_If_BidPrice_Is_Less_Than_0&lt;/TestId&gt;
-    &lt;TestId&gt;xUnit::7A5268AD-31B0-4272-8624-F5021EA448A0::net8.0::Auctioneer.API.IntegrationTests.Auction.PlaceBidTests.PlaceBidEndPoint_Should__Not_Place_Bid_On_Auction_If_BidPrice_Is_Less_Or_Equal_To_CurrentPrice&lt;/TestId&gt;
-  &lt;/TestAncestor&gt;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=e45cf82a_002D1985_002D409f_002D82b1_002D75e1d70c23fe/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="PlaceBidEndPoint_Should__Not_Place_Bid_On_Auction_If_AuctionId_Is_Empty" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+  &lt;Or&gt;
+    &lt;TestAncestor&gt;
+      &lt;TestId&gt;xUnit::7A5268AD-31B0-4272-8624-F5021EA448A0::net8.0::Auctioneer.API.IntegrationTests.Auction.PlaceBidTests.PlaceBidEndPoint_Should__Not_Place_Bid_On_Auction_If_AuctionId_Is_Empty&lt;/TestId&gt;
+      &lt;TestId&gt;xUnit::7A5268AD-31B0-4272-8624-F5021EA448A0::net8.0::Auctioneer.API.IntegrationTests.Auction.PlaceBidTests.PlaceBidEndPoint_Should__Not_Place_Bid_On_Auction_If_MemberId_Is_Empty&lt;/TestId&gt;
+      &lt;TestId&gt;xUnit::7A5268AD-31B0-4272-8624-F5021EA448A0::net8.0::Auctioneer.API.IntegrationTests.Auction.PlaceBidTests.PlaceBidEndPoint_Should__Not_Place_Bid_On_Auction_If_BidPrice_Is_Less_Than_0&lt;/TestId&gt;
+      &lt;TestId&gt;xUnit::7A5268AD-31B0-4272-8624-F5021EA448A0::net8.0::Auctioneer.API.IntegrationTests.Auction.PlaceBidTests.PlaceBidEndPoint_Should__Not_Place_Bid_On_Auction_If_BidPrice_Is_Less_Or_Equal_To_CurrentPrice&lt;/TestId&gt;
+    &lt;/TestAncestor&gt;
+    &lt;Project Location="/Users/petterziden/Projects/Auctioneer/tests/Auctioneer.Application.UnitTests" Presentation="&amp;lt;Auctioneer.Application.UnitTests&amp;gt;" /&gt;
+  &lt;/Or&gt;
 &lt;/SessionState&gt;</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=e47e6d68_002De854_002D4f0f_002Dba59_002Dd80bb29d7731/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="GetAuctionsEndPoint_Should_Return_Not_Found_If_Auctions_Does_Not_Exist" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
   &lt;Or&gt;
