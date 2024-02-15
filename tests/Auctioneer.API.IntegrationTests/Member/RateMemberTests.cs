@@ -1,7 +1,3 @@
-using System.Net;
-using System.Text;
-using System.Text.Json;
-using Auctioneer.API.IntegrationTests.Extensions;
 using Auctioneer.Application.Common.Models;
 
 namespace Auctioneer.API.IntegrationTests.Member;
@@ -26,9 +22,10 @@ public class RateMemberTests(AuctioneerApiFactory factory) : BaseIntegrationTest
 
         var member = await MemberRepository.GetAsync(memberId);
 
-        Assert.True(response.IsSuccessStatusCode);
-        Assert.Equal(1, member?.Ratings.Count);
-        Assert.Equal(1, member?.NumberOfRatings);
+        response.IsSuccessStatusCode.Should().BeTrue();
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        member?.Ratings.Should().HaveCount(1);
+        member?.NumberOfRatings.Should().Be(1);
     }
 
     [Fact]
@@ -45,10 +42,10 @@ public class RateMemberTests(AuctioneerApiFactory factory) : BaseIntegrationTest
                 new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json"))
             .DeserializeResponseAsync<string>();
 
-        Assert.False(response.IsSuccess);
-        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
-        Assert.NotNull(response.Value);
-        Assert.Equal("No member found", response.Value);
+        response.IsSuccess.Should().BeFalse();
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        response.Value.Should().NotBeNull();
+        response.Value.Should().Be("No member found");
     }
 
     [Fact]
@@ -65,10 +62,10 @@ public class RateMemberTests(AuctioneerApiFactory factory) : BaseIntegrationTest
                 new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json"))
             .DeserializeResponseAsync<List<string>>();
 
-        Assert.False(response.IsSuccess);
-        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-        Assert.NotNull(response.Value);
-        Assert.Equal("'Rating From Member Id' must not be empty.", response.Value.FirstOrDefault());
+        response.IsSuccess.Should().BeFalse();
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        response.Value.Should().NotBeNull();
+        response.Value!.FirstOrDefault().Should().Be("'Rating From Member Id' must not be empty.");
     }
 
     [Fact]
@@ -85,10 +82,10 @@ public class RateMemberTests(AuctioneerApiFactory factory) : BaseIntegrationTest
                 new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json"))
             .DeserializeResponseAsync<List<string>>();
 
-        Assert.False(response.IsSuccess);
-        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-        Assert.NotNull(response.Value);
-        Assert.Equal("'Rating For Member Id' must not be empty.", response.Value.FirstOrDefault());
+        response.IsSuccess.Should().BeFalse();
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        response.Value.Should().NotBeNull();
+        response.Value!.FirstOrDefault().Should().Be("'Rating For Member Id' must not be empty.");
     }
 
     [Fact]
@@ -105,10 +102,10 @@ public class RateMemberTests(AuctioneerApiFactory factory) : BaseIntegrationTest
                 new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json"))
             .DeserializeResponseAsync<List<string>>();
 
-        Assert.False(response.IsSuccess);
-        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-        Assert.NotNull(response.Value);
-        Assert.Equal("'Stars' must be greater than '0'.", response.Value.FirstOrDefault());
+        response.IsSuccess.Should().BeFalse();
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        response.Value.Should().NotBeNull();
+        response.Value!.FirstOrDefault().Should().Be("'Stars' must be greater than '0'.");
     }
 
     [Fact]
@@ -125,10 +122,10 @@ public class RateMemberTests(AuctioneerApiFactory factory) : BaseIntegrationTest
                 new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json"))
             .DeserializeResponseAsync<List<string>>();
 
-        Assert.False(response.IsSuccess);
-        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-        Assert.NotNull(response.Value);
-        Assert.Equal("'Stars' must be less than '6'.", response.Value.FirstOrDefault());
+        response.IsSuccess.Should().BeFalse();
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        response.Value.Should().NotBeNull();
+        response.Value!.FirstOrDefault().Should().Be("'Stars' must be less than '6'.");
     }
 
     private async Task<(Guid, Guid)> SetupMembers()

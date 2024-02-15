@@ -2,7 +2,6 @@ using Auctioneer.Application.Common;
 using Auctioneer.Application.Common.Interfaces;
 using Auctioneer.Application.Entities;
 using Auctioneer.Application.Features.Members.Commands;
-using NSubstitute;
 
 namespace Auctioneer.Application.UnitTests.Features.Members.Commands;
 
@@ -33,7 +32,7 @@ public class DeleteMemberTests
 
         var result = await _handler.Handle(GetValidCommand(), new CancellationToken());
 
-        Assert.True(result.IsSuccess);
+        result.IsSuccess.Should().BeTrue();
         await _memberRepository.Received(1).GetAsync(Arg.Any<Guid>());
         await _memberRepository.Received(1).DeleteAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>());
         await _eventRepository.Received(1).CreateAsync(Arg.Any<DomainEvent>(), Arg.Any<CancellationToken>());
@@ -53,8 +52,8 @@ public class DeleteMemberTests
 
         var result = await _handler.Handle(GetValidCommand(), new CancellationToken());
 
-        Assert.True(result.IsFailed);
-        Assert.Equal("MemberRepository failed", result.Errors[0].Message);
+        result.IsFailed.Should().BeTrue();
+        result.Errors.FirstOrDefault()?.Message.Should().Be("MemberRepository failed");
         await _memberRepository.Received(1).GetAsync(Arg.Any<Guid>());
         await _memberRepository.Received(1).DeleteAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>());
         await _eventRepository.Received(0).CreateAsync(Arg.Any<DomainEvent>(), Arg.Any<CancellationToken>());
@@ -74,8 +73,8 @@ public class DeleteMemberTests
 
         var result = await _handler.Handle(GetValidCommand(), new CancellationToken());
 
-        Assert.True(result.IsFailed);
-        Assert.Equal("EventRepository failed", result.Errors[0].Message);
+        result.IsFailed.Should().BeTrue();
+        result.Errors.FirstOrDefault()?.Message.Should().Be("EventRepository failed");
         await _memberRepository.Received(1).GetAsync(Arg.Any<Guid>());
         await _memberRepository.Received(1).DeleteAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>());
         await _eventRepository.Received(1).CreateAsync(Arg.Any<DomainEvent>(), Arg.Any<CancellationToken>());
@@ -94,8 +93,8 @@ public class DeleteMemberTests
 
         var result = await _handler.Handle(GetValidCommand(), new CancellationToken());
 
-        Assert.True(result.IsFailed);
-        Assert.Equal("UnitOfWork failed", result.Errors[0].Message);
+        result.IsFailed.Should().BeTrue();
+        result.Errors.FirstOrDefault()?.Message.Should().Be("UnitOfWork failed");
         await _memberRepository.Received(1).GetAsync(Arg.Any<Guid>());
         await _memberRepository.Received(1).DeleteAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>());
         await _eventRepository.Received(1).CreateAsync(Arg.Any<DomainEvent>(), Arg.Any<CancellationToken>());

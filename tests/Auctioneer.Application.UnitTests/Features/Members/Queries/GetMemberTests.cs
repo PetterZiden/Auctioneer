@@ -2,7 +2,6 @@ using Auctioneer.Application.Common.Interfaces;
 using Auctioneer.Application.Entities;
 using Auctioneer.Application.Features.Members.Dto;
 using Auctioneer.Application.Features.Members.Queries;
-using NSubstitute;
 
 namespace Auctioneer.Application.UnitTests.Features.Members.Queries;
 
@@ -25,8 +24,8 @@ public class GetMemberTests
 
         var result = await _handler.Handle(GetValidQuery(), new CancellationToken());
 
-        Assert.True(result.IsSuccess);
-        Assert.IsType<MemberDto>(result.Value);
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().BeOfType<MemberDto>();
         await _memberRepository.Received(1).GetAsync(Arg.Any<Guid>());
     }
 
@@ -37,8 +36,8 @@ public class GetMemberTests
 
         var result = await _handler.Handle(GetValidQuery(), new CancellationToken());
 
-        Assert.True(result.IsFailed);
-        Assert.Equal("No member found", result.Errors[0].Message);
+        result.IsFailed.Should().BeTrue();
+        result.Errors.FirstOrDefault()?.Message.Should().Be("No member found");
         await _memberRepository.Received(1).GetAsync(Arg.Any<Guid>());
     }
 
@@ -50,8 +49,8 @@ public class GetMemberTests
 
         var result = await _handler.Handle(GetValidQuery(), new CancellationToken());
 
-        Assert.True(result.IsFailed);
-        Assert.Equal("MemberRepository failed", result.Errors[0].Message);
+        result.IsFailed.Should().BeTrue();
+        result.Errors.FirstOrDefault()?.Message.Should().Be("MemberRepository failed");
         await _memberRepository.Received(1).GetAsync(Arg.Any<Guid>());
     }
 

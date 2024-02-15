@@ -2,8 +2,6 @@ using Auctioneer.Application.Common;
 using Auctioneer.Application.Common.Interfaces;
 using Auctioneer.Application.Entities;
 using Auctioneer.Application.Features.Auctions.Commands;
-using FluentValidation.TestHelper;
-using NSubstitute;
 
 namespace Auctioneer.Application.UnitTests.Features.Auctions.Commands;
 
@@ -38,8 +36,8 @@ public class CreateAuctionTests
 
         var result = await _handler.Handle(GetValidCommand(), new CancellationToken());
 
-        Assert.True(result.IsSuccess);
-        Assert.IsType<Guid>(result.Value);
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().NotBeEmpty();
         await _memberRepository.Received(1).GetAsync(Arg.Any<Guid>());
         await _auctionRepository.Received(1).CreateAsync(Arg.Any<Auction>(), Arg.Any<CancellationToken>());
         await _eventRepository.Received(1).CreateAsync(Arg.Any<DomainEvent>(), Arg.Any<CancellationToken>());
@@ -53,8 +51,8 @@ public class CreateAuctionTests
 
         var result = await _handler.Handle(GetValidCommand(), new CancellationToken());
 
-        Assert.True(result.IsFailed);
-        Assert.Equal("No member found", result.Errors[0].Message);
+        result.IsFailed.Should().BeTrue();
+        result.Errors.FirstOrDefault()?.Message.Should().Be("No member found");
         await _memberRepository.Received(1).GetAsync(Arg.Any<Guid>());
         await _auctionRepository.Received(0).CreateAsync(Arg.Any<Auction>(), Arg.Any<CancellationToken>());
         await _eventRepository.Received(0).CreateAsync(Arg.Any<DomainEvent>(), Arg.Any<CancellationToken>());
@@ -81,8 +79,8 @@ public class CreateAuctionTests
 
         var result = await _handler.Handle(request, new CancellationToken());
 
-        Assert.True(result.IsFailed);
-        Assert.Equal("Title can not be empty", result.Errors[0].Message);
+        result.IsFailed.Should().BeTrue();
+        result.Errors.FirstOrDefault()?.Message.Should().Be("Title can not be empty");
         await _memberRepository.Received(1).GetAsync(Arg.Any<Guid>());
         await _auctionRepository.Received(0).CreateAsync(Arg.Any<Auction>(), Arg.Any<CancellationToken>());
         await _eventRepository.Received(0).CreateAsync(Arg.Any<DomainEvent>(), Arg.Any<CancellationToken>());
@@ -109,8 +107,8 @@ public class CreateAuctionTests
 
         var result = await _handler.Handle(request, new CancellationToken());
 
-        Assert.True(result.IsFailed);
-        Assert.Equal("Description can not be empty", result.Errors[0].Message);
+        result.IsFailed.Should().BeTrue();
+        result.Errors.FirstOrDefault()?.Message.Should().Be("Description can not be empty");
     }
 
     [Fact]
@@ -133,8 +131,8 @@ public class CreateAuctionTests
 
         var result = await _handler.Handle(request, new CancellationToken());
 
-        Assert.True(result.IsFailed);
-        Assert.Equal("Start time can not be earlier than current day and time", result.Errors[0].Message);
+        result.IsFailed.Should().BeTrue();
+        result.Errors.FirstOrDefault()?.Message.Should().Be("Start time can not be earlier than current day and time");
     }
 
     [Fact]
@@ -157,8 +155,9 @@ public class CreateAuctionTests
 
         var result = await _handler.Handle(request, new CancellationToken());
 
-        Assert.True(result.IsFailed);
-        Assert.Equal("End time can not be earlier than at least one day in the future", result.Errors[0].Message);
+        result.IsFailed.Should().BeTrue();
+        result.Errors.FirstOrDefault()?.Message.Should()
+            .Be("End time can not be earlier than at least one day in the future");
     }
 
     [Fact]
@@ -181,8 +180,8 @@ public class CreateAuctionTests
 
         var result = await _handler.Handle(request, new CancellationToken());
 
-        Assert.True(result.IsFailed);
-        Assert.Equal("Starting price must be greater than 0", result.Errors[0].Message);
+        result.IsFailed.Should().BeTrue();
+        result.Errors.FirstOrDefault()?.Message.Should().Be("Starting price must be greater than 0");
     }
 
     [Fact]
@@ -205,8 +204,8 @@ public class CreateAuctionTests
 
         var result = await _handler.Handle(request, new CancellationToken());
 
-        Assert.True(result.IsFailed);
-        Assert.Equal("Image route can not be empty", result.Errors[0].Message);
+        result.IsFailed.Should().BeTrue();
+        result.Errors.FirstOrDefault()?.Message.Should().Be("Image route can not be empty");
     }
 
     [Fact]
@@ -223,8 +222,8 @@ public class CreateAuctionTests
 
         var result = await _handler.Handle(GetValidCommand(), new CancellationToken());
 
-        Assert.True(result.IsFailed);
-        Assert.Equal("AuctionRepository failed", result.Errors[0].Message);
+        result.IsFailed.Should().BeTrue();
+        result.Errors.FirstOrDefault()?.Message.Should().Be("AuctionRepository failed");
         await _memberRepository.Received(1).GetAsync(Arg.Any<Guid>());
         await _auctionRepository.Received(1).CreateAsync(Arg.Any<Auction>(), Arg.Any<CancellationToken>());
         await _eventRepository.Received(1).CreateAsync(Arg.Any<DomainEvent>(), Arg.Any<CancellationToken>());
@@ -243,8 +242,8 @@ public class CreateAuctionTests
 
         var result = await _handler.Handle(GetValidCommand(), new CancellationToken());
 
-        Assert.True(result.IsFailed);
-        Assert.Equal("MemberRepository failed", result.Errors[0].Message);
+        result.IsFailed.Should().BeTrue();
+        result.Errors.FirstOrDefault()?.Message.Should().Be("MemberRepository failed");
         await _memberRepository.Received(1).GetAsync(Arg.Any<Guid>());
         await _auctionRepository.Received(0).CreateAsync(Arg.Any<Auction>(), Arg.Any<CancellationToken>());
         await _eventRepository.Received(0).CreateAsync(Arg.Any<DomainEvent>(), Arg.Any<CancellationToken>());
@@ -265,8 +264,8 @@ public class CreateAuctionTests
 
         var result = await _handler.Handle(GetValidCommand(), new CancellationToken());
 
-        Assert.True(result.IsFailed);
-        Assert.Equal("EventRepository failed", result.Errors[0].Message);
+        result.IsFailed.Should().BeTrue();
+        result.Errors.FirstOrDefault()?.Message.Should().Be("EventRepository failed");
         await _memberRepository.Received(1).GetAsync(Arg.Any<Guid>());
         await _auctionRepository.Received(0).CreateAsync(Arg.Any<Auction>(), Arg.Any<CancellationToken>());
         await _eventRepository.Received(1).CreateAsync(Arg.Any<DomainEvent>(), Arg.Any<CancellationToken>());
@@ -286,8 +285,8 @@ public class CreateAuctionTests
 
         var result = await _handler.Handle(GetValidCommand(), new CancellationToken());
 
-        Assert.True(result.IsFailed);
-        Assert.Equal("UnitOfWork failed", result.Errors[0].Message);
+        result.IsFailed.Should().BeTrue();
+        result.Errors.FirstOrDefault()?.Message.Should().Be("UnitOfWork failed");
         await _memberRepository.Received(1).GetAsync(Arg.Any<Guid>());
         await _auctionRepository.Received(1).CreateAsync(Arg.Any<Auction>(), Arg.Any<CancellationToken>());
         await _eventRepository.Received(1).CreateAsync(Arg.Any<DomainEvent>(), Arg.Any<CancellationToken>());

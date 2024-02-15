@@ -2,7 +2,6 @@ using Auctioneer.Application.Common.Interfaces;
 using Auctioneer.Application.Entities;
 using Auctioneer.Application.Features.Auctions.Dto;
 using Auctioneer.Application.Features.Auctions.Queries;
-using NSubstitute;
 
 namespace Auctioneer.Application.UnitTests.Features.Auctions.Queries;
 
@@ -25,8 +24,8 @@ public class GetAuctionTests
 
         var result = await _handler.Handle(GetValidQuery(), new CancellationToken());
 
-        Assert.True(result.IsSuccess);
-        Assert.IsType<AuctionDto>(result.Value);
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().BeOfType<AuctionDto>();
         await _auctionRepository.Received(1).GetAsync(Arg.Any<Guid>());
     }
 
@@ -37,8 +36,8 @@ public class GetAuctionTests
 
         var result = await _handler.Handle(GetValidQuery(), new CancellationToken());
 
-        Assert.True(result.IsFailed);
-        Assert.Equal("No auction found", result.Errors[0].Message);
+        result.IsFailed.Should().BeTrue();
+        result.Errors.FirstOrDefault()?.Message.Should().Be("No auction found");
         await _auctionRepository.Received(1).GetAsync(Arg.Any<Guid>());
     }
 
@@ -50,8 +49,8 @@ public class GetAuctionTests
 
         var result = await _handler.Handle(GetValidQuery(), new CancellationToken());
 
-        Assert.True(result.IsFailed);
-        Assert.Equal("AuctionRepository failed", result.Errors[0].Message);
+        result.IsFailed.Should().BeTrue();
+        result.Errors.FirstOrDefault()?.Message.Should().Be("AuctionRepository failed");
         await _auctionRepository.Received(1).GetAsync(Arg.Any<Guid>());
     }
 

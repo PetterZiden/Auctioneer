@@ -4,7 +4,6 @@ using Auctioneer.Application.Features.Auctions.Contracts;
 using Auctioneer.Application.Features.Auctions.Dto;
 using Auctioneer.Application.Features.Auctions.Queries;
 using Auctioneer.Application.Infrastructure.Persistence;
-using NSubstitute;
 
 namespace Auctioneer.Application.UnitTests.Features.Auctions.Queries;
 
@@ -39,11 +38,11 @@ public class GetAuctionsByPaginationTests
             }
         }, new CancellationToken());
 
-        Assert.True(result.IsSuccess);
-        Assert.Equal(1, result.Value.TotalPages);
-        Assert.Equal(1, result.Value.PageNumber);
-        Assert.IsType<List<AuctionDto>>(result.Value.Auctions);
-        Assert.IsType<GetAuctionsByPaginationResponse>(result.Value);
+        result.IsSuccess.Should().BeTrue();
+        result.Value.TotalPages.Should().Be(1);
+        result.Value.PageNumber.Should().Be(1);
+        result.Value.Auctions.Should().AllBeOfType<AuctionDto>();
+        result.Value.Should().BeOfType<GetAuctionsByPaginationResponse>();
         await _auctionRepository.Received(1).GetAsync(Arg.Any<int>(), Arg.Any<int>());
     }
 
@@ -61,8 +60,8 @@ public class GetAuctionsByPaginationTests
             }
         }, new CancellationToken());
 
-        Assert.True(result.IsFailed);
-        Assert.Equal("No auction found", result.Errors[0].Message);
+        result.IsFailed.Should().BeTrue();
+        result.Errors.FirstOrDefault()?.Message.Should().Be("No auction found");
         await _auctionRepository.Received(1).GetAsync(Arg.Any<int>(), Arg.Any<int>());
     }
 
@@ -81,8 +80,8 @@ public class GetAuctionsByPaginationTests
             }
         }, new CancellationToken());
 
-        Assert.True(result.IsFailed);
-        Assert.Equal("AuctionRepository failed", result.Errors[0].Message);
+        result.IsFailed.Should().BeTrue();
+        result.Errors.FirstOrDefault()?.Message.Should().Be("AuctionRepository failed");
         await _auctionRepository.Received(1).GetAsync(Arg.Any<int>(), Arg.Any<int>());
     }
 }
