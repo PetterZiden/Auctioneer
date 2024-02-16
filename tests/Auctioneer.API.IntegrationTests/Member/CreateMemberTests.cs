@@ -2,10 +2,11 @@ using Auctioneer.Application.Features.Members.Contracts;
 
 namespace Auctioneer.API.IntegrationTests.Member;
 
-[Collection("BaseIntegrationTest")]
+[Collection("Auctioneer Test Collection")]
+[TestCaseOrderer("Auctioneer.API.IntegrationTests.Helpers.PriorityOrderer", "Auctioneer.API.IntegrationTests")]
 public class CreateMemberTests(AuctioneerApiFactory factory) : BaseIntegrationTest(factory)
 {
-    [Fact]
+    [Fact, TestPriority(0)]
     public async Task CreateMembersEndPoint_Should_Create_Members_And_Return_MemberId_If_Request_Is_Valid()
     {
         var request = new CreateMemberRequest("Test", "Testsson", "Testgatan 2", "12345", "Testholm", "Test@test.se",
@@ -19,7 +20,7 @@ public class CreateMemberTests(AuctioneerApiFactory factory) : BaseIntegrationTe
         response.Value.Should().NotBeEmpty();
     }
 
-    [Fact]
+    [Fact, TestPriority(1)]
     public async Task CreateMembersEndPoint_Should_Return_Bad_Request_If_Request_Is_Missing_FirstName()
     {
         var request = new CreateMemberRequest("", "Testsson", "Testgatan 2", "12345", "Testholm", "Test@test.se",
@@ -35,7 +36,7 @@ public class CreateMemberTests(AuctioneerApiFactory factory) : BaseIntegrationTe
         response.Value!.FirstOrDefault().Should().Be("'First Name' must not be empty.");
     }
 
-    [Fact]
+    [Fact, TestPriority(2)]
     public async Task CreateMembersEndPoint_Should_Return_Bad_Request_If_Request_Is_Missing_LastName()
     {
         var request =
@@ -51,7 +52,7 @@ public class CreateMemberTests(AuctioneerApiFactory factory) : BaseIntegrationTe
         response.Value!.FirstOrDefault().Should().Be("'Last Name' must not be empty.");
     }
 
-    [Fact]
+    [Fact, TestPriority(3)]
     public async Task CreateMembersEndPoint_Should_Return_Bad_Request_If_Email_Is_Invalid_Email_Format()
     {
         var request = new CreateMemberRequest("Test", "Testsson", "Testgatan 2", "12345", "Testholm", "test.test.se",

@@ -14,7 +14,9 @@ public class AuctioneerApiFactory : WebApplicationFactory<IApiMarker>, IAsyncLif
 
     public async Task InitializeAsync()
     {
+        await Task.Delay(2000);
         _runner = MongoDbRunner.Start(singleNodeReplSet: true);
+        await Task.Delay(2000);
     }
 
     public new async Task DisposeAsync()

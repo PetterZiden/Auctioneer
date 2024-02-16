@@ -2,13 +2,14 @@ using Auctioneer.Application.Features.Members.Dto;
 
 namespace Auctioneer.API.IntegrationTests.Member;
 
-[Collection("BaseIntegrationTest")]
+[Collection("Auctioneer Test Collection")]
+[TestCaseOrderer("Auctioneer.API.IntegrationTests.Helpers.PriorityOrderer", "Auctioneer.API.IntegrationTests")]
 public class GetMembersTests(AuctioneerApiFactory factory) : BaseIntegrationTest(factory)
 {
-    [Fact]
+    [Fact, TestPriority(1)]
     public async Task GetMembersEndPoint_Should_Fetch_Members_If_Members_Exist()
     {
-        await SetupMember();
+        await SeedMembers();
 
         var response = await Client.GetAsync("https://localhost:7298/api/members")
             .DeserializeResponseAsync<List<MemberDto>>();
@@ -20,39 +21,15 @@ public class GetMembersTests(AuctioneerApiFactory factory) : BaseIntegrationTest
         response.Value.Should().AllBeOfType<MemberDto>();
     }
 
-    [Fact]
+    [Fact, TestPriority(0)]
     public async Task GetMembersEndPoint_Should_Return_Not_Found_If_Members_Does_Not_Exist()
     {
+        await ResetDb();
         var response = await Client.GetAsync("https://localhost:7298/api/members").DeserializeResponseAsync<string>();
 
         response.IsSuccess.Should().BeFalse();
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
         response.Value.Should().NotBeNull();
         response.Value.Should().Be("No member found");
-    }
-
-    private async Task SetupMember()
-    {
-        var member = Application.Entities.Member.Create(
-            "Test",
-            "Testsson",
-            "test@test.se",
-            "0734443322",
-            "testgatan 2",
-            "12345",
-            "testholm").Value;
-
-        var member2 = Application.Entities.Member.Create(
-            "Test2",
-            "Testsson2",
-            "test2@test.se",
-            "0732223344",
-            "testgatan 22",
-            "12342",
-            "testhol2").Value;
-
-        await MemberRepository.CreateAsync(member, new CancellationToken());
-        await MemberRepository.CreateAsync(member2, new CancellationToken());
-        await UnitOfWork.SaveAsync();
     }
 }

@@ -2,15 +2,16 @@ using Auctioneer.Application.Features.Members.Dto;
 
 namespace Auctioneer.API.IntegrationTests.Member;
 
-[Collection("BaseIntegrationTest")]
+[Collection("Auctioneer Test Collection")]
+[TestCaseOrderer("Auctioneer.API.IntegrationTests.Helpers.PriorityOrderer", "Auctioneer.API.IntegrationTests")]
 public class GetMemberTests(AuctioneerApiFactory factory) : BaseIntegrationTest(factory)
 {
-    [Fact]
+    [Fact, TestPriority(2)]
     public async Task GetMemberEndPoint_Should_Fetch_Member_If_Member_Exist()
     {
-        var member = await SetupMember();
+        var memberId = await SeedMember();
 
-        var response = await Client.GetAsync($"https://localhost:7298/api/member/{member.Id}")
+        var response = await Client.GetAsync($"https://localhost:7298/api/member/{memberId}")
             .DeserializeResponseAsync<MemberDto>();
 
         response.IsSuccess.Should().BeTrue();
@@ -19,7 +20,7 @@ public class GetMemberTests(AuctioneerApiFactory factory) : BaseIntegrationTest(
         response.Value.Should().BeOfType<MemberDto>();
     }
 
-    [Fact]
+    [Fact, TestPriority(0)]
     public async Task GetMemberEndPoint_Should_Return_Not_Found_If_Member_Does_Not_Exist()
     {
         var response = await Client.GetAsync($"https://localhost:7298/api/member/{Guid.NewGuid()}")
@@ -31,29 +32,12 @@ public class GetMemberTests(AuctioneerApiFactory factory) : BaseIntegrationTest(
         response.Value.Should().Be("No member found");
     }
 
-    [Fact]
+    [Fact, TestPriority(1)]
     public async Task GetMemberEndPoint_Should_Return_Not_Found_When_Not_Passing_Guid_As_QueryParameter()
     {
         var response = await Client.GetAsync("https://localhost:7298/api/member/id234");
 
         response.IsSuccessStatusCode.Should().BeFalse();
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
-    }
-
-    private async Task<Application.Entities.Member> SetupMember()
-    {
-        var member = Application.Entities.Member.Create(
-            "Test",
-            "Testsson",
-            "test@test.se",
-            "0734443322",
-            "testgatan 2",
-            "12345",
-            "testholm").Value;
-
-        await MemberRepository.CreateAsync(member, new CancellationToken());
-        await UnitOfWork.SaveAsync();
-
-        return member;
     }
 }

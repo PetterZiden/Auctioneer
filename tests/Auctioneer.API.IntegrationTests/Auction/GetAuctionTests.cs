@@ -2,15 +2,16 @@ using Auctioneer.Application.Features.Auctions.Dto;
 
 namespace Auctioneer.API.IntegrationTests.Auction;
 
-[Collection("BaseIntegrationTest")]
+[Collection("Auctioneer Test Collection")]
+[TestCaseOrderer("Auctioneer.API.IntegrationTests.Helpers.PriorityOrderer", "Auctioneer.API.IntegrationTests")]
 public class GetAuctionTests(AuctioneerApiFactory factory) : BaseIntegrationTest(factory)
 {
-    [Fact]
+    [Fact, TestPriority(2)]
     public async Task GetAuctionEndPoint_Should_Fetch_Auction_If_Auction_Exist()
     {
-        var auction = await SetupAuction();
+        var auctionId = await SeedAuction();
 
-        var response = await Client.GetAsync($"https://localhost:7298/api/auction/{auction.Id}")
+        var response = await Client.GetAsync($"https://localhost:7298/api/auction/{auctionId}")
             .DeserializeResponseAsync<AuctionDto>();
 
         response.IsSuccess.Should().BeTrue();
@@ -19,7 +20,7 @@ public class GetAuctionTests(AuctioneerApiFactory factory) : BaseIntegrationTest
         response.Value.Should().BeOfType<AuctionDto>();
     }
 
-    [Fact]
+    [Fact, TestPriority(1)]
     public async Task GetAuctionEndPoint_Should_Return_Not_Found_If_Auction_Does_Not_Exist()
     {
         var response = await Client.GetAsync($"https://localhost:7298/api/auction/{Guid.NewGuid()}")
@@ -30,29 +31,12 @@ public class GetAuctionTests(AuctioneerApiFactory factory) : BaseIntegrationTest
         response.Value.Should().Be("No auction found");
     }
 
-    [Fact]
+    [Fact, TestPriority(0)]
     public async Task GetAuctionEndPoint_Should_Return_Not_Found_When_Not_Passing_Guid_As_QueryParameter()
     {
         var response = await Client.GetAsync("https://localhost:7298/api/auction/id234");
 
         response.IsSuccessStatusCode.Should().BeFalse();
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
-    }
-
-    private async Task<Application.Entities.Auction> SetupAuction()
-    {
-        var auction = Application.Entities.Auction.Create(
-            Guid.NewGuid(),
-            "TestAuction",
-            "TestDescription",
-            DateTimeOffset.Now.AddHours(6),
-            DateTimeOffset.Now.AddDays(7),
-            100,
-            "../images.test.jpg").Value;
-
-        await AuctionRepository.CreateAsync(auction, new CancellationToken());
-        await UnitOfWork.SaveAsync();
-
-        return auction;
     }
 }
