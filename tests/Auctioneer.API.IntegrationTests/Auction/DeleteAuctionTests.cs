@@ -1,9 +1,10 @@
 namespace Auctioneer.API.IntegrationTests.Auction;
 
-[Collection("BaseIntegrationTest")]
+[Collection("Auctioneer Test Collection")]
+[TestCaseOrderer("Auctioneer.API.IntegrationTests.Helpers.PriorityOrderer", "Auctioneer.API.IntegrationTests")]
 public class DeleteAuctionTests(AuctioneerApiFactory factory) : BaseIntegrationTest(factory)
 {
-    [Fact]
+    [Fact, TestPriority(0)]
     public async Task DeleteAuctionEndPoint_Should_Delete_Auctions_If_Auction_Exist()
     {
         var auctionId = await SetupAuction();
@@ -17,7 +18,7 @@ public class DeleteAuctionTests(AuctioneerApiFactory factory) : BaseIntegrationT
         auction.Should().BeNull();
     }
 
-    [Fact]
+    [Fact, TestPriority(1)]
     public async Task DeleteAuctionEndPoint_Should_Not_Delete_Auctions_If_Auction_Not_Found()
     {
         var response = await Client.DeleteAsync($"https://localhost:7298/api/auction/{Guid.NewGuid()}")

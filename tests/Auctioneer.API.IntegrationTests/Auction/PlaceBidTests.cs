@@ -2,14 +2,15 @@ using Auctioneer.Application.Common.Models;
 
 namespace Auctioneer.API.IntegrationTests.Auction;
 
-[Collection("BaseIntegrationTest")]
+[Collection("Auctioneer Test Collection")]
+[TestCaseOrderer("Auctioneer.API.IntegrationTests.Helpers.PriorityOrderer", "Auctioneer.API.IntegrationTests")]
 public class PlaceBidTests(AuctioneerApiFactory factory) : BaseIntegrationTest(factory)
 {
-    [Fact]
+    [Fact, TestPriority(6)]
     public async Task PlaceBidEndPoint_Should_Place_Bid_On_Auction_If_Request_Is_Valid()
     {
-        var memberId = await SetupMember();
-        var auctionId = await SetupAuction(memberId);
+        var memberId = await SeedMember();
+        var auctionId = await SeedAuction(memberId);
         var request = new Bid
         {
             AuctionId = auctionId,
@@ -30,7 +31,7 @@ public class PlaceBidTests(AuctioneerApiFactory factory) : BaseIntegrationTest(f
         member?.Bids.Should().HaveCount(1);
     }
 
-    [Fact]
+    [Fact, TestPriority(0)]
     public async Task PlaceBidEndPoint_Should__Not_Place_Bid_On_Auction_If_Auction_Is_Not_Found()
     {
         var request = new Bid
@@ -50,10 +51,10 @@ public class PlaceBidTests(AuctioneerApiFactory factory) : BaseIntegrationTest(f
         response.Value.Should().Be("No auction found");
     }
 
-    [Fact]
+    [Fact, TestPriority(1)]
     public async Task PlaceBidEndPoint_Should__Not_Place_Bid_On_Auction_If_Member_Is_Not_Found()
     {
-        var auctionId = await SetupAuction(Guid.NewGuid());
+        var auctionId = await SeedAuction();
         var request = new Bid
         {
             AuctionId = auctionId,
@@ -71,11 +72,11 @@ public class PlaceBidTests(AuctioneerApiFactory factory) : BaseIntegrationTest(f
         response.Value.Should().Be("No member found");
     }
 
-    [Fact]
+    [Fact, TestPriority(2)]
     public async Task PlaceBidEndPoint_Should__Not_Place_Bid_On_Auction_If_BidPrice_Is_Less_Or_Equal_To_CurrentPrice()
     {
-        var memberId = await SetupMember();
-        var auctionId = await SetupAuction(memberId);
+        var memberId = await SeedMember();
+        var auctionId = await SeedAuction(memberId);
         var request = new Bid
         {
             AuctionId = auctionId,
@@ -94,7 +95,7 @@ public class PlaceBidTests(AuctioneerApiFactory factory) : BaseIntegrationTest(f
         response.Value.Should().StartWith("Bid must be greater than current price:");
     }
 
-    [Fact]
+    [Fact, TestPriority(3)]
     public async Task PlaceBidEndPoint_Should__Not_Place_Bid_On_Auction_If_AuctionId_Is_Empty()
     {
         var request = new Bid
@@ -115,7 +116,7 @@ public class PlaceBidTests(AuctioneerApiFactory factory) : BaseIntegrationTest(f
         response.Value!.FirstOrDefault().Should().Be("'Auction Id' must not be empty.");
     }
 
-    [Fact]
+    [Fact, TestPriority(4)]
     public async Task PlaceBidEndPoint_Should__Not_Place_Bid_On_Auction_If_MemberId_Is_Empty()
     {
         var request = new Bid
@@ -136,7 +137,7 @@ public class PlaceBidTests(AuctioneerApiFactory factory) : BaseIntegrationTest(f
         response.Value!.FirstOrDefault().Should().Be("'Member Id' must not be empty.");
     }
 
-    [Fact]
+    [Fact, TestPriority(5)]
     public async Task PlaceBidEndPoint_Should__Not_Place_Bid_On_Auction_If_BidPrice_Is_Less_Than_0()
     {
         var request = new Bid
@@ -155,39 +156,5 @@ public class PlaceBidTests(AuctioneerApiFactory factory) : BaseIntegrationTest(f
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         response.Value.Should().NotBeNull();
         response.Value!.FirstOrDefault().Should().Be("'Bid Price' must be greater than '0'.");
-    }
-
-    private async Task<Guid> SetupAuction(Guid memberId)
-    {
-        var auction = Application.Entities.Auction.Create(
-            memberId,
-            "TestAuction",
-            "TestDescription",
-            DateTimeOffset.Now.AddHours(6),
-            DateTimeOffset.Now.AddDays(7),
-            100,
-            "../images.test.jpg").Value;
-
-        await AuctionRepository.CreateAsync(auction, new CancellationToken());
-        await UnitOfWork.SaveAsync();
-
-        return auction.Id;
-    }
-
-    private async Task<Guid> SetupMember()
-    {
-        var member = Application.Entities.Member.Create(
-            "Test",
-            "Testsson",
-            "test@test.se",
-            "0734443322",
-            "testgatan 2",
-            "12345",
-            "testholm").Value;
-
-        await MemberRepository.CreateAsync(member, new CancellationToken());
-        await UnitOfWork.SaveAsync();
-
-        return member.Id;
     }
 }

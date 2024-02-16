@@ -2,13 +2,14 @@ using Auctioneer.Application.Features.Auctions.Contracts;
 
 namespace Auctioneer.API.IntegrationTests.Auction;
 
-[Collection("BaseIntegrationTest")]
+[Collection("Auctioneer Test Collection")]
+[TestCaseOrderer("Auctioneer.API.IntegrationTests.Helpers.PriorityOrderer", "Auctioneer.API.IntegrationTests")]
 public class CreateAuctionTests(AuctioneerApiFactory factory) : BaseIntegrationTest(factory)
 {
-    [Fact]
+    [Fact, TestPriority(4)]
     public async Task CreateAuctionsEndPoint_Should_Create_Auctions_And_Return_AuctionId_If_Request_Is_Valid()
     {
-        var memberId = await SetupMember();
+        var memberId = await SeedMember();
         var request = new CreateAuctionRequest(
             memberId,
             "TestAuction",
@@ -27,7 +28,7 @@ public class CreateAuctionTests(AuctioneerApiFactory factory) : BaseIntegrationT
         response.Value.Should().NotBeEmpty();
     }
 
-    [Fact]
+    [Fact, TestPriority(0)]
     public async Task CreateAuctionsEndPoint_Should_Not_Create_Auctions_If_Member_Is_Not_Found()
     {
         var request = new CreateAuctionRequest(
@@ -48,7 +49,7 @@ public class CreateAuctionTests(AuctioneerApiFactory factory) : BaseIntegrationT
         response.Value.Should().Be("No member found");
     }
 
-    [Fact]
+    [Fact, TestPriority(1)]
     public async Task CreateAuctionsEndPoint_Should_Return_Bad_Request_If_Request_Is_Missing_Title()
     {
         var request = new CreateAuctionRequest(
@@ -70,7 +71,7 @@ public class CreateAuctionTests(AuctioneerApiFactory factory) : BaseIntegrationT
         response.Value!.FirstOrDefault().Should().Be("'Title' must not be empty.");
     }
 
-    [Fact]
+    [Fact, TestPriority(2)]
     public async Task CreateAuctionsEndPoint_Should_Return_Bad_Request_If_Request_Is_Missing_Description()
     {
         var request = new CreateAuctionRequest(
@@ -92,7 +93,7 @@ public class CreateAuctionTests(AuctioneerApiFactory factory) : BaseIntegrationT
         response.Value!.FirstOrDefault().Should().Be("'Description' must not be empty.");
     }
 
-    [Fact]
+    [Fact, TestPriority(3)]
     public async Task CreateAuctionsEndPoint_Should_Return_Bad_Request_If_StartingPrice_Is_Less_Than_0()
     {
         var request = new CreateAuctionRequest(
@@ -112,22 +113,5 @@ public class CreateAuctionTests(AuctioneerApiFactory factory) : BaseIntegrationT
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         response.Value.Should().NotBeNull();
         response.Value!.FirstOrDefault().Should().Be("'Starting Price' must be greater than '-1'.");
-    }
-
-    private async Task<Guid> SetupMember()
-    {
-        var member = Application.Entities.Member.Create(
-            "Test",
-            "Testsson",
-            "test@test.se",
-            "0734443322",
-            "testgatan 2",
-            "12345",
-            "testholm").Value;
-
-        await MemberRepository.CreateAsync(member, new CancellationToken());
-        await UnitOfWork.SaveAsync();
-
-        return member.Id;
     }
 }
