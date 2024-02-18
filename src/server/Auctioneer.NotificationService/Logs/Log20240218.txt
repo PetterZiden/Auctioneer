@@ -1,0 +1,4 @@
+[21:05:28 INF] Configured endpoint "place-bid-notification", Consumer: "Auctioneer.NotificationService.Consumers.PlaceBidNotificationConsumer"
+[21:05:28 INF] Configured endpoint "rate-member-notification", Consumer: "Auctioneer.NotificationService.Consumers.RateMemberNotificationConsumer"
+[21:05:28 INF] Bus started: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj
+[21:06:21 INF] Bus stopped: rabbitmqs://hog.rmq5.cloudamqp.com/lerbksnj

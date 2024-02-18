@@ -1,5 +1,7 @@
 using System.Threading.RateLimiting;
 using Auctioneer.Application;
+using HealthChecks.UI.Client;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.OpenApi.Models;
 
@@ -46,6 +48,11 @@ app.UseSwaggerUI(options => { options.SwaggerEndpoint("/swagger/v1/swagger.json"
 app.UseCors();
 
 app.UseHttpsRedirection();
+
+app.MapHealthChecks("health", new HealthCheckOptions
+{
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+});
 
 app.UseExceptionHandler(app.Environment.IsDevelopment() ? "/error-development" : "/error");
 

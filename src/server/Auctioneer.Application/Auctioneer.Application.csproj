@@ -11,10 +11,15 @@
     <ItemGroup>
         <Folder Include="Auth\Migrations\"/>
         <Folder Include="Common\Exceptions\"/>
+        <Folder Include="Health\"/>
         <Folder Include="Resources\"/>
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="AspNetCore.HealthChecks.MongoDb" Version="8.0.0"/>
+        <PackageReference Include="AspNetCore.HealthChecks.NpgSql" Version="8.0.0"/>
+        <PackageReference Include="AspNetCore.HealthChecks.Rabbitmq" Version="8.0.0"/>
+        <PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="8.0.0"/>
         <PackageReference Include="FluentResults" Version="3.15.2"/>
         <PackageReference Include="FluentValidation" Version="11.9.0"/>
         <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.9.0"/>
