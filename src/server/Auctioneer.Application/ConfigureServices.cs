@@ -84,6 +84,13 @@ public static class ConfigureServices
 
     public static void AddInfrastructure(this WebApplicationBuilder builder)
     {
+        var logger = new LoggerConfiguration()
+            .ReadFrom.Configuration(builder.Configuration)
+            .Enrich.FromLogContext()
+            .CreateLogger();
+        builder.Logging.ClearProviders();
+        builder.Logging.AddSerilog(logger);
+
         builder.Services.Configure<AuctioneerDatabaseSettings>(
             builder.Configuration.GetSection("AuctioneerDatabaseSettings"));
 
@@ -97,12 +104,10 @@ public static class ConfigureServices
 
         builder.Services.AddSingleton<IDomainEventService, DomainEventService>();
 
-        var logger = new LoggerConfiguration()
-            .ReadFrom.Configuration(builder.Configuration)
-            .Enrich.FromLogContext()
-            .CreateLogger();
-        builder.Logging.ClearProviders();
-        builder.Logging.AddSerilog(logger);
+        builder.Services.AddHealthChecks()
+            .AddMongoDb(builder.Configuration["AuctioneerDatabaseSettings:ConnectionString"]!)
+            .AddNpgSql(builder.Configuration.GetConnectionString("AuthDb")!)
+            .AddRabbitMQ();
     }
 
     public static void AddMediatr(this IServiceCollection services)
