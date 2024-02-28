@@ -17,7 +17,7 @@ namespace Auctioneer.Application.Features.Auctions.Queries;
 public class GetAuctionsByPaginationController(ILogger<GetAuctionsByPaginationController> logger)
     : ApiControllerBase(logger)
 {
-    [HttpGet("api/auctions/{pageNumber:int}/{pageSize:int}")]
+    [HttpGet("auctions/{pageNumber:int}/{pageSize:int}")]
     [Produces("application/json")]
     [ProducesResponseType(typeof(GetAuctionsByPaginationResponse), 200)]
     [ProducesResponseType(400)]

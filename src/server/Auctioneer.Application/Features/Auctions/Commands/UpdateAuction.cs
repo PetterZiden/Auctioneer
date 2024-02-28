@@ -15,7 +15,7 @@ namespace Auctioneer.Application.Features.Auctions.Commands;
 
 public class UpdateAuctionController(ILogger<UpdateAuctionController> logger) : ApiControllerBase(logger)
 {
-    [HttpPut("api/auction")]
+    [HttpPut("auction")]
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
     [ProducesResponseType(404)]

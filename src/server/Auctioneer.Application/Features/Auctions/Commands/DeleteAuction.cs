@@ -13,7 +13,7 @@ namespace Auctioneer.Application.Features.Auctions.Commands;
 
 public class DeleteAuctionController(ILogger<DeleteAuctionController> logger) : ApiControllerBase(logger)
 {
-    [HttpDelete("api/auction/{id:guid}")]
+    [HttpDelete("auction/{id:guid}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
     [ProducesResponseType(404)]

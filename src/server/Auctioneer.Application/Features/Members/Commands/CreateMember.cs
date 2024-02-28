@@ -14,7 +14,7 @@ namespace Auctioneer.Application.Features.Members.Commands;
 
 public class CreateMemberController(ILogger<CreateMemberController> logger) : ApiControllerBase(logger)
 {
-    [HttpPost("api/member")]
+    [HttpPost("member")]
     [Produces("application/json")]
     [ProducesResponseType(typeof(Guid), 200)]
     [ProducesResponseType(400)]

@@ -20,7 +20,7 @@ public class OutboxPublisher(
             try
             {
                 var domainEvents = await eventRepository.GetAsync();
-                if (domainEvents is not null && domainEvents.Count != 0)
+                if (domainEvents.Count != 0)
                 {
                     foreach (var @event in domainEvents)
                     {
@@ -33,7 +33,7 @@ public class OutboxPublisher(
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Error in publishing events {ExMessage}", ex.Message);
+                logger.LogError(ex, "Error in outbox publisher while publishing events");
             }
             finally
             {

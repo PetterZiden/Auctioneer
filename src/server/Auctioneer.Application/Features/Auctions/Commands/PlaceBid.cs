@@ -17,7 +17,7 @@ namespace Auctioneer.Application.Features.Auctions.Commands;
 
 public class PlaceBidController(ILogger<PlaceBidController> logger) : ApiControllerBase(logger)
 {
-    [HttpPost("api/auction/place-bid")]
+    [HttpPost("auction/place-bid")]
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
     [ProducesResponseType(404)]

@@ -1,3 +1,4 @@
+using Asp.Versioning;
 using Auctioneer.Application.Common.Metrics;
 using FluentResults;
 using MediatR;
@@ -10,6 +11,9 @@ namespace Auctioneer.Application.Common;
 
 [Authorize]
 [ApiController]
+[ApiVersion(1)]
+[ApiVersion(2)]
+[Route("api/v{v:apiVersion}")]
 public abstract class ApiControllerBase(ILogger logger) : ControllerBase
 {
     private ISender? _mediator;

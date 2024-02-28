@@ -17,7 +17,7 @@ namespace Auctioneer.Application.Features.Members.Commands;
 
 public class UpdateMemberController(ILogger<UpdateMemberController> logger) : ApiControllerBase(logger)
 {
-    [HttpPut("api/member")]
+    [HttpPut("member")]
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
     [ProducesResponseType(404)]

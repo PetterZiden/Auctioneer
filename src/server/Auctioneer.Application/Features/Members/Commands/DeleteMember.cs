@@ -13,7 +13,7 @@ namespace Auctioneer.Application.Features.Members.Commands;
 
 public class DeleteMemberController(ILogger<DeleteMemberController> logger) : ApiControllerBase(logger)
 {
-    [HttpDelete("api/member/{id:guid}")]
+    [HttpDelete("member/{id:guid}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
     [ProducesResponseType(404)]

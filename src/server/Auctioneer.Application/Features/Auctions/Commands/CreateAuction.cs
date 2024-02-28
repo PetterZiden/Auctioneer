@@ -15,7 +15,7 @@ namespace Auctioneer.Application.Features.Auctions.Commands;
 
 public class CreateAuctionController(ILogger<CreateAuctionController> logger) : ApiControllerBase(logger)
 {
-    [HttpPost("api/auction")]
+    [HttpPost("auction")]
     [Produces("application/json")]
     [ProducesResponseType(typeof(Guid), 200)]
     [ProducesResponseType(400)]
