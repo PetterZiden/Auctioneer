@@ -1,0 +1,25 @@
+[18:16:59 INF] Background service started...
+[18:16:59 INF] Start listening on queue: "create-member-email"
+[18:16:59 INF] Start listening on queue: "create-auction-email"
+[18:16:59 INF] Start listening on queue: "rate-member-email"
+[18:16:59 INF] Start listening on queue: "place-bid-email"
+[18:28:45 INF] Background service started...
+[18:28:45 INF] Start listening on queue: "create-member-email"
+[18:28:45 INF] Start listening on queue: "create-auction-email"
+[18:28:45 INF] Start listening on queue: "rate-member-email"
+[18:28:45 INF] Start listening on queue: "place-bid-email"
+[18:29:12 INF] Background service started...
+[18:29:12 INF] Start listening on queue: "create-member-email"
+[18:29:12 INF] Start listening on queue: "create-auction-email"
+[18:29:12 INF] Start listening on queue: "rate-member-email"
+[18:29:12 INF] Start listening on queue: "place-bid-email"
+[18:29:48 INF] Background service started...
+[18:29:48 INF] Start listening on queue: "create-member-email"
+[18:29:48 INF] Start listening on queue: "create-auction-email"
+[18:29:48 INF] Start listening on queue: "rate-member-email"
+[18:29:48 INF] Start listening on queue: "place-bid-email"
+[18:33:45 INF] Background service started...
+[18:33:45 INF] Start listening on queue: "create-member-email"
+[18:33:45 INF] Start listening on queue: "create-auction-email"
+[18:33:45 INF] Start listening on queue: "rate-member-email"
+[18:33:45 INF] Start listening on queue: "place-bid-email"

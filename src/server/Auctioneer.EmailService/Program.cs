@@ -14,7 +14,7 @@ var host = Host.CreateDefaultBuilder(args)
         services.Configure<CloudAmqpSettings>(config.GetSection("CloudAMQP"));
         services.AddSingleton<IRabbitMqService, RabbitMqService>();
         services.AddSingleton<IMessageHandlerService, MessageHandlerService>();
-        services.AddScoped<IEmailService, EmailService>();
+        services.AddSingleton<IEmailService, EmailService>();
         services.AddHostedService<Worker>();
         services
             .AddFluentEmail("Auctioneer@test.test")

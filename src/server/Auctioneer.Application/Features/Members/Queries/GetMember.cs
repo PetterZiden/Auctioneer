@@ -14,7 +14,7 @@ namespace Auctioneer.Application.Features.Members.Queries;
 
 public class GetMemberController(ILogger<GetMemberController> logger) : ApiControllerBase(logger)
 {
-    [HttpGet("api/member/{id:guid}")]
+    [HttpGet("member/{id:guid}")]
     [Produces("application/json")]
     [ProducesResponseType(typeof(MemberDto), 200)]
     [ProducesResponseType(400)]

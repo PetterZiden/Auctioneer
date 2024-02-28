@@ -16,7 +16,7 @@ namespace Auctioneer.Application.Features.Members.Commands;
 
 public class ChangeEmailMemberController(ILogger<ChangeEmailMemberController> logger) : ApiControllerBase(logger)
 {
-    [HttpPut("api/member/change-email")]
+    [HttpPut("member/change-email")]
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
     [ProducesResponseType(404)]

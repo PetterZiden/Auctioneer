@@ -16,7 +16,7 @@ namespace Auctioneer.Application.Features.Members.Commands;
 
 public class RateMemberController(ILogger<RateMemberController> logger) : ApiControllerBase(logger)
 {
-    [HttpPost("api/member/rate")]
+    [HttpPost("member/rate")]
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
     [ProducesResponseType(404)]

@@ -14,7 +14,7 @@ namespace Auctioneer.Application.Features.Auctions.Queries;
 
 public class GetAuctionsController(ILogger<GetAuctionsController> logger) : ApiControllerBase(logger)
 {
-    [HttpGet("api/auctions")]
+    [HttpGet("auctions")]
     [Produces("application/json")]
     [ProducesResponseType(typeof(List<AuctionDto>), 200)]
     [ProducesResponseType(400)]

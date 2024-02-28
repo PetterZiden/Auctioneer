@@ -18,7 +18,7 @@ public class GetMembersController(ILogger<GetMembersController> logger, CurrentU
 {
     private readonly CurrentUserService _currentUser = currentUser;
 
-    [HttpGet("api/members")]
+    [HttpGet("members")]
     [Produces("application/json")]
     [ProducesResponseType(typeof(List<MemberDto>), 200)]
     [ProducesResponseType(400)]

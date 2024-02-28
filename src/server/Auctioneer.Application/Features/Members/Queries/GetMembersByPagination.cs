@@ -17,7 +17,7 @@ namespace Auctioneer.Application.Features.Members.Queries;
 public class GetMembersByPaginationController(ILogger<GetMembersByPaginationController> logger)
     : ApiControllerBase(logger)
 {
-    [HttpGet("api/members/{pageNumber:int}/{pageSize:int}")]
+    [HttpGet("members/{pageNumber:int}/{pageSize:int}")]
     [Produces("application/json")]
     [ProducesResponseType(typeof(GetMembersByPaginationResponse), 200)]
     [ProducesResponseType(400)]
