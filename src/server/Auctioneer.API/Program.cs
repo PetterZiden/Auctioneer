@@ -5,6 +5,8 @@ using Auctioneer.Application;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.FeatureManagement;
+using Microsoft.FeatureManagement.FeatureFilters;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -50,6 +52,9 @@ builder.Services.AddApiVersioning(options =>
 builder.Services.ConfigureOptions<ConfigureSwaggerGenOptions>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddFeatureManagement(builder.Configuration.GetSection("FeatureFlags"))
+    .AddFeatureFilter<PercentageFilter>();
 
 builder.Configuration.AddUserSecrets<Program>();
 

@@ -11,12 +11,14 @@ using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.FeatureManagement.Mvc;
 
 namespace Auctioneer.Application.Features.Members.Commands;
 
 public class RateMemberController(ILogger<RateMemberController> logger) : ApiControllerBase(logger)
 {
     [HttpPost("member/rate")]
+    [FeatureGate("RateMemberPercentage")]
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
     [ProducesResponseType(404)]
