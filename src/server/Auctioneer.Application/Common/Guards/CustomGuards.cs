@@ -92,7 +92,7 @@ public static class CustomGuards
 
         if (trimmedEmail.EndsWith('.'))
         {
-            throw new ArgumentException(message ?? $"Required input {parameterName} can not be same as current value.",
+            throw new ArgumentException(message ?? $"Required input {parameterName} is an invalid email.",
                 parameterName);
         }
 
@@ -104,12 +104,12 @@ public static class CustomGuards
                 return input;
             }
 
-            throw new ArgumentException(message ?? $"Required input {parameterName} can not be same as current value.",
+            throw new ArgumentException(message ?? $"Required input {parameterName} is an invalid email.",
                 parameterName);
         }
         catch
         {
-            throw new ArgumentException(message ?? $"Required input {parameterName} can not be same as current value.",
+            throw new ArgumentException(message ?? $"Required input {parameterName} is an invalid email.",
                 parameterName);
         }
     }
