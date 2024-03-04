@@ -1,45 +1,16 @@
-using System.ComponentModel.DataAnnotations;
+using Ardalis.GuardClauses;
 using Auctioneer.Application.Common;
+using Auctioneer.Application.Common.Guards;
 
 namespace Auctioneer.Application.ValueObjects;
 
-public class Email : ValueObject
+public class Email(string email) : ValueObject
 {
-    public string Value { get; set; }
-
-    public Email(string email)
-    {
-        if (string.IsNullOrWhiteSpace(email))
-            throw new ArgumentNullException(nameof(email));
-
-        if (!IsValidEmail(email))
-            throw new ValidationException($"{nameof(email)} is not a valid email");
-
-        Value = email;
-    }
+    public string Value { get; set; } =
+        Guard.Against.IsNullOrWhitespaceOrInvalidEmail(email, nameof(email), $"{nameof(email)} is not a valid email");
 
     protected override IEnumerable<object> GetEqualityComponents()
     {
         yield return Value;
-    }
-
-    private static bool IsValidEmail(string email)
-    {
-        var trimmedEmail = email.Trim();
-
-        if (trimmedEmail.EndsWith('.'))
-        {
-            return false;
-        }
-
-        try
-        {
-            var addr = new System.Net.Mail.MailAddress(email);
-            return addr.Address == trimmedEmail;
-        }
-        catch
-        {
-            return false;
-        }
     }
 }

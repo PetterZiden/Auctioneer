@@ -1,28 +1,13 @@
+using Ardalis.GuardClauses;
 using Auctioneer.Application.Common;
 
 namespace Auctioneer.Application.ValueObjects;
 
-public class Address : ValueObject
+public class Address(string street, string zipcode, string city) : ValueObject
 {
-    public string Street { get; }
-    public string Zipcode { get; }
-    public string City { get; }
-
-    public Address(string street, string zipcode, string city)
-    {
-        if (string.IsNullOrWhiteSpace(street))
-            throw new ArgumentNullException(nameof(street));
-
-        if (string.IsNullOrWhiteSpace(zipcode))
-            throw new ArgumentNullException(nameof(zipcode));
-
-        if (string.IsNullOrWhiteSpace(city))
-            throw new ArgumentNullException(nameof(city));
-
-        Street = street;
-        Zipcode = zipcode;
-        City = city;
-    }
+    public string Street { get; } = Guard.Against.NullOrWhiteSpace(street, nameof(Street));
+    public string Zipcode { get; } = Guard.Against.NullOrWhiteSpace(zipcode, nameof(Zipcode));
+    public string City { get; } = Guard.Against.NullOrWhiteSpace(city, nameof(City));
 
     protected override IEnumerable<object> GetEqualityComponents()
     {
